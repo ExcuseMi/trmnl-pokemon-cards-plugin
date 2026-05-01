@@ -201,8 +201,11 @@
       C6.774,187.91,0,221.44,0,255.993C0,290.553,6.774,324.085,20.125,355.645z"/>
   </svg>
   <span class="title pkmn-title"></span>
-  <span class="instance pkmn-instance"></span>
-</div>
+  <span class="instance pkmn-instance
+  {% if view >= 3 %}
+  md:portrait:hidden
+  {% endif %}"></span>
+  </div>
 
 <script>
   (function() {
