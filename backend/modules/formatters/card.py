@@ -35,8 +35,6 @@ def shape_card(raw: dict) -> dict:
     dex_id = raw.get('dexId')
     set_symbol = set_info.get('symbol', '')
     card_count = set_info.get('cardCount', {})
-    release_date = set_info.get('releaseDate', '')
-    set_year = release_date[:4] if release_date else ''
     return {
         'id': raw.get('id', ''),
         'name': raw.get('name', ''),
@@ -45,7 +43,7 @@ def shape_card(raw: dict) -> dict:
         'types': types,
         'rarity': raw.get('rarity', ''),
         'set_name': set_info.get('name', ''),
-        'set_year': set_year,
+        'set_release_date': set_info.get('releaseDate', ''),
         'set_logo': f'{logo}.png' if logo else '',
         'set_symbol': f"{set_symbol}.png" if set_symbol else '',
         'image_large': f'{image}/high.png' if image else '',

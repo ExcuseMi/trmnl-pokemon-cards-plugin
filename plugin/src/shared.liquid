@@ -281,7 +281,9 @@
     show2('price-avg', price.avg);
     show2('price-avg7', price.avg7);
 
-    show2('set-name', item.set_name);
+    var setLabel = item.set_name || '';
+    if (item.set_year) setLabel += ' (' + item.set_year + ')';
+    show2('set-name', setLabel);
 
     if (item.set_logo) {
       var setLogoEl = q('.pkmn-set-logo');
@@ -295,7 +297,7 @@
     }
 
     if (titleEl) titleEl.textContent = item.name || '';
-    if (instEl)  instEl.textContent  = item.set_name || '';
+    if (instEl)  instEl.textContent  = item.set_year ? (item.set_name || '') + ' (' + item.set_year + ')' : (item.set_name || '');
   })();
 </script>
 
