@@ -51,4 +51,19 @@ The backend expects a Redis instance. Docker Compose starts one automatically.
 | `BACKEND_PORT` | `8694` | Exposed backend port |
 
 <!-- PLUGIN_STATS_START -->
+## 🚀 TRMNL Plugin(s)
+
+*Last updated: 2026-05-01 19:56:19 UTC*
+
+
+## 🔒 Plugin ID: 297288
+
+**Status**: ⏳ Not yet published on TRMNL or API unavailable
+
+This plugin is configured but either hasn't been published to the TRMNL marketplace yet or the API is temporarily unavailable.
+
+**Plugin URL**: https://usetrmnl.com/recipes/297288
+
+---
+
 <!-- PLUGIN_STATS_END -->
