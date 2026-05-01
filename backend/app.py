@@ -59,6 +59,7 @@ async def card():
 
 
 async def _fetch_sets_with_dates():
+    # todo implement properly
     async with aiohttp.ClientSession() as session:
         async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
             resp.raise_for_status()
@@ -118,10 +119,16 @@ def _build_sets(raw_sets: list, search: str) -> list:
     for s in raw_sets:
         sid = s.get('id', '')
         name = s.get('name', '')
-        if not sid or not name:
+        year_text = ""
+        release_date = s.get('releaseDate', '')
+        if release_date:
+            year = release_date[:4]
+            year_text = f" ({year})"
+        label = f"{name}{year_text}"
+        if not sid or not label:
             continue
-        if not search or search in name.lower():
-            result.append({'id': sid, 'name': name})
+        if not search or search in label.lower():
+            result.append({'id': sid, 'name': label})
     return result
 
 
