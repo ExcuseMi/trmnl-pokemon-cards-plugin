@@ -11,7 +11,7 @@ class MtgProvider(BaseProvider):
     def __init__(self):
         super().__init__('mtg')
 
-    async def _fetch_random_card(self) -> dict | None:
+    async def _fetch_random_card(self, **filters) -> dict | None:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(SCRYFALL_API, timeout=aiohttp.ClientTimeout(total=15)) as resp:

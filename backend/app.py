@@ -14,7 +14,8 @@ log = logging.getLogger(__name__)
 
 app = Quart(__name__)
 
-REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '3'))
+# Default refresh interval is now 1 hour
+REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
 
 # Registry of providers
 PROVIDERS = {
@@ -23,34 +24,42 @@ PROVIDERS = {
     'yugioh': YugiohProvider()
 }
 
-async def _scheduler_loop():
-    while True:
-        await asyncio.sleep(REFRESH_HOURS * 3600)
-        for provider in PROVIDERS.values():
-            await provider.refresh_card()
-
-
 @app.before_serving
 async def _startup():
     await init_ip_whitelist()
-    # Initial refresh for all providers
-    await asyncio.gather(*(p.refresh_card() for p in PROVIDERS.values()))
-    asyncio.create_task(_scheduler_loop())
+    # We no longer pre-refresh all at startup because filters are dynamic
+    log.info('Backend started. Cache TTL: %s hours', REFRESH_HOURS)
 
 
 @app.route('/card')
 @require_trmnl_ip
 async def card():
-    # Allow specifying game via query param, default to pokemon
-    game = request.args.get('game', 'pokemon').lower()
-    provider = PROVIDERS.get(game)
+    # Get all query params as filters
+    args = request.args.to_dict()
+    game = args.pop('game', 'pokemon').lower()
     
+    provider = PROVIDERS.get(game)
     if not provider:
         return jsonify({'error': f'Unsupported game: {game}'}), 400
         
-    data = provider.get_current_card()
-    if data is None:
-        return jsonify({'error': f'No {game} card loaded yet'}), 503
+    # Check if we need to refresh (if not in cache or expired)
+    ttl_seconds = REFRESH_HOURS * 3600
+    if provider.is_cache_expired(ttl_seconds, **args):
+        # Trigger background refresh but return current if available (stale-while-revalidate style)
+        # Or if no card at all, wait for it
+        current = provider.get_current_card(**args)
+        if current:
+            asyncio.create_task(provider.refresh_card(**args))
+            return jsonify(current)
+        else:
+            # Wait for first fetch
+            data = await provider.refresh_card(**args)
+            if data:
+                return jsonify(data)
+            return jsonify({'error': f'Failed to fetch {game} card'}), 503
+    
+    # Return from cache
+    data = provider.get_current_card(**args)
     return jsonify(data)
 
 
@@ -62,14 +71,20 @@ async def health():
 @app.route('/refresh', methods=['POST'])
 @require_trmnl_ip
 async def manual_refresh():
-    game = request.args.get('game', 'all').lower()
+    args = request.args.to_dict()
+    game = args.pop('game', 'all').lower()
+    
     if game == 'all':
-        for provider in PROVIDERS.values():
-            asyncio.create_task(provider.refresh_card())
+        # This is harder now because of dynamic filters, 
+        # but we can refresh everything currently in cache
+        for p in PROVIDERS.values():
+            for filter_key in list(p._cache.keys()):
+                filters = dict(filter_key)
+                asyncio.create_task(p.refresh_card(**filters))
     else:
         provider = PROVIDERS.get(game)
         if provider:
-            asyncio.create_task(provider.refresh_card())
+            asyncio.create_task(provider.refresh_card(**args))
         else:
             return jsonify({'error': f'Unsupported game: {game}'}), 400
             

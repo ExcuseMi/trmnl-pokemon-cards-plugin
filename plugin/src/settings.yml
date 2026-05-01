@@ -6,7 +6,7 @@ static_data: ''
 polling_verb: get
 framework_version: 
 serverless_language: 
-polling_url: https://trmnl.bettens.dev/pokemon-cards/card?game={{ pokemon_game }}
+polling_url: https://trmnl.bettens.dev/pokemon-cards/card?game={{ pokemon_game }}&pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}
 polling_headers: ''
 polling_body: 
 id: 297288
@@ -71,7 +71,8 @@ custom_fields:
   min: 1
   max: 24
   step: 1
-  default: 3
+  default: 1
   optional: true
+
 name: TCG Cards
 refresh_interval: 60

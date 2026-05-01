@@ -13,7 +13,7 @@ class YugiohProvider(BaseProvider):
         super().__init__('yugioh')
         self.total_cards = 14000 # Fallback
 
-    async def _fetch_random_card(self) -> dict | None:
+    async def _fetch_random_card(self, **filters) -> dict | None:
         try:
             async with aiohttp.ClientSession() as session:
                 # First, get a random card by using offset

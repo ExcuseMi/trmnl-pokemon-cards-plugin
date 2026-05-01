@@ -1,4 +1,3 @@
-import os
 import random
 import aiohttp
 import logging
@@ -13,10 +12,10 @@ class PokemonProvider(BaseProvider):
     def __init__(self):
         super().__init__('pokemon')
 
-    async def _fetch_random_card(self) -> dict | None:
-        set_id = os.getenv('SET_ID', '').strip()
-        rarity = os.getenv('RARITY', '').strip()
-        ptype = os.getenv('POKEMON_TYPE', '').strip()
+    async def _fetch_random_card(self, **filters) -> dict | None:
+        set_id = filters.get('set_id', '').strip()
+        rarity = filters.get('rarity', '').strip()
+        ptype = filters.get('pokemon_type', '').strip()
 
         params = {}
         url = f'{TCGDEX_API}/cards'
