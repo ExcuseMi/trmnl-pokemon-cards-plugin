@@ -38,6 +38,8 @@ async def _startup():
 @require_tiered_access(lambda: _redis, prefix='card')
 async def card():
     args = dict(request.args)
+    if '::' in args.get('set_id', ''):
+        args['set_id'] = args['set_id'].split('::')[0]
     ttl = REFRESH_HOURS * 3600
 
     if await _provider.is_expired(ttl, **args):
