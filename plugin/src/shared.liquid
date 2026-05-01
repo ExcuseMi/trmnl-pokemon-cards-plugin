@@ -3,53 +3,60 @@
 
 <script>var __pkmn = {{ items | json }};</script>
 
-{% if display_mode == 'art' or view == 4 %}
+<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full">
+  <img class="pkmn-img image image image-dither image--contain h--full
+  {% if view == 1  %}    portrait:hidden lg:portrait:block
+  {% elsif view == 2  %}
+  {% elsif view == 3  %} portrait:hidden lg:hidden
+  {% elsif view == 4  %} portrait:hidden
+  {% endif %}"
+   alt="height">
+  <img class="pkmn-img image image-dither image--contain w--full
+  {% if view == 1  %}    hidden portrait:block lg:portrait:hidden
+  {% elsif view == 2  %} hidden
+  {% elsif view == 3  %} hidden portrait:block lg:block
+  {% elsif view == 4  %} hidden portrait:block
+  {% endif %}"
 
-<div class="layout layout--stretch gap--none m--0 p--0">
-  <img class="pkmn-img hidden image image-dither image--contain" alt="">
-  <div class="pkmn-empty hidden flex flex--col flex--center gap--small">
-    <span class="label label--small">Pokémon Cards</span>
-    <span class="description text--center">No card available.</span>
-  </div>
-</div>
+  " alt="">
 
-{% else %}
-
-<div class="flex flex--row gap--medium h--full">
-
-  <img class="pkmn-img hidden image image-dither image--contain h--full" alt="">
-
-  <div class="flex flex--col gap--small stretch-x flex--center-y">
-
-    <span class="title pkmn-name" data-clamp="2"></span>
-
+  <div class="flex--col gap--small stretch-x flex--center-y outline
+  {% if view == 1 %}   flex portrait:hidden
+  {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
+  {% elsif view == 3 %}hidden portrait:flex
+  {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
+  {% endif %}" >
+    <span class="label label--underline label--large lg:label--xlarge pkmn-name" data-clamp="2"></span>
     <div class="pkmn-hp-row hidden flex flex--row flex--center-y gap--small">
-      <span class="label label--small label--filled">HP</span>
-      <span class="description pkmn-hp"></span>
+      <span class="label label--base lg:label--large label--filled">HP</span>
+      <span class="description description--large lg:description--xlarge pkmn-hp"></span>
     </div>
-
     <div class="pkmn-type-row hidden flex flex--row flex--center-y gap--small">
-      <span class="label label--small">Type</span>
-      <span class="description pkmn-types"></span>
+      <span class="label label--base lg:label--large">Type</span>
+      <span class="description description--large lg:description--xlarge pkmn-types"></span>
     </div>
-
     {% if view == 1 or view == 3 %}
     <div class="pkmn-rarity-row hidden flex flex--row flex--center-y gap--small">
-      <span class="label label--small">Rarity</span>
-      <span class="description pkmn-rarity"></span>
+      <span class="label label--base lg:label--large">Rarity</span>
+      <span class="description description--large lg:description--xlarge pkmn-rarity"></span>
     </div>
     {% endif %}
-
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden h--12 w--auto image--contain" alt="">
+      <img class="pkmn-set-logo hidden image--contain w--full" alt="">
     </div>
-
   </div>
 </div>
 
-{% endif %}
+<div class="title_bar
+{% if view == 1 %}
+lg:portrait:hidden
+{% elsif view == 2 %}
 
-<div class="title_bar">
+{% elsif view == 3 %}
+
+{% elsif view == 4 %}
+lg:portrait:hidden
+{% endif %}">
   <svg class="image" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
     <circle cx="24" cy="24" r="22" fill="white" stroke="black" stroke-width="1"/>
     <path d="M2 24 A22 22 0 0 1 46 24 Z" fill="#f8654b"/>
@@ -65,12 +72,11 @@
 (function() {
   var self   = document.currentScript;
   var views  = Array.from(document.querySelectorAll('.view'));
-  var host   = views.find(function(v) { return v.contains(self); }) || document.body;
+  var host = document.currentScript.closest('.view') || document.body;
   var idx    = views.indexOf(host) % 4;
   var item   = (__pkmn || [])[idx] || null;
   var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
   var isImageOnly = !host.querySelector('.pkmn-name');
-
   function q(sel) { return host.querySelector(sel); }
   function show(el) { if (el) el.classList.remove('hidden'); }
 
@@ -80,15 +86,27 @@
   if (!item || (!item.image_large && !item.name)) {
     show(q('.pkmn-empty'));
     if (titleEl) titleEl.textContent = name;
+    // Clear all images when no item
+    var allImgs = host.querySelectorAll('.pkmn-img');
+    allImgs.forEach(function(img) {
+      img.src = '';
+      img.alt = '';
+    });
     return;
   }
 
-  var img = q('.pkmn-img');
-  if (img && item.image_large) {
-    img.src = item.image_large;
-    img.alt = item.name || '';
-    show(img);
+  // Update ALL images with the same src/alt
+  var allImgs = host.querySelectorAll('.pkmn-img');
+  if (item.image_large) {
+    allImgs.forEach(function(img) {
+      img.src = item.image_large;
+      img.alt = item.name || '';
+    });
   } else {
+    allImgs.forEach(function(img) {
+      img.src = '';
+      img.alt = '';
+    });
     show(q('.pkmn-empty'));
   }
 
