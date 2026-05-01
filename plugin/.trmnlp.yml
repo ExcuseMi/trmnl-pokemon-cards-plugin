@@ -1,0 +1,31 @@
+# TRMNLP configuration
+# {{ env.VARIABLE }} interpolation is available here
+---
+watch:
+  - .trmnlp.yml
+  - src
+
+custom_fields: {}
+
+variables:
+  trmnl:
+    system:
+      timestamp_utc: 1700000000
+    plugin_settings:
+      instance_name: "Pokemon Cards"
+      strategy: polling
+      dark_mode: "no"
+      no_screen_padding: "no"
+      custom_fields_values:
+        pokemon_type: "any"
+        rarity: "any"
+        set_id: ""
+        refresh_hours: 3
+  card:
+    name: "Charizard"
+    hp: "120"
+    types_str: "Fire"
+    rarity: "Rare Holo"
+    set_name: "Base Set"
+    image_large: "https://images.pokemontcg.io/base1/4_hires.png"
+    image_small: "https://images.pokemontcg.io/base1/4.png"

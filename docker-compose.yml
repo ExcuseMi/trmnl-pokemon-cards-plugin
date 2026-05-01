@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: ./backend
+    container_name: trmnl-pokemon-cards-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${BACKEND_PORT:-8080}:8694"
+    deploy:
+      resources:
+        limits:
+          memory: 1g

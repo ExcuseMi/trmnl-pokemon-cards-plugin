@@ -1,0 +1,50 @@
+[
+  {
+    "name": "charizard full card",
+    "input": {
+      "data": {
+        "id": "base1-4",
+        "name": "Charizard",
+        "hp": "120",
+        "types": ["Fire"],
+        "rarity": "Rare Holo",
+        "set_name": "Base Set",
+        "series": "Base",
+        "image_large": "https://images.pokemontcg.io/base1/4_hires.png",
+        "image_small": "https://images.pokemontcg.io/base1/4.png"
+      }
+    }
+  },
+  {
+    "name": "dual type card",
+    "input": {
+      "data": {
+        "id": "sv3-123",
+        "name": "Mew ex",
+        "hp": "200",
+        "types": ["Psychic"],
+        "rarity": "Double Rare",
+        "set_name": "Obsidian Flames",
+        "series": "Scarlet & Violet",
+        "image_large": "https://images.pokemontcg.io/sv3/123_hires.png",
+        "image_small": "https://images.pokemontcg.io/sv3/123.png"
+      }
+    }
+  },
+  {
+    "name": "missing optional fields",
+    "input": {
+      "data": {
+        "id": "base1-1",
+        "name": "Alakazam",
+        "hp": "",
+        "types": [],
+        "rarity": "",
+        "set_name": "",
+        "series": "",
+        "image_large": "",
+        "image_small": ""
+      }
+    }
+  }
+]

@@ -16,10 +16,9 @@ Full view: card art + full stats. Smaller views: card art + name only.
 
 ## Data source
 
-Pokemon TCG API — https://api.pokemontcg.io/v2/cards
-- Free tier: 1000 req/day, no auth needed
-- Optional API key (header `X-Api-Key`) for 20 000 req/day
-- Filter by set, type, rarity via query params
+TCGdex API — https://tcgdex.dev
+- Free, no authentication needed
+- Base URL: https://api.tcgdex.net/v2/en/
 
 ---
 
@@ -32,7 +31,7 @@ TRMNL polls `GET /card` to get the current card JSON.
 ```
 TRMNL  →  GET /card  →  backend  (cached card, refreshed in background)
                               ↕ (startup + scheduled)
-                        Pokemon TCG API
+                        TCGdex API
 ```
 
 ### Backend stack
@@ -48,7 +47,7 @@ backend/
 ├── requirements.txt
 └── modules/
     ├── providers/
-    │   └── pokemon_tcg.py     # fetch random card from API
+    │   └── tcgdex.py          # fetch random card from TCGdex API
     ├── formatters/
     │   └── card.py            # shape card dict for template
     └── utils/

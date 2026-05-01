@@ -1,0 +1,56 @@
+{% template main %}
+<div class="layout layout--row gap--medium">
+
+  <div style="flex-shrink: 0; display: flex; align-items: flex-start;">
+    {% if view == 1 %}
+    <img src="{{ card.image_large }}" alt="{{ card.name }}" style="height: 180px; width: auto; object-fit: contain;">
+    {% elsif view == 2 %}
+    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 110px; width: auto; object-fit: contain;">
+    {% elsif view == 3 %}
+    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 80px; width: auto; object-fit: contain;">
+    {% else %}
+    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 60px; width: auto; object-fit: contain;">
+    {% endif %}
+  </div>
+
+  <div class="flex flex--col gap--small" style="flex: 1; min-width: 0;">
+    <span class="title" data-clamp="2">{{ card.name }}</span>
+
+    {% unless view == 4 %}
+    {% if card.hp != '' %}
+    <div class="flex gap--small" style="align-items: center;">
+      <span class="label label--small label--filled">{{ card.stat_label }}</span>
+      <span class="description">{{ card.hp }}</span>
+    </div>
+    {% endif %}
+
+    {% if card.types_str != '' %}
+    <div class="flex gap--small" style="align-items: center;">
+      <span class="label label--small">Type</span>
+      <span class="description">{{ card.types_str }}</span>
+    </div>
+    {% endif %}
+    {% endunless %}
+
+    {% if view == 1 %}
+    {% if card.rarity != '' %}
+    <div class="flex gap--small" style="align-items: center;">
+      <span class="label label--small">Rarity</span>
+      <span class="description">{{ card.rarity }}</span>
+    </div>
+    {% endif %}
+    {% if card.set_name != '' %}
+    <div class="flex gap--small" style="align-items: center;">
+      <span class="label label--small">Set</span>
+      <span class="description">{{ card.set_name }}</span>
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+
+</div>
+<div class="title_bar">
+  <img class="image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23f8654b'/%3E%3Cpath d='M1 12h22' stroke='white' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3.5' fill='white' stroke='%23f8654b' stroke-width='1.5'/%3E%3C/svg%3E" alt="Pokemon Cards">
+  <span class="title">{{ trmnl.plugin_settings.instance_name }}</span>
+</div>
+{% endtemplate %}
