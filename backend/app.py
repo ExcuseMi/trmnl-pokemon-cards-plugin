@@ -75,7 +75,7 @@ async def sets():
                 resp.raise_for_status()
                 data = await resp.json()
 
-        result = [{'label': s['name'], 'value': s['id']} for s in data if s.get('id') and s.get('name')]
+        result = [{s['name']: s['id']} for s in data if s.get('id') and s.get('name')]
         payload = json.dumps(result)
         try:
             await _redis.set(cache_key, payload, ex=86400)
