@@ -1,5 +1,16 @@
 {% template main %}
 {% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
+{% if view == 1 %}
+  {% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--2" %}
+  {% assign val_cls = "description description--large lg:description--xxlarge" %}
+  {% assign hp_cls  = "description description--xlarge lg:description--xxxlarge" %}
+  {% assign rar_cls = "label label--base lg:label--large" %}
+{% else %}
+  {% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2" %}
+  {% assign val_cls = "description description--large lg:description--xlarge" %}
+  {% assign hp_cls  = "description description--xlarge lg:description--xxlarge" %}
+  {% assign rar_cls = "label label--base" %}
+{% endif %}
 
 <script>var __pkmn = {{ items | json }};</script>
 
@@ -24,43 +35,77 @@
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
-    {% endif %}" >
+    {% endif %}">
     <span class="label label--underline label--large lg:label--xxlarge pkmn-name" data-clamp="2"></span>
 
-    <div class="pkmn-stats" style="display:grid;grid-template-columns:auto 1fr;column-gap:12px;row-gap:4px;align-items:baseline;">
-      <span class="pkmn-illustrator-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Artist</span>
-      <span class="description description--large lg:description--xlarge pkmn-illustrator hidden"></span>
+    <div class="columns" data-overflow="true" {% if view == 2 %}data-overflow-max-cols="2"{% else %}data-overflow-max-cols="1"{% endif %}>
+      <div class="column">
 
-      <span class="pkmn-hp-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">HP</span>
-      <span class="description description--xlarge lg:description--xxlarge pkmn-hp hidden"></span>
+        <div class="item pkmn-illustrator-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Artist</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-illustrator"></span></div>
+        </div>
 
-      <span class="pkmn-types-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Type</span>
-      <span class="description description--large lg:description--xlarge pkmn-types hidden"></span>
+        <div class="item pkmn-hp-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">HP</span></div>
+          <div class="content"><span class="{{ hp_cls }} pkmn-hp"></span></div>
+        </div>
 
-      <span class="pkmn-stage-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Stage</span>
-      <span class="description description--large lg:description--xlarge pkmn-stage hidden"></span>
+        <div class="item pkmn-types-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Type</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-types"></span></div>
+        </div>
 
-      {% if view == 1 or view == 3 %}
-      <span class="pkmn-rarity-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Rarity</span>
-      <span class="description description--large lg:description--xlarge pkmn-rarity hidden"></span>
+        <div class="item pkmn-stage-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Stage</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-stage"></span></div>
+        </div>
 
-      <span class="pkmn-retreat-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Retreat</span>
-      <span class="description description--large lg:description--xlarge pkmn-retreat hidden"></span>
+        {% if view == 1 or view == 3 %}
+        <div class="item pkmn-rarity-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Rarity</span></div>
+          <div class="content"><span class="{{ rar_cls }} pkmn-rarity"></span></div>
+        </div>
 
-      <span class="pkmn-regulation-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Mark</span>
-      <span class="description description--large lg:description--xlarge pkmn-regulation hidden"></span>
-      {% endif %}
+        <div class="item pkmn-retreat-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Retreat</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-retreat"></span></div>
+        </div>
 
-      <span class="pkmn-price-avg-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Avg</span>
-      <span class="description description--large lg:description--xlarge pkmn-price-avg hidden"></span>
+        <div class="item pkmn-regulation-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Mark</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-regulation"></span></div>
+        </div>
 
-      <span class="pkmn-price-avg7-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">7d avg</span>
-      <span class="description description--large lg:description--xlarge pkmn-price-avg7 hidden"></span>
+        <div class="item pkmn-variants-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Print</span></div>
+          <div class="content pkmn-variants flex flex--row gap--small flex--wrap"></div>
+        </div>
 
-      {% unless view == 1 %}
-      <span class="pkmn-set-name-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Set</span>
-      <span class="description description--large lg:description--xlarge pkmn-set-name hidden"></span>
-      {% endunless %}
+        <div class="item pkmn-card-count-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Cards</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-card-count"></span></div>
+        </div>
+        {% endif %}
+
+        <div class="item pkmn-price-avg-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Avg</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-price-avg"></span></div>
+        </div>
+
+        <div class="item pkmn-price-avg7-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">7d avg</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-price-avg7"></span></div>
+        </div>
+
+        {% unless view == 1 %}
+        <div class="item pkmn-set-name-row hidden">
+          <div class="meta"><span class="{{ lbl_cls }}">Set</span></div>
+          <div class="content"><span class="{{ val_cls }} pkmn-set-name"></span></div>
+        </div>
+        {% endunless %}
+
+      </div>
     </div>
 
     {% if view == 1 %}
@@ -125,9 +170,8 @@
 
 <script>
   (function() {
-    var self   = document.currentScript;
     var views  = Array.from(document.querySelectorAll('.view'));
-    var host = document.currentScript.closest('.view') || document.body;
+    var host   = document.currentScript.closest('.view') || document.body;
     var idx    = views.indexOf(host) % 4;
     var item   = (__pkmn || [])[idx] || null;
     var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
@@ -137,7 +181,6 @@
     var instEl  = q('.pkmn-instance');
 
     if (!item || (!item.image_large && !item.name)) {
-      show(q('.pkmn-empty'));
       if (titleEl) titleEl.textContent = name;
       host.querySelectorAll('.pkmn-img').forEach(function(img) { img.src = ''; img.alt = ''; });
       return;
@@ -151,19 +194,31 @@
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
 
-    function show2(key, value) {
+    function show2(key, value, extraClass) {
       if (!value && value !== 0) return;
-      var lbl = q('.pkmn-' + key + '-label');
       var val = q('.pkmn-' + key);
-      if (lbl) lbl.classList.remove('hidden');
-      if (val) { val.textContent = String(value); val.classList.remove('hidden'); }
+      var row = q('.pkmn-' + key + '-row');
+      if (val) {
+        val.textContent = String(value);
+        if (extraClass) val.classList.add(extraClass);
+      }
+      if (row) row.classList.remove('hidden');
+    }
+
+    function rarityClass(r) {
+      r = (r || '').toLowerCase();
+      if (r.includes('special illustration') || r.includes('hyper')) return 'label--error';
+      if (r.includes('illustration'))  return 'label--warning';
+      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) return 'label--primary';
+      if (r.includes('rare')) return 'label--primary';
+      return '';
     }
 
     show2('illustrator', item.illustrator);
     show2('hp', item.hp);
     show2('types', item.types ? item.types.join(', ') : '');
     show2('stage', item.stage);
-    show2('rarity', item.rarity);
+    show2('rarity', item.rarity, rarityClass(item.rarity));
     show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
 

@@ -34,6 +34,7 @@ def shape_card(raw: dict) -> dict:
     attacks = raw.get('attacks', {})
     dex_id = raw.get('dexId')
     set_symbol = set_info.get('symbol', '')
+    card_count = set_info.get('cardCount', {})
     return {
         'id': raw.get('id', ''),
         'name': raw.get('name', ''),
@@ -55,4 +56,8 @@ def shape_card(raw: dict) -> dict:
         'retreat': raw.get('retreat'),
         'regulation_mark': raw.get('regulationMark', ''),
         'price': _format_price(pricing),
+        'card_count': {
+            'official': card_count.get('official'),
+            'total': card_count.get('total'),
+        },
     }
