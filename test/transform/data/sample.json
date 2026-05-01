@@ -1,50 +1,77 @@
 [
   {
-    "name": "charizard full card",
+    "name": "4 cards from backend",
     "input": {
-      "data": {
-        "id": "base1-4",
-        "name": "Charizard",
-        "hp": "120",
-        "types": ["Fire"],
-        "rarity": "Rare Holo",
-        "set_name": "Base Set",
-        "series": "Base",
-        "image_large": "https://images.pokemontcg.io/base1/4_hires.png",
-        "image_small": "https://images.pokemontcg.io/base1/4.png"
-      }
+      "data": [
+        {
+          "id": "base1-4",
+          "name": "Charizard",
+          "hp": "120",
+          "types": ["Fire"],
+          "rarity": "Rare Holo",
+          "set_name": "Base Set",
+          "set_logo": "https://assets.tcgdex.net/en/base/base1/logo.png",
+          "image_large": "https://assets.tcgdex.net/en/base/base1/4/high.png",
+          "image_small": "https://assets.tcgdex.net/en/base/base1/4/low.png"
+        },
+        {
+          "id": "sv3-123",
+          "name": "Mew ex",
+          "hp": "200",
+          "types": ["Psychic"],
+          "rarity": "Double Rare",
+          "set_name": "Obsidian Flames",
+          "set_logo": "https://assets.tcgdex.net/en/scarlet-violet/sv3/logo.png",
+          "image_large": "https://assets.tcgdex.net/en/scarlet-violet/sv3/123/high.png",
+          "image_small": "https://assets.tcgdex.net/en/scarlet-violet/sv3/123/low.png"
+        },
+        {
+          "id": "base1-58",
+          "name": "Pikachu",
+          "hp": "60",
+          "types": ["Lightning"],
+          "rarity": "Common",
+          "set_name": "Base Set",
+          "set_logo": "https://assets.tcgdex.net/en/base/base1/logo.png",
+          "image_large": "https://assets.tcgdex.net/en/base/base1/58/high.png",
+          "image_small": "https://assets.tcgdex.net/en/base/base1/58/low.png"
+        },
+        {
+          "id": "swsh7-217",
+          "name": "Rayquaza VMAX",
+          "hp": "320",
+          "types": ["Dragon"],
+          "rarity": "Ultra Rare",
+          "set_name": "Evolving Skies",
+          "set_logo": "https://assets.tcgdex.net/en/sword-shield/swsh7/logo.png",
+          "image_large": "https://assets.tcgdex.net/en/sword-shield/swsh7/217/high.png",
+          "image_small": "https://assets.tcgdex.net/en/sword-shield/swsh7/217/low.png"
+        }
+      ]
     }
   },
   {
-    "name": "dual type card",
+    "name": "empty data",
     "input": {
-      "data": {
-        "id": "sv3-123",
-        "name": "Mew ex",
-        "hp": "200",
-        "types": ["Psychic"],
-        "rarity": "Double Rare",
-        "set_name": "Obsidian Flames",
-        "series": "Scarlet & Violet",
-        "image_large": "https://images.pokemontcg.io/sv3/123_hires.png",
-        "image_small": "https://images.pokemontcg.io/sv3/123.png"
-      }
+      "data": []
     }
   },
   {
     "name": "missing optional fields",
     "input": {
-      "data": {
-        "id": "base1-1",
-        "name": "Alakazam",
-        "hp": "",
-        "types": [],
-        "rarity": "",
-        "set_name": "",
-        "series": "",
-        "image_large": "",
-        "image_small": ""
-      }
+      "data": [
+        {
+          "id": "base1-1",
+          "name": "Alakazam",
+          "hp": "",
+          "types": [],
+          "rarity": "",
+          "set_name": "",
+          "set_logo": "",
+          "image_large": "",
+          "image_small": ""
+        }
+      ]
     }
   }
 ]

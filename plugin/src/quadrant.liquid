@@ -1,9 +1,2 @@
 {% assign view = 4 %}
-<div class="layout layout--grid col--2 row--2">
-  {% for card in cards limit:4 %}
-    <div class="grid__item">
-      {% render "main", trmnl: trmnl, card: card, view: view %}
-    </div>
-  {% endfor %}
-</div>
-{% render "title_bar", trmnl: trmnl %}
+{% render "main", trmnl: trmnl, items: items, view: view %}

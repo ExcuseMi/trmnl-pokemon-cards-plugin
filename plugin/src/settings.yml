@@ -1,36 +1,35 @@
 ---
 strategy: polling
-no_screen_padding: 'no'
+no_screen_padding: 'yes'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-framework_version: 
-serverless_language: 
-polling_url: https://trmnl.bettens.dev/pokemon-cards/card?game={{ pokemon_game }}&pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}
+polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}'
 polling_headers: ''
-polling_body: 
+polling_body: ''
 id: 297288
+name: Pokémon Cards
+refresh_interval: 60
 custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: 'Display a random card from your favorite TCG — Pokemon, Magic: The Gathering, or Yu-Gi-Oh!. A new card appears each refresh cycle.<br /><br /><strong>Data:</strong> TCGdex, Scryfall, YGOPRODeck'
+  description: 'Display beautiful Pokémon cards on your TRMNL. Art Only mode shows just the artwork; Card + Stats shows details. A new selection appears each refresh.<br /><br /><strong>Data:</strong> TCGdex (free, no API key required)'
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
-  category: games
+  category: games,art
   help_text: TRMNL X Ready
-- keyname: pokemon_game
+- keyname: display_mode
   field_type: select
-  name: Trading Card Game
-  description: Select which game to display cards from
+  name: Display Mode
+  description: How cards are displayed on screen
   options:
-  - Pokémon: pokemon
-  - 'Magic: The Gathering': mtg
-  - Yu-Gi-Oh!: yugioh
-  default: pokemon
+  - Art Only: art
+  - Card + Stats: stats
+  default: stats
 - keyname: pokemon_type
   field_type: select
   name: Pokémon Type
-  description: Filter cards by type
+  description: Filter by Pokémon type
   options:
   - Any: any
   - Fire: Fire
@@ -56,22 +55,16 @@ custom_fields:
   - Uncommon: Uncommon
   - Rare: Rare
   - Rare Holo: Rare Holo
+  - Double Rare: Double Rare
+  - Ultra Rare: Ultra Rare
+  - Illustration Rare: Illustration Rare
+  - Special Illustration Rare: Special Illustration Rare
   default: any
   optional: true
 - keyname: set_id
-  field_type: string
-  name: Set ID
-  description: Lock to a specific set. Leave blank for all sets.<br /><strong>Example:</strong> base1 &nbsp;·&nbsp; <strong>Example:</strong> swsh1
-  placeholder: base1
+  field_type: xhrSelect
+  name: Set / Series
+  description: Filter by a specific set. Leave empty for all sets.
+  endpoint: 'https://trmnl.bettens.dev/pokemon-cards/sets'
+  http_verb: get
   optional: true
-- keyname: refresh_hours
-  field_type: number
-  name: Card Refresh Interval (hours)
-  description: How often the backend fetches a new card
-  min: 1
-  max: 24
-  step: 1
-  default: 1
-  optional: true
-name: TCG Cards
-refresh_interval: 60

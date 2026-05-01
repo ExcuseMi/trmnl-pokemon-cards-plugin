@@ -1,70 +1,160 @@
 {% template main %}
-<div class="flex flex--row gap--medium" style="flex: 1; min-width: 0;">
+{% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
 
-  <div style="flex-shrink: 0; display: flex; align-items: flex-start;">
-    {% if view == 1 %}
-    <img src="{{ card.image_large }}" alt="{{ card.name }}" style="height: 180px; width: auto; object-fit: contain;">
-    {% elsif view == 2 %}
-    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 110px; width: auto; object-fit: contain;">
-    {% elsif view == 3 %}
-    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 80px; width: auto; object-fit: contain;">
-    {% else %}
-    <img src="{{ card.image_small }}" alt="{{ card.name }}" style="height: 60px; width: auto; object-fit: contain;">
-    {% endif %}
+<script>var __pkmn = {{ items | json }};</script>
+
+{% if display_mode == 'art' %}
+
+<div class="layout layout--stretch gap--none m--0 p--0" style="overflow: hidden; position: relative;">
+  <svg class="pkmn-art-svg hidden" viewBox="44 87 503 321"
+       width="100%" height="100%"
+       preserveAspectRatio="xMidYMid slice"
+       style="display: block; position: absolute; inset: 0;">
+    <image class="pkmn-art-img" width="747" height="1038" href=""/>
+  </svg>
+  <div class="pkmn-empty hidden" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;">
+    <span class="label label--small">Pokémon Cards</span>
+    <span class="description text--center">No card available.</span>
   </div>
+</div>
 
-  <div class="flex flex--col gap--small" style="flex: 1; min-width: 0;">
-    <span class="title" data-clamp="2">{{ card.name }}</span>
+{% else %}
 
-    {% unless view == 4 %}
-    {% if card.hp != '' %}
-    <div class="flex gap--small" style="align-items: center;">
-      <span class="label label--small label--filled">{{ card.stat_label }}</span>
-      <span class="description">{{ card.hp }}</span>
+{% if view == 4 %}
+
+<div class="layout layout--stretch gap--none m--0 p--0" style="position: relative;">
+  <img class="pkmn-img hidden image image-dither image--contain" alt="" style="width: 100%; height: 100%;">
+  <div class="pkmn-empty hidden" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+    <span class="description text--center">No card.</span>
+  </div>
+</div>
+
+{% else %}
+
+<div class="flex flex--row gap--medium h--full">
+
+  <img class="pkmn-img hidden image image-dither image--contain h--full" alt="">
+
+  <div class="flex flex--col gap--small" style="flex: 1; min-width: 0; justify-content: center;">
+
+    <span class="title pkmn-name" data-clamp="2"></span>
+
+    <div class="pkmn-hp-row hidden flex gap--small" style="align-items: center;">
+      <span class="label label--small label--filled">HP</span>
+      <span class="description pkmn-hp"></span>
     </div>
-    {% endif %}
 
-    {% if card.types_str != '' %}
-    <div class="flex gap--small" style="align-items: center;">
+    <div class="pkmn-type-row hidden flex gap--small" style="align-items: center;">
       <span class="label label--small">Type</span>
-      <span class="description">{{ card.types_str }}</span>
+      <span class="description pkmn-types"></span>
     </div>
-    {% endif %}
-    {% endunless %}
 
-    {% if view == 1 %}
-    {% if card.rarity != '' %}
-    <div class="flex gap--small" style="align-items: center;">
+    {% if view == 1 or view == 3 %}
+    <div class="pkmn-rarity-row hidden flex gap--small" style="align-items: center;">
       <span class="label label--small">Rarity</span>
-      <span class="description">{{ card.rarity }}</span>
+      <span class="description pkmn-rarity"></span>
     </div>
     {% endif %}
-    {% if card.set_name != '' %}
-    <div class="flex gap--small" style="align-items: center;">
-      <span class="label label--small">Set</span>
-      <div class="flex gap--small" style="align-items: center;">
-        {% if card.set_image != '' %}
-        <img src="{{ card.set_image }}" alt="{{ card.set_name }}" style="height: 24px; width: auto; object-fit: contain;">
-        {% endif %}
-        <span class="description">{{ card.set_name }}</span>
-      </div>
+
+    <div class="pkmn-set-row hidden flex gap--small" style="align-items: center;">
+      <img class="pkmn-set-logo hidden" alt="" style="height: 20px; width: auto; object-fit: contain;">
+      <span class="description pkmn-set-name"></span>
     </div>
-    {% endif %}
-    {% else %}
-    {% if card.set_image != '' %}
-    <div style="margin-top: 4px;">
-      <img src="{{ card.set_image }}" alt="{{ card.set_name }}" style="height: 20px; width: auto; object-fit: contain;">
-    </div>
-    {% endif %}
-    {% endif %}
+
   </div>
-
 </div>
-{% endtemplate %}
 
-{% template title_bar %}
+{% endif %}
+{% endif %}
+
 <div class="title_bar">
-  <img class="image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23f8654b'/%3E%3Cpath d='M1 12h22' stroke='white' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3.5' fill='white' stroke='%23f8654b' stroke-width='1.5'/%3E%3C/svg%3E" alt="Pokemon Cards">
-  <span class="title">{{ trmnl.plugin_settings.instance_name }}</span>
+  <svg class="image" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="24" cy="24" r="22" fill="white" stroke="black" stroke-width="1"/>
+    <path d="M2 24 A22 22 0 0 1 46 24 Z" fill="#f8654b"/>
+    <rect x="2" y="21" width="44" height="6" fill="black"/>
+    <circle cx="24" cy="24" r="8" fill="black"/>
+    <circle cx="24" cy="24" r="5" fill="white"/>
+  </svg>
+  <span class="title pkmn-title"></span>
+  <span class="instance pkmn-instance"></span>
 </div>
+
+<script>
+(function() {
+  var self   = document.currentScript;
+  var views  = Array.from(document.querySelectorAll('.view'));
+  var host   = views.find(function(v) { return v.contains(self); }) || document.body;
+  var idx    = views.indexOf(host) % 4;
+  var item   = (__pkmn || [])[idx] || null;
+  var mode   = '{{ display_mode }}';
+  var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
+
+  function q(sel) { return host.querySelector(sel); }
+  function show(el) { if (el) el.classList.remove('hidden'); }
+
+  var titleEl = q('.pkmn-title');
+  var instEl  = q('.pkmn-instance');
+
+  if (!item || (!item.image_large && !item.name)) {
+    show(q('.pkmn-empty'));
+    if (titleEl) titleEl.textContent = name;
+    return;
+  }
+
+  if (mode === 'art') {
+    var artImg = q('.pkmn-art-img');
+    if (artImg && item.image_large) {
+      artImg.setAttribute('href', item.image_large);
+      show(q('.pkmn-art-svg'));
+    } else {
+      show(q('.pkmn-empty'));
+    }
+    if (titleEl) titleEl.textContent = item.name || '';
+    if (instEl)  instEl.textContent  = item.set_name || '';
+  } else {
+    var img = q('.pkmn-img');
+    if (img && item.image_large) {
+      img.src = item.image_large;
+      img.alt = item.name || '';
+      show(img);
+    }
+
+    var nameEl = q('.pkmn-name');
+    if (nameEl) nameEl.textContent = item.name || '';
+
+    if (item.hp) {
+      var hpEl = q('.pkmn-hp');
+      if (hpEl) hpEl.textContent = item.hp;
+      show(q('.pkmn-hp-row'));
+    }
+    if (item.types_str) {
+      var typesEl = q('.pkmn-types');
+      if (typesEl) typesEl.textContent = item.types_str;
+      show(q('.pkmn-type-row'));
+    }
+    if (item.rarity) {
+      var rarityEl = q('.pkmn-rarity');
+      if (rarityEl) rarityEl.textContent = item.rarity;
+      show(q('.pkmn-rarity-row'));
+    }
+    if (item.set_name) {
+      var setNameEl = q('.pkmn-set-name');
+      if (setNameEl) setNameEl.textContent = item.set_name;
+      show(q('.pkmn-set-row'));
+    }
+    if (item.set_logo) {
+      var setLogoEl = q('.pkmn-set-logo');
+      if (setLogoEl) {
+        setLogoEl.src = item.set_logo;
+        setLogoEl.alt = item.set_name || '';
+        show(setLogoEl);
+      }
+    }
+
+    if (titleEl) titleEl.textContent = name;
+    if (instEl)  instEl.textContent  = item.name || '';
+  }
+})();
+</script>
+
 {% endtemplate %}

@@ -1,7 +1,2 @@
 {% assign view = 3 %}
-<div class="layout layout--col gap--medium">
-  {% for card in cards limit:2 %}
-    {% render "main", trmnl: trmnl, card: card, view: view %}
-  {% endfor %}
-</div>
-{% render "title_bar", trmnl: trmnl %}
+{% render "main", trmnl: trmnl, items: items, view: view %}

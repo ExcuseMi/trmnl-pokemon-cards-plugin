@@ -1,69 +1,87 @@
 import asyncio
+import json
 import logging
 import os
 import random
 
-from quart import Quart, jsonify, request
+import aiohttp
+from quart import Quart, Response, jsonify, request
+from redis.asyncio import Redis
 
 from modules.providers.pokemon import PokemonProvider
-from modules.providers.mtg import MtgProvider
-from modules.providers.yugioh import YugiohProvider
-from modules.utils.ip_whitelist import init_ip_whitelist, require_trmnl_ip
+from modules.utils.ip_whitelist import init_ip_whitelist, require_tiered_access
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 log = logging.getLogger(__name__)
 
 app = Quart(__name__)
 
-# Default refresh interval is now 1 hour
 REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
+TCGDEX_API = 'https://api.tcgdex.net/v2/en'
 
-# Registry of providers
-PROVIDERS = {
-    'pokemon': PokemonProvider(),
-    'mtg': MtgProvider(),
-    'yugioh': YugiohProvider()
-}
+_redis = Redis(
+    host=os.getenv('REDIS_HOST', 'localhost'),
+    port=int(os.getenv('REDIS_PORT', '6379')),
+    db=0,
+    decode_responses=True,
+)
+_provider = PokemonProvider(name='pokemon', redis=_redis)
+
 
 @app.before_serving
 async def _startup():
     await init_ip_whitelist()
-    log.info('Backend started. Cache TTL: %s hours', REFRESH_HOURS)
+    log.info('Pokémon Cards backend started — cache TTL: %sh', REFRESH_HOURS)
 
 
 @app.route('/card')
-@require_trmnl_ip
+@require_tiered_access(lambda: _redis, prefix='card')
 async def card():
-    # Get all query params as filters
-    args = request.args.to_dict()
-    game = args.pop('game', 'pokemon').lower()
-    
-    provider = PROVIDERS.get(game)
-    if not provider:
-        return jsonify({'error': f'Unsupported game: {game}'}), 400
-        
-    ttl_seconds = REFRESH_HOURS * 3600
-    
-    # Check if cache is expired
-    if provider.is_cache_expired(ttl_seconds, **args):
-        # Trigger refresh in background or wait if nothing in cache
-        cached_cards = provider.get_current_cards(**args)
-        if cached_cards:
-            asyncio.create_task(provider.refresh_cards(**args))
+    args = dict(request.args)
+    ttl = REFRESH_HOURS * 3600
+
+    if await _provider.is_expired(ttl, **args):
+        cached = await _provider.get_cached(**args)
+        if cached:
+            asyncio.create_task(_provider.refresh(**args))
         else:
-            cached_cards = await provider.refresh_cards(**args)
-            
+            cached = await _provider.refresh(**args)
     else:
-        cached_cards = provider.get_current_cards(**args)
-        
-    if not cached_cards:
-        return jsonify({'error': f'Failed to fetch {game} cards'}), 503
-        
-    # Return 4 random items from the cached batch
-    count = min(4, len(cached_cards))
-    selected = random.sample(cached_cards, count)
-    
+        cached = await _provider.get_cached(**args)
+
+    if not cached:
+        return jsonify({'error': 'Failed to fetch cards'}), 503
+
+    selected = random.sample(cached, min(4, len(cached)))
     return jsonify({'data': selected})
+
+
+@app.route('/sets')
+async def sets():
+    cache_key = 'pokemon:sets:v1'
+    try:
+        cached = await _redis.get(cache_key)
+        if cached:
+            return Response(cached, content_type='application/json')
+    except Exception:
+        pass
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                resp.raise_for_status()
+                data = await resp.json()
+
+        result = [{'label': s['name'], 'value': s['id']} for s in data if s.get('id') and s.get('name')]
+        payload = json.dumps(result)
+        try:
+            await _redis.set(cache_key, payload, ex=86400)
+        except Exception:
+            pass
+        return Response(payload, content_type='application/json')
+    except Exception as exc:
+        log.error('Error fetching sets: %s', exc)
+        return jsonify({'error': 'Failed to fetch sets'}), 503
 
 
 @app.route('/health')
@@ -72,23 +90,10 @@ async def health():
 
 
 @app.route('/refresh', methods=['POST'])
-@require_trmnl_ip
+@require_tiered_access(lambda: _redis, prefix='refresh')
 async def manual_refresh():
-    args = request.args.to_dict()
-    game = args.pop('game', 'all').lower()
-    
-    if game == 'all':
-        for p in PROVIDERS.values():
-            # In Redis version, we don't easily list all cached filter combos
-            # but we can refresh the 'any' filters at least
-            asyncio.create_task(p.refresh_cards())
-    else:
-        provider = PROVIDERS.get(game)
-        if provider:
-            asyncio.create_task(provider.refresh_cards(**args))
-        else:
-            return jsonify({'error': f'Unsupported game: {game}'}), 400
-            
+    args = dict(request.args)
+    asyncio.create_task(_provider.refresh(**args))
     return jsonify({'ok': True, 'queued': True})
 
 
