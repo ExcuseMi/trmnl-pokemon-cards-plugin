@@ -27,40 +27,47 @@
     {% endif %}" >
     <span class="label label--underline label--large lg:label--xxlarge pkmn-name" data-clamp="2"></span>
 
-    <div class="pkmn-stats" style="display:grid;grid-template-columns:auto 1fr;column-gap:8px;row-gap:2px;align-items:baseline;">
-      <span class="pkmn-illustrator-label label label--small hidden">Artist</span>
-      <span class="description description--base pkmn-illustrator hidden"></span>
+    <div class="pkmn-stats" style="display:grid;grid-template-columns:auto 1fr;column-gap:12px;row-gap:4px;align-items:baseline;">
+      <span class="pkmn-illustrator-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Artist</span>
+      <span class="description description--large lg:description--xlarge pkmn-illustrator hidden"></span>
 
-      <span class="pkmn-hp-label label label--small hidden">HP</span>
-      <span class="description description--large pkmn-hp hidden"></span>
+      <span class="pkmn-hp-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">HP</span>
+      <span class="description description--xlarge lg:description--xxlarge pkmn-hp hidden"></span>
 
-      <span class="pkmn-types-label label label--small hidden">Type</span>
-      <span class="description description--base pkmn-types hidden"></span>
+      <span class="pkmn-types-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Type</span>
+      <span class="description description--large lg:description--xlarge pkmn-types hidden"></span>
 
-      <span class="pkmn-stage-label label label--small hidden">Stage</span>
-      <span class="description description--base pkmn-stage hidden"></span>
+      <span class="pkmn-stage-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Stage</span>
+      <span class="description description--large lg:description--xlarge pkmn-stage hidden"></span>
 
       {% if view == 1 or view == 3 %}
-      <span class="pkmn-rarity-label label label--small hidden">Rarity</span>
-      <span class="description description--base pkmn-rarity hidden"></span>
+      <span class="pkmn-rarity-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Rarity</span>
+      <span class="description description--large lg:description--xlarge pkmn-rarity hidden"></span>
 
-      <span class="pkmn-retreat-label label label--small hidden">Retreat</span>
-      <span class="description description--base pkmn-retreat hidden"></span>
+      <span class="pkmn-retreat-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Retreat</span>
+      <span class="description description--large lg:description--xlarge pkmn-retreat hidden"></span>
 
-      <span class="pkmn-regulation-label label label--small hidden">Mark</span>
-      <span class="description description--base pkmn-regulation hidden"></span>
+      <span class="pkmn-regulation-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Mark</span>
+      <span class="description description--large lg:description--xlarge pkmn-regulation hidden"></span>
       {% endif %}
 
-      <span class="pkmn-price-avg-label label label--small hidden">Avg</span>
-      <span class="description description--base pkmn-price-avg hidden"></span>
+      <span class="pkmn-price-avg-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Avg</span>
+      <span class="description description--large lg:description--xlarge pkmn-price-avg hidden"></span>
 
-      <span class="pkmn-price-avg7-label label label--small hidden">7d avg</span>
-      <span class="description description--base pkmn-price-avg7 hidden"></span>
+      <span class="pkmn-price-avg7-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">7d avg</span>
+      <span class="description description--large lg:description--xlarge pkmn-price-avg7 hidden"></span>
+
+      {% unless view == 1 %}
+      <span class="pkmn-set-name-label label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2 hidden">Set</span>
+      <span class="description description--large lg:description--xlarge pkmn-set-name hidden"></span>
+      {% endunless %}
     </div>
 
+    {% if view == 1 %}
     <div class="pkmn-set-row hidden">
       <img class="pkmn-set-logo hidden image--contain w--max-48 lg:w--max-64" alt="">
     </div>
+    {% endif %}
   </div>
 </div>
 
@@ -160,10 +167,17 @@
     show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
 
-    if (item.price) {
-      show2('price-avg', item.price.avg);
-      show2('price-avg7', item.price.avg7);
+    var price = item.price || {};
+    if (!price.avg && item.pricing && item.pricing.cardmarket) {
+      var cm = item.pricing.cardmarket;
+      var sym = cm.unit === 'EUR' ? '€' : (cm.unit === 'USD' ? '$' : (cm.unit || '') + ' ');
+      function fmtP(v) { return v != null ? sym + Number(v).toFixed(2) : ''; }
+      price = { avg: fmtP(cm.avg), avg7: fmtP(cm.avg7) };
     }
+    show2('price-avg', price.avg);
+    show2('price-avg7', price.avg7);
+
+    show2('set-name', item.set_name);
 
     if (item.set_logo) {
       var setLogoEl = q('.pkmn-set-logo');
