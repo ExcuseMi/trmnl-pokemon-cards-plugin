@@ -7,10 +7,10 @@ log = logging.getLogger(__name__)
 class BaseProvider:
     def __init__(self, name: str):
         self.name = name
-        self._cache = {} # Key: filter_tuple, Value: (card_data, timestamp)
+        self._cache = {} # Key: filter_tuple, Value: (list_of_cards, timestamp)
         self._locks = {} # Key: filter_tuple, Value: Lock
 
-    def get_current_card(self, **filters) -> dict | None:
+    def get_current_cards(self, **filters) -> list[dict] | None:
         key = tuple(sorted(filters.items()))
         cached = self._cache.get(key)
         if cached:
@@ -24,22 +24,21 @@ class BaseProvider:
             return True
         return (time.time() - cached[1]) > ttl_seconds
 
-    async def refresh_card(self, **filters) -> dict | None:
+    async def refresh_cards(self, **filters) -> list[dict] | None:
         key = tuple(sorted(filters.items()))
         
-        # Get or create lock for this specific filter combo
         if key not in self._locks:
             self._locks[key] = asyncio.Lock()
             
         async with self._locks[key]:
-            card = await self._fetch_random_card(**filters)
-            if card:
-                self._cache[key] = (card, time.time())
-                log.info('%s card refreshed with filters %s: %s', self.name.capitalize(), filters, card.get('name'))
-                return card
+            cards = await self._fetch_random_cards(**filters)
+            if cards:
+                self._cache[key] = (cards, time.time())
+                log.info('%s cards refreshed (count: %d) with filters %s', self.name.capitalize(), len(cards), filters)
+                return cards
             else:
-                log.warning('Failed to fetch a %s card with filters %s', self.name, filters)
+                log.warning('Failed to fetch %s cards with filters %s', self.name, filters)
                 return None
 
-    async def _fetch_random_card(self, **filters) -> dict | None:
+    async def _fetch_random_cards(self, **filters) -> list[dict] | None:
         raise NotImplementedError

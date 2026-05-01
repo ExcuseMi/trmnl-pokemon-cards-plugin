@@ -27,7 +27,6 @@ PROVIDERS = {
 @app.before_serving
 async def _startup():
     await init_ip_whitelist()
-    # We no longer pre-refresh all at startup because filters are dynamic
     log.info('Backend started. Cache TTL: %s hours', REFRESH_HOURS)
 
 
@@ -45,22 +44,20 @@ async def card():
     # Check if we need to refresh (if not in cache or expired)
     ttl_seconds = REFRESH_HOURS * 3600
     if provider.is_cache_expired(ttl_seconds, **args):
-        # Trigger background refresh but return current if available (stale-while-revalidate style)
-        # Or if no card at all, wait for it
-        current = provider.get_current_card(**args)
+        current = provider.get_current_cards(**args)
         if current:
-            asyncio.create_task(provider.refresh_card(**args))
-            return jsonify(current)
+            asyncio.create_task(provider.refresh_cards(**args))
+            return jsonify({'data': current})
         else:
             # Wait for first fetch
-            data = await provider.refresh_card(**args)
+            data = await provider.refresh_cards(**args)
             if data:
-                return jsonify(data)
-            return jsonify({'error': f'Failed to fetch {game} card'}), 503
+                return jsonify({'data': data})
+            return jsonify({'error': f'Failed to fetch {game} cards'}), 503
     
     # Return from cache
-    data = provider.get_current_card(**args)
-    return jsonify(data)
+    data = provider.get_current_cards(**args)
+    return jsonify({'data': data})
 
 
 @app.route('/health')
@@ -75,16 +72,14 @@ async def manual_refresh():
     game = args.pop('game', 'all').lower()
     
     if game == 'all':
-        # This is harder now because of dynamic filters, 
-        # but we can refresh everything currently in cache
         for p in PROVIDERS.values():
             for filter_key in list(p._cache.keys()):
                 filters = dict(filter_key)
-                asyncio.create_task(p.refresh_card(**filters))
+                asyncio.create_task(p.refresh_cards(**filters))
     else:
         provider = PROVIDERS.get(game)
         if provider:
-            asyncio.create_task(provider.refresh_card(**args))
+            asyncio.create_task(provider.refresh_cards(**args))
         else:
             return jsonify({'error': f'Unsupported game: {game}'}), 400
             

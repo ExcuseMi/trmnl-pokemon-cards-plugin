@@ -1,22 +1,17 @@
 function transform(input) {
-  var d = (input.data) || {};
-  var types = Array.isArray(d.types) ? d.types : [];
+  var rawCards = Array.isArray(input.data) ? input.data : (input.data ? [input.data] : []);
   
-  // Determine stat label based on ID or content if game info not directly available
-  // But we can check the polling_url in trmnl context if needed, 
-  // though it's easier to just detect it from the data content or assume Pokemon if it's just a number.
-  var statLabel = 'HP';
-  var hp = d.hp || '';
-  if (hp.indexOf('/') !== -1) {
-    if (hp.indexOf('Lvl') === -1) {
-      // Likely MTG (P/T) or YGO (ATK/DEF)
-      // We can try to guess or just use 'Stats'
-      statLabel = 'Stats'; 
+  var cards = rawCards.map(function(d) {
+    var types = Array.isArray(d.types) ? d.types : [];
+    var statLabel = 'HP';
+    var hp = d.hp || '';
+    if (hp.indexOf('/') !== -1) {
+      if (hp.indexOf('Lvl') === -1) {
+        statLabel = 'Stats'; 
+      }
     }
-  }
-
-  return {
-    card: {
+    
+    return {
       name: d.name || '',
       hp: hp,
       stat_label: statLabel,
@@ -25,6 +20,20 @@ function transform(input) {
       set_name: d.set_name || '',
       image_large: d.image_large || '',
       image_small: d.image_small || '',
-    }
+    };
+  });
+
+  return {
+    card: cards.length > 0 ? cards[0] : {
+      name: '',
+      hp: '',
+      stat_label: 'HP',
+      types_str: '',
+      rarity: '',
+      set_name: '',
+      image_large: '',
+      image_small: '',
+    },
+    cards: cards
   };
 }

@@ -1,2 +1,6 @@
 {% assign view = 1 %}
-{% render "main", trmnl: trmnl, card: card, view: view %}
+{% assign card = cards[0] %}
+<div class="layout layout--row gap--medium">
+  {% render "main", trmnl: trmnl, card: card, view: view %}
+</div>
+{% render "title_bar", trmnl: trmnl %}

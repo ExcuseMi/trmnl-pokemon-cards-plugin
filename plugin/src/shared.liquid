@@ -1,5 +1,5 @@
 {% template main %}
-<div class="layout layout--row gap--medium">
+<div class="flex flex--row gap--medium" style="flex: 1; min-width: 0;">
 
   <div style="flex-shrink: 0; display: flex; align-items: flex-start;">
     {% if view == 1 %}
@@ -49,6 +49,9 @@
   </div>
 
 </div>
+{% endtemplate %}
+
+{% template title_bar %}
 <div class="title_bar">
   <img class="image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23f8654b'/%3E%3Cpath d='M1 12h22' stroke='white' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='3.5' fill='white' stroke='%23f8654b' stroke-width='1.5'/%3E%3C/svg%3E" alt="Pokemon Cards">
   <span class="title">{{ trmnl.plugin_settings.instance_name }}</span>

@@ -73,6 +73,5 @@ custom_fields:
   step: 1
   default: 1
   optional: true
-
 name: TCG Cards
 refresh_interval: 60
