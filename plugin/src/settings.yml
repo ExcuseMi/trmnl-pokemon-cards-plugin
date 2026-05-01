@@ -14,7 +14,7 @@ custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: Display beautiful Pokémon cards on your TRMNL. Art Only mode shows just the artwork; Card + Stats shows details. A new selection appears each refresh.<br /><br /><strong>Data:</strong> TCGdex (free, no API key required)
+  description: Display beautiful pokemon cards on your TRMNL. Art Only mode shows just the artwork; Card + Stats shows details. A new selection appears each refresh.<br /><br /><strong>Data:</strong> TCGdex (free, no API key required)
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
   help_text: TRMNL X Ready
@@ -28,8 +28,8 @@ custom_fields:
   default: stats
 - keyname: pokemon_type
   field_type: select
-  name: Pokémon Type
-  description: Filter by Pokémon type
+  name: pokemon Type
+  description: Filter by pokemon type
   options:
   - Any: any
   - Fire: Fire
@@ -69,5 +69,5 @@ custom_fields:
   http_verb: post
   exclude_csrf_token: true
   optional: true
-name: Pokémon Cards
+name: Pokemon Cards
 refresh_interval: 60
