@@ -3,29 +3,13 @@
 
 <script>var __pkmn = {{ items | json }};</script>
 
-{% if display_mode == 'art' %}
+{% if display_mode == 'art' or view == 4 %}
 
-<div class="layout layout--stretch gap--none m--0 p--0" style="overflow: hidden; position: relative;">
-  <svg class="pkmn-art-svg hidden" viewBox="44 87 503 321"
-       width="100%" height="100%"
-       preserveAspectRatio="xMidYMid slice"
-       style="display: block; position: absolute; inset: 0;">
-    <image class="pkmn-art-img" width="747" height="1038" href=""/>
-  </svg>
-  <div class="pkmn-empty hidden" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;">
+<div class="layout layout--stretch gap--none m--0 p--0">
+  <img class="pkmn-img hidden image image-dither image--contain" alt="">
+  <div class="pkmn-empty hidden flex flex--col flex--center gap--small">
     <span class="label label--small">Pokémon Cards</span>
     <span class="description text--center">No card available.</span>
-  </div>
-</div>
-
-{% else %}
-
-{% if view == 4 %}
-
-<div class="layout layout--stretch gap--none m--0 p--0" style="position: relative;">
-  <img class="pkmn-img hidden image image-dither image--contain" alt="" style="width: 100%; height: 100%;">
-  <div class="pkmn-empty hidden" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-    <span class="description text--center">No card.</span>
   </div>
 </div>
 
@@ -35,35 +19,34 @@
 
   <img class="pkmn-img hidden image image-dither image--contain h--full" alt="">
 
-  <div class="flex flex--col gap--small" style="flex: 1; min-width: 0; justify-content: center;">
+  <div class="flex flex--col gap--small stretch-x flex--center-y">
 
     <span class="title pkmn-name" data-clamp="2"></span>
 
-    <div class="pkmn-hp-row hidden flex gap--small" style="align-items: center;">
+    <div class="pkmn-hp-row hidden flex flex--row flex--center-y gap--small">
       <span class="label label--small label--filled">HP</span>
       <span class="description pkmn-hp"></span>
     </div>
 
-    <div class="pkmn-type-row hidden flex gap--small" style="align-items: center;">
+    <div class="pkmn-type-row hidden flex flex--row flex--center-y gap--small">
       <span class="label label--small">Type</span>
       <span class="description pkmn-types"></span>
     </div>
 
     {% if view == 1 or view == 3 %}
-    <div class="pkmn-rarity-row hidden flex gap--small" style="align-items: center;">
+    <div class="pkmn-rarity-row hidden flex flex--row flex--center-y gap--small">
       <span class="label label--small">Rarity</span>
       <span class="description pkmn-rarity"></span>
     </div>
     {% endif %}
 
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden" alt="" style="height: 48px; width: auto; object-fit: contain;">
+      <img class="pkmn-set-logo hidden h--12 w--auto image--contain" alt="">
     </div>
 
   </div>
 </div>
 
-{% endif %}
 {% endif %}
 
 <div class="title_bar">
@@ -85,8 +68,8 @@
   var host   = views.find(function(v) { return v.contains(self); }) || document.body;
   var idx    = views.indexOf(host) % 4;
   var item   = (__pkmn || [])[idx] || null;
-  var mode   = '{{ display_mode }}';
   var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
+  var isImageOnly = !host.querySelector('.pkmn-name');
 
   function q(sel) { return host.querySelector(sel); }
   function show(el) { if (el) el.classList.remove('hidden'); }
@@ -100,24 +83,19 @@
     return;
   }
 
-  if (mode === 'art') {
-    var artImg = q('.pkmn-art-img');
-    if (artImg && item.image_large) {
-      artImg.setAttribute('href', item.image_large);
-      show(q('.pkmn-art-svg'));
-    } else {
-      show(q('.pkmn-empty'));
-    }
+  var img = q('.pkmn-img');
+  if (img && item.image_large) {
+    img.src = item.image_large;
+    img.alt = item.name || '';
+    show(img);
+  } else {
+    show(q('.pkmn-empty'));
+  }
+
+  if (isImageOnly) {
     if (titleEl) titleEl.textContent = item.name || '';
     if (instEl)  instEl.textContent  = item.set_name || '';
   } else {
-    var img = q('.pkmn-img');
-    if (img && item.image_large) {
-      img.src = item.image_large;
-      img.alt = item.name || '';
-      show(img);
-    }
-
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
 

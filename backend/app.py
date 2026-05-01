@@ -56,13 +56,16 @@ async def card():
     return jsonify({'data': selected})
 
 
-@app.route('/sets')
+@app.route('/sets', methods=['GET', 'OPTIONS'])
 async def sets():
+    if request.method == 'OPTIONS':
+        return _cors(Response('', status=204))
+
     cache_key = 'pokemon:sets:v1'
     try:
         cached = await _redis.get(cache_key)
         if cached:
-            return Response(cached, content_type='application/json')
+            return _cors(Response(cached, content_type='application/json'))
     except Exception:
         pass
 
@@ -78,10 +81,16 @@ async def sets():
             await _redis.set(cache_key, payload, ex=86400)
         except Exception:
             pass
-        return Response(payload, content_type='application/json')
+        return _cors(Response(payload, content_type='application/json'))
     except Exception as exc:
         log.error('Error fetching sets: %s', exc)
         return jsonify({'error': 'Failed to fetch sets'}), 503
+
+
+def _cors(response: Response) -> Response:
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    return response
 
 
 @app.route('/health')
