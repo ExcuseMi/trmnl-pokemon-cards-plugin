@@ -65,7 +65,7 @@ async def sets():
 
     search = await _parse_search()
 
-    cache_key = 'pokemon:sets:raw:v1'
+    cache_key = 'pokemon:sets:enriched:v1'
     raw_sets = None
     try:
         cached = await _redis.get(cache_key)
@@ -76,10 +76,7 @@ async def sets():
 
     if raw_sets is None:
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
-                    resp.raise_for_status()
-                    raw_sets = await resp.json()
+            raw_sets = await _fetch_sets_with_dates()
             try:
                 await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
             except Exception:

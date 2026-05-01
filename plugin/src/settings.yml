@@ -6,7 +6,7 @@ static_data: ''
 polling_verb: get
 framework_version: 
 serverless_language: 
-polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}
+polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | url_encode }}&rarity={{ rarity | url_encode }}&set_id={{ set_id | url_encode }}
 polling_headers: ''
 polling_body: ''
 id: 297288
