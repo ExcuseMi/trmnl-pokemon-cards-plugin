@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import random
+import urllib.parse
 
 import aiohttp
 from quart import Quart, Response, jsonify, request
@@ -61,30 +62,58 @@ async def sets():
     if request.method == 'OPTIONS':
         return _cors(Response('', status=204))
 
-    cache_key = 'pokemon:sets:v1'
+    search = _parse_search()
+
+    cache_key = 'pokemon:sets:raw:v1'
+    raw_sets = None
     try:
         cached = await _redis.get(cache_key)
         if cached:
-            return _cors(Response(cached, content_type='application/json'))
+            raw_sets = json.loads(cached)
     except Exception:
         pass
 
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
-                resp.raise_for_status()
-                data = await resp.json()
-
-        result = [{s['name']: s['id']} for s in data if s.get('id') and s.get('name')]
-        payload = json.dumps(result)
+    if raw_sets is None:
         try:
-            await _redis.set(cache_key, payload, ex=86400)
-        except Exception:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    resp.raise_for_status()
+                    raw_sets = await resp.json()
+            try:
+                await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+            except Exception:
+                pass
+        except Exception as exc:
+            log.error('Error fetching sets: %s', exc)
+            return _cors(jsonify({'error': 'Failed to fetch sets'})), 503
+
+    result = _build_sets(raw_sets, search)
+    return _cors(Response(json.dumps(result), content_type='application/json'))
+
+
+def _parse_search() -> str:
+    qs = request.query_string.decode('utf-8', errors='replace')
+    if qs:
+        try:
+            params = json.loads(urllib.parse.unquote(qs))
+            return str(params.get('query') or params.get('search') or params.get('q') or '').lower().strip()
+        except (json.JSONDecodeError, ValueError):
             pass
-        return _cors(Response(payload, content_type='application/json'))
-    except Exception as exc:
-        log.error('Error fetching sets: %s', exc)
-        return jsonify({'error': 'Failed to fetch sets'}), 503
+    return request.args.get('q', request.args.get('query', '')).lower().strip()
+
+
+def _build_sets(raw_sets: list, search: str) -> list:
+    result = []
+    for s in sorted(raw_sets, key=lambda x: x.get('releaseDate', ''), reverse=True):
+        sid = s.get('id', '')
+        name = s.get('name', '')
+        if not sid or not name:
+            continue
+        year = (s.get('releaseDate') or '')[:4]
+        label = f'{name} ({year})' if year else name
+        if not search or search in label.lower():
+            result.append({label: sid})
+    return result
 
 
 def _cors(response: Response) -> Response:
@@ -97,14 +126,6 @@ def _cors(response: Response) -> Response:
 @app.route('/health')
 async def health():
     return jsonify({'ok': True})
-
-
-@app.route('/refresh', methods=['POST'])
-@require_tiered_access(lambda: _redis, prefix='refresh')
-async def manual_refresh():
-    args = dict(request.args)
-    asyncio.create_task(_provider.refresh(**args))
-    return jsonify({'ok': True, 'queued': True})
 
 
 if __name__ == '__main__':
