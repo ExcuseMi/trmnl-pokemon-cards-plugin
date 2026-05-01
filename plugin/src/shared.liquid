@@ -162,7 +162,8 @@
   {% elsif view == 4 %}
   lg:portrait:hidden
   {% endif %}">
-  <svg class="image w--8 h--8" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  <img class="image  h--8 set_symbol" />
+  <svg class="image w--8 h--8 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 511.985 511.985" xml:space="preserve">
     <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
       c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-34.554,0-68.083,6.773-99.645,20.125
@@ -206,7 +207,7 @@
   md:portrait:hidden
   {% endif %}"></span>
   </div>
-é
+
 <script>
   (function() {
     var views  = Array.from(document.querySelectorAll('.view'));
@@ -229,9 +230,20 @@
       if (item.image_large) { img.src = item.image_large; img.alt = item.name || ''; }
       else { img.src = ''; img.alt = ''; }
     });
-
+    if (item && item.set_symbol) {
+        host.querySelectorAll('.set_symbol').forEach(function(img) {
+          img.src = item.set_symbol; }
+        );
+    } else {
+        show('pokemon-logo');
+    }
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
+    function show(key) {
+        host.querySelectorAll('.' + key).forEach(function(el) {
+            el.classList.remove('hidden');
+         });
+    }
 
     function show2(key, value, extraClass) {
       if (!value && value !== 0) return;
