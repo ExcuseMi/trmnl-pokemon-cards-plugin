@@ -62,11 +62,11 @@ custom_fields:
   default: any
   optional: true
 - keyname: set_id
-  field_type: xhrSelect
+  field_type: xhrSelectSearch
   name: Set / Series
-  description: Filter by a specific set. Leave empty for all sets.
+  description: Search for a set by name. Leave empty for all sets.
   endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
-  http_verb: get
+  http_verb: post
   optional: true
 name: Pokémon Cards
 refresh_interval: 60

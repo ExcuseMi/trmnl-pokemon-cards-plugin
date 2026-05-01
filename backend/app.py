@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import random
-import urllib.parse
 
 import aiohttp
 from quart import Quart, Response, jsonify, request
@@ -92,27 +91,23 @@ async def sets():
 
 
 def _parse_search() -> str:
-    qs = request.query_string.decode('utf-8', errors='replace')
-    if qs:
-        try:
-            params = json.loads(urllib.parse.unquote(qs))
-            return str(params.get('query') or params.get('search') or params.get('q') or '').lower().strip()
-        except (json.JSONDecodeError, ValueError):
-            pass
-    return request.args.get('q', request.args.get('query', '')).lower().strip()
+    # xhrSelectSearch accumulates query= params per keystroke; take the last non-empty one
+    queries = request.args.getlist('query')
+    for q in reversed(queries):
+        if q.strip():
+            return q.lower().strip()
+    return request.args.get('q', '').lower().strip()
 
 
 def _build_sets(raw_sets: list, search: str) -> list:
     result = []
-    for s in sorted(raw_sets, key=lambda x: x.get('releaseDate', ''), reverse=True):
+    for s in raw_sets:
         sid = s.get('id', '')
         name = s.get('name', '')
         if not sid or not name:
             continue
-        year = (s.get('releaseDate') or '')[:4]
-        label = f'{name} ({year})' if year else name
-        if not search or search in label.lower():
-            result.append({label: sid})
+        if not search or search in name.lower():
+            result.append({name: sid})
     return result
 
 
