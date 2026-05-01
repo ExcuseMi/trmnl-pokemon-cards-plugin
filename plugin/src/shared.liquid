@@ -56,9 +56,8 @@
     </div>
     {% endif %}
 
-    <div class="pkmn-set-row hidden flex gap--small" style="align-items: center;">
-      <img class="pkmn-set-logo hidden" alt="" style="height: 20px; width: auto; object-fit: contain;">
-      <span class="description pkmn-set-name"></span>
+    <div class="pkmn-set-row hidden">
+      <img class="pkmn-set-logo hidden" alt="" style="height: 48px; width: auto; object-fit: contain;">
     </div>
 
   </div>
@@ -137,17 +136,13 @@
       if (rarityEl) rarityEl.textContent = item.rarity;
       show(q('.pkmn-rarity-row'));
     }
-    if (item.set_name) {
-      var setNameEl = q('.pkmn-set-name');
-      if (setNameEl) setNameEl.textContent = item.set_name;
-      show(q('.pkmn-set-row'));
-    }
     if (item.set_logo) {
       var setLogoEl = q('.pkmn-set-logo');
       if (setLogoEl) {
         setLogoEl.src = item.set_logo;
         setLogoEl.alt = item.set_name || '';
         show(setLogoEl);
+        show(q('.pkmn-set-row'));
       }
     }
 

@@ -57,13 +57,24 @@ class BaseProvider:
                     await self.store_cards(cards, **filters)
                     log.info('%s: cached %d cards filters=%s', self.name, len(cards), filters)
                     return cards
-                log.warning('%s: fetch returned nothing filters=%s', self.name, filters)
+                log.warning('%s: fetch returned nothing filters=%s — backing off 5m', self.name, filters)
+                await self._store_backoff(**filters)
                 return None
             finally:
                 await self.redis.delete(lock_key)
         except Exception as exc:
             log.error('%s: refresh error: %s', self.name, exc)
             return None
+
+    async def _store_backoff(self, **filters, backoff: int = 300):
+        try:
+            await self.redis.set(
+                self._cache_key(**filters),
+                json.dumps({'cards': [], 'timestamp': time.time()}),
+                ex=backoff,
+            )
+        except Exception as exc:
+            log.error('Redis backoff store error: %s', exc)
 
     async def _fetch(self, **filters) -> list[dict] | None:
         raise NotImplementedError

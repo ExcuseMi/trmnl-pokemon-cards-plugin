@@ -4,17 +4,17 @@ no_screen_padding: 'yes'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}'
+framework_version: 
+serverless_language: 
+polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type }}&rarity={{ rarity }}&set_id={{ set_id }}
 polling_headers: ''
 polling_body: ''
 id: 297288
-name: Pokémon Cards
-refresh_interval: 60
 custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: 'Display beautiful Pokémon cards on your TRMNL. Art Only mode shows just the artwork; Card + Stats shows details. A new selection appears each refresh.<br /><br /><strong>Data:</strong> TCGdex (free, no API key required)'
+  description: Display beautiful Pokémon cards on your TRMNL. Art Only mode shows just the artwork; Card + Stats shows details. A new selection appears each refresh.<br /><br /><strong>Data:</strong> TCGdex (free, no API key required)
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
   help_text: TRMNL X Ready
@@ -65,6 +65,8 @@ custom_fields:
   field_type: xhrSelect
   name: Set / Series
   description: Filter by a specific set. Leave empty for all sets.
-  endpoint: 'https://trmnl.bettens.dev/pokemon-cards/sets'
+  endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
   http_verb: get
   optional: true
+name: Pokémon Cards
+refresh_interval: 60
