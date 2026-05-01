@@ -1,83 +1,77 @@
-#
-# Changes to this file will be overwritten by `trmnlp pull`.
-#
-# Docs: https://help.trmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
-#
 ---
 strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
+framework_version: 
+serverless_language: 
 polling_url: https://trmnl.bettens.dev/pokemon-cards/card?game={{ pokemon_game }}
 polling_headers: ''
+polling_body: 
+id: 297288
+custom_fields:
+- keyname: author_info
+  name: About This Plugin
+  field_type: author_bio
+  description: 'Display a random card from your favorite TCG — Pokemon, Magic: The Gathering, or Yu-Gi-Oh!. A new card appears each refresh cycle.<br /><br /><strong>Data:</strong> TCGdex, Scryfall, YGOPRODeck'
+  github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
+  category: games
+  help_text: TRMNL X Ready
+- keyname: pokemon_game
+  field_type: select
+  name: Trading Card Game
+  description: Select which game to display cards from
+  options:
+  - Pokémon: pokemon
+  - 'Magic: The Gathering': mtg
+  - Yu-Gi-Oh!: yugioh
+  default: pokemon
+- keyname: pokemon_type
+  field_type: select
+  name: Pokémon Type
+  description: Filter cards by type
+  options:
+  - Any: any
+  - Fire: Fire
+  - Water: Water
+  - Grass: Grass
+  - Lightning: Lightning
+  - Psychic: Psychic
+  - Fighting: Fighting
+  - Darkness: Darkness
+  - Metal: Metal
+  - Dragon: Dragon
+  - Colorless: Colorless
+  - Fairy: Fairy
+  default: any
+  optional: true
+- keyname: rarity
+  field_type: select
+  name: Rarity
+  description: Filter by card rarity
+  options:
+  - Any: any
+  - Common: Common
+  - Uncommon: Uncommon
+  - Rare: Rare
+  - Rare Holo: Rare Holo
+  default: any
+  optional: true
+- keyname: set_id
+  field_type: string
+  name: Set ID
+  description: Lock to a specific set. Leave blank for all sets.<br /><strong>Example:</strong> base1 &nbsp;·&nbsp; <strong>Example:</strong> swsh1
+  placeholder: base1
+  optional: true
+- keyname: refresh_hours
+  field_type: number
+  name: Card Refresh Interval (hours)
+  description: How often the backend fetches a new card
+  min: 1
+  max: 24
+  step: 1
+  default: 3
+  optional: true
 name: TCG Cards
 refresh_interval: 60
-custom_fields:
-  - keyname: author_info
-    name: About This Plugin
-    field_type: author_bio
-    description: 'Display a random card from your favorite TCG — Pokemon, Magic: The Gathering, or Yu-Gi-Oh!. A new card appears each refresh cycle.<br /><br /><strong>Data:</strong> TCGdex, Scryfall, YGOPRODeck'
-    github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
-    category: games
-    help_text: TRMNL X Ready
-
-  - keyname: pokemon_game
-    field_type: select
-    name: Trading Card Game
-    description: Select which game to display cards from
-    options:
-      - Pokémon: pokemon
-      - Magic: The Gathering: mtg
-      - Yu-Gi-Oh!: yugioh
-    default: pokemon
-
-  - keyname: pokemon_type
-    field_type: select
-    name: Pokémon Type
-    description: Filter cards by type
-    options:
-      - Any: any
-      - Fire: Fire
-      - Water: Water
-      - Grass: Grass
-      - Lightning: Lightning
-      - Psychic: Psychic
-      - Fighting: Fighting
-      - Darkness: Darkness
-      - Metal: Metal
-      - Dragon: Dragon
-      - Colorless: Colorless
-      - Fairy: Fairy
-    default: any
-    optional: true
-
-  - keyname: rarity
-    field_type: select
-    name: Rarity
-    description: Filter by card rarity
-    options:
-      - Any: any
-      - Common: Common
-      - Uncommon: Uncommon
-      - Rare: Rare
-      - Rare Holo: Rare Holo
-    default: any
-    optional: true
-
-  - keyname: set_id
-    field_type: string
-    name: Set ID
-    description: 'Lock to a specific set. Leave blank for all sets.<br /><strong>Example:</strong> base1 &nbsp;·&nbsp; <strong>Example:</strong> swsh1'
-    placeholder: base1
-    optional: true
-
-  - keyname: refresh_hours
-    field_type: number
-    name: Card Refresh Interval (hours)
-    description: How often the backend fetches a new card
-    min: 1
-    max: 24
-    step: 1
-    default: 3
-    optional: true
