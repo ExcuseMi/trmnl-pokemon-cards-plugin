@@ -1,4 +1,8 @@
+import json
+import logging
+
 def shape_card(raw: dict) -> dict:
+    logging.info(f"{json.dumps(raw)}")
     types = raw.get('types') or []
     set_info = raw.get('set') or {}
     logo = set_info.get('logo', '')
