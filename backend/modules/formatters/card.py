@@ -2,23 +2,34 @@ import json
 import logging
 
 
+def _sym(unit: str) -> str:
+    return '€' if unit == 'EUR' else ('$' if unit == 'USD' else (unit + ' ' if unit else ''))
+
+
+def _fmt(sym: str, v) -> str:
+    return f"{sym}{v:.2f}" if v is not None else ''
+
+
 def _format_price(pricing: dict) -> dict:
-    cm = (pricing or {}).get('cardmarket') or {}
-    if not cm:
-        return {}
-    unit = cm.get('unit', '')
-    sym = '€' if unit == 'EUR' else ('$' if unit == 'USD' else unit + ' ')
+    result = {}
+    pricing = pricing or {}
 
-    def fmt(v):
-        return f"{sym}{v:.2f}" if v is not None else ''
+    cm = pricing.get('cardmarket') or {}
+    if cm:
+        sym = _sym(cm.get('unit', ''))
+        result['avg']  = _fmt(sym, cm.get('avg'))
+        result['avg7'] = _fmt(sym, cm.get('avg7'))
+        result['low']  = _fmt(sym, cm.get('low'))
+        result['trend'] = _fmt(sym, cm.get('trend'))
 
-    return {
-        'avg': fmt(cm.get('avg')),
-        'avg7': fmt(cm.get('avg7')),
-        'avg30': fmt(cm.get('avg30')),
-        'low': fmt(cm.get('low')),
-        'trend': fmt(cm.get('trend')),
-    }
+    tcg = pricing.get('tcgplayer') or {}
+    if tcg:
+        sym = _sym(tcg.get('unit', ''))
+        normal = tcg.get('normal') or {}
+        result['tcg_market'] = _fmt(sym, normal.get('marketPrice'))
+        result['tcg_low']    = _fmt(sym, normal.get('lowPrice'))
+
+    return result
 
 
 def shape_card(raw: dict) -> dict:

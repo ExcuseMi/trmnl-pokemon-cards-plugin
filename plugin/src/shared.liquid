@@ -119,6 +119,20 @@
           </div>
         </div>
 
+        <div class="item pkmn-price-tcg-market-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.tcg_market }}</span>
+            <span class="{{ val_cls }} pkmn-price-tcg-market"></span>
+          </div>
+        </div>
+
+        <div class="item pkmn-price-tcg-low-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
+            <span class="{{ val_cls }} pkmn-price-tcg-low"></span>
+          </div>
+        </div>
+
         {% unless view == 1 %}
         <div class="item pkmn-set-name-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
@@ -276,10 +290,22 @@
       var cm = item.pricing.cardmarket;
       var sym = cm.unit === 'EUR' ? '€' : (cm.unit === 'USD' ? '$' : (cm.unit || '') + ' ');
       function fmtP(v) { return v != null ? sym + Number(v).toFixed(2) : ''; }
-      price = { avg: fmtP(cm.avg), avg7: fmtP(cm.avg7) };
+      price.avg  = fmtP(cm.avg);
+      price.avg7 = fmtP(cm.avg7);
+      price.low  = fmtP(cm.low);
+    }
+    if (!price.tcg_market && item.pricing && item.pricing.tcgplayer) {
+      var tcg = item.pricing.tcgplayer;
+      var tsym = tcg.unit === 'USD' ? '$' : (tcg.unit === 'EUR' ? '€' : (tcg.unit || '') + ' ');
+      var normal = tcg.normal || {};
+      function fmtT(v) { return v != null ? tsym + Number(v).toFixed(2) : ''; }
+      price.tcg_market = fmtT(normal.marketPrice);
+      price.tcg_low    = fmtT(normal.lowPrice);
     }
     show2('price-avg', price.avg);
     show2('price-avg7', price.avg7);
+    show2('price-tcg-market', price.tcg_market);
+    show2('price-tcg-low', price.tcg_low);
 
     var setYear = item.set_release_date ? item.set_release_date.slice(0, 4) : '';
     var setLabel = item.set_name || '';

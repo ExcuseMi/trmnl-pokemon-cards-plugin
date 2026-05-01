@@ -32,9 +32,11 @@ variables:
     mark: Mark
     print: Print
     cards: Cards
-    avg: Avg
-    avg7: 7d avg
+    avg: CM Avg
+    avg7: CM 7d
     set: Set
+    tcg_market: TCG Mkt
+    tcg_low: TCG Low
   items:
     - name: "Charizard"
       hp: "120"

@@ -37,7 +37,7 @@ class PokemonProvider(BaseProvider):
 
         sample = random.sample(card_ids, min(SAMPLE_SIZE, len(card_ids)))
         results = await asyncio.gather(*[self._fetch_card(api, cid) for cid in sample], return_exceptions=True)
-        cards = [r for r in results if isinstance(r, dict)]
+        cards = [r for r in results if isinstance(r, dict) and r.get('image_large')]
         return cards if cards else None
 
     async def _fetch_ids(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str] | None:
