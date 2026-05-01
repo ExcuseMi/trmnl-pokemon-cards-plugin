@@ -18,9 +18,23 @@ variables:
       no_screen_padding: "yes"
       custom_fields_values:
         display_mode: "stats"
+        language: "en"
         pokemon_type: "any"
         rarity: "any"
         set_id: ""
+  labels:
+    artist: Artist
+    hp: HP
+    type: Type
+    stage: Stage
+    rarity: Rarity
+    retreat: Retreat
+    mark: Mark
+    print: Print
+    cards: Cards
+    avg: Avg
+    avg7: 7d avg
+    set: Set
   items:
     - name: "Charizard"
       hp: "120"

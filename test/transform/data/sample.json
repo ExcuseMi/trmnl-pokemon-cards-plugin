@@ -1,7 +1,8 @@
 [
   {
-    "name": "4 cards from backend",
+    "name": "4 cards (English)",
     "input": {
+      "variables": { "language": "en" },
       "data": [
         {
           "id": "base1-4",
@@ -51,14 +52,54 @@
     }
   },
   {
+    "name": "4 cards (French)",
+    "input": {
+      "variables": { "language": "fr" },
+      "data": [
+        {
+          "id": "base1-4",
+          "name": "Dracaufeu",
+          "hp": "120",
+          "types": ["Fire"],
+          "rarity": "Rare Holo",
+          "set_name": "Ensemble de Base",
+          "set_logo": "https://assets.tcgdex.net/fr/base/base1/logo.png",
+          "image_large": "https://assets.tcgdex.net/fr/base/base1/4/high.png",
+          "image_small": "https://assets.tcgdex.net/fr/base/base1/4/low.png"
+        }
+      ]
+    }
+  },
+  {
+    "name": "4 cards (Japanese)",
+    "input": {
+      "variables": { "language": "ja" },
+      "data": [
+        {
+          "id": "base1-4",
+          "name": "リザードン",
+          "hp": "120",
+          "types": ["Fire"],
+          "rarity": "Rare Holo",
+          "set_name": "拡張パック第1弾",
+          "set_logo": "https://assets.tcgdex.net/ja/base/base1/logo.png",
+          "image_large": "https://assets.tcgdex.net/ja/base/base1/4/high.png",
+          "image_small": "https://assets.tcgdex.net/ja/base/base1/4/low.png"
+        }
+      ]
+    }
+  },
+  {
     "name": "empty data",
     "input": {
+      "variables": {},
       "data": []
     }
   },
   {
     "name": "missing optional fields",
     "input": {
+      "variables": {},
       "data": [
         {
           "id": "base1-1",

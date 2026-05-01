@@ -28,6 +28,10 @@ class PokemonProvider(BaseProvider):
         api = _api(language)
 
         card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
+        if not card_ids and language != 'en':
+            log.info('No cards found for language=%s, falling back to en', language)
+            api = _api('en')
+            card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
         if not card_ids:
             return None
 

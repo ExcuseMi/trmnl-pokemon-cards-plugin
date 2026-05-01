@@ -42,28 +42,28 @@
 
         <div class="item pkmn-illustrator-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Artist</span>
+            <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
             <span class="{{ val_cls }} pkmn-illustrator"></span>
           </div>
         </div>
 
         <div class="item pkmn-hp-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">HP</span>
+            <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
             <span class="{{ hp_cls }} pkmn-hp"></span>
           </div>
         </div>
 
         <div class="item pkmn-types-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Type</span>
+            <span class="{{ lbl_cls }}">{{ labels.type }}</span>
             <span class="{{ val_cls }} pkmn-types"></span>
           </div>
         </div>
 
         <div class="item pkmn-stage-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Stage</span>
+            <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
             <span class="{{ val_cls }} pkmn-stage"></span>
           </div>
         </div>
@@ -71,35 +71,35 @@
         {% if view == 1 or view == 3 %}
         <div class="item pkmn-rarity-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Rarity</span>
+            <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
             <span class="{{ rar_cls }} pkmn-rarity"></span>
           </div>
         </div>
 
         <div class="item pkmn-retreat-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Retreat</span>
+            <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
             <span class="{{ val_cls }} pkmn-retreat"></span>
           </div>
         </div>
 
         <div class="item pkmn-regulation-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Mark</span>
+            <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
             <span class="{{ val_cls }} pkmn-regulation"></span>
           </div>
         </div>
 
         <div class="item pkmn-variants-row hidden">
           <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-            <span class="{{ lbl_cls }}">Print</span>
+            <span class="{{ lbl_cls }}">{{ labels.print }}</span>
             <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
           </div>
         </div>
 
         <div class="item pkmn-card-count-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Cards</span>
+            <span class="{{ lbl_cls }}">{{ labels.cards }}</span>
             <span class="{{ val_cls }} pkmn-card-count"></span>
           </div>
         </div>
@@ -107,14 +107,14 @@
 
         <div class="item pkmn-price-avg-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Avg</span>
+            <span class="{{ lbl_cls }}">{{ labels.avg }}</span>
             <span class="{{ val_cls }} pkmn-price-avg"></span>
           </div>
         </div>
 
         <div class="item pkmn-price-avg7-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">7d avg</span>
+            <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
             <span class="{{ val_cls }} pkmn-price-avg7"></span>
           </div>
         </div>
@@ -122,7 +122,7 @@
         {% unless view == 1 %}
         <div class="item pkmn-set-name-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Set</span>
+            <span class="{{ lbl_cls }}">{{ labels.set }}</span>
             <span class="{{ val_cls }} pkmn-set-name"></span>
           </div>
         </div>
