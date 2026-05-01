@@ -56,12 +56,12 @@ async def card():
     return jsonify({'data': selected})
 
 
-@app.route('/sets', methods=['GET', 'OPTIONS'])
+@app.route('/sets', methods=['GET', 'POST', 'OPTIONS'])
 async def sets():
     if request.method == 'OPTIONS':
         return _cors(Response('', status=204))
 
-    search = _parse_search()
+    search = await _parse_search()
 
     cache_key = 'pokemon:sets:raw:v1'
     raw_sets = None
@@ -90,7 +90,14 @@ async def sets():
     return _cors(Response(json.dumps(result), content_type='application/json'))
 
 
-def _parse_search() -> str:
+async def _parse_search() -> str:
+    if request.method == 'POST':
+        try:
+            body = await request.get_json(silent=True) or {}
+            term = body.get('query') or body.get('search') or body.get('q') or ''
+            return str(term).lower().strip()
+        except Exception:
+            pass
     # xhrSelectSearch accumulates query= params per keystroke; take the last non-empty one
     queries = request.args.getlist('query')
     for q in reversed(queries):
@@ -107,13 +114,13 @@ def _build_sets(raw_sets: list, search: str) -> list:
         if not sid or not name:
             continue
         if not search or search in name.lower():
-            result.append({name: sid})
+            result.append({'id': sid, 'name': name})
     return result
 
 
 def _cors(response: Response) -> Response:
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = '*'
     return response
 

@@ -67,6 +67,7 @@ custom_fields:
   description: Search for a set by name. Leave empty for all sets.
   endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
   http_verb: post
+  exclude_csrf_token: true
   optional: true
 name: Pokémon Cards
 refresh_interval: 60
