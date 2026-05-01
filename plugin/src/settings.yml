@@ -18,14 +18,6 @@ custom_fields:
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
   help_text: TRMNL X Ready
-- keyname: display_mode
-  field_type: select
-  name: Display Mode
-  description: How cards are displayed on screen
-  options:
-  - Art Only: art
-  - Card + Stats: stats
-  default: stats
 - keyname: pokemon_type
   field_type: select
   name: pokemon Type

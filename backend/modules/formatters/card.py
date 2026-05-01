@@ -18,6 +18,7 @@ def shape_card(raw: dict) -> dict:
     return {
         'id': raw.get('id', ''),
         'name': raw.get('name', ''),
+        'stage': raw.get('stage', ''),
         'hp': str(hp) if hp else '',
         'types': types,
         'rarity': raw.get('rarity', ''),
