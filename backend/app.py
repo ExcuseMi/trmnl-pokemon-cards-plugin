@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 app = Quart(__name__)
 
 REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
-TCGDEX_API = 'https://api.tcgdex.net/v2/en'
+TCGDEX_SETS_API = 'https://api.tcgdex.net/v2/en'
 
 _redis = Redis(
     host=os.getenv('REDIS_HOST', 'localhost'),
@@ -59,9 +59,8 @@ async def card():
 
 
 async def _fetch_sets_with_dates():
-    # todo implement properly
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
+        async with session.get(f'{TCGDEX_SETS_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
             resp.raise_for_status()
             raw_sets = await resp.json()
             return raw_sets

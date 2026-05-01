@@ -9,8 +9,13 @@ from modules.providers.base import BaseProvider
 
 log = logging.getLogger(__name__)
 
-TCGDEX_API = 'https://api.tcgdex.net/v2/en'
+TCGDEX_BASE = 'https://api.tcgdex.net/v2'
 SAMPLE_SIZE = 20
+
+
+def _api(language: str) -> str:
+    lang = (language or 'en').strip().lower() or 'en'
+    return f'{TCGDEX_BASE}/{lang}'
 
 
 class PokemonProvider(BaseProvider):
@@ -19,22 +24,24 @@ class PokemonProvider(BaseProvider):
         set_id = filters.get('set_id', '').strip()
         rarity = filters.get('rarity', '').strip()
         ptype = filters.get('pokemon_type', '').strip()
+        language = filters.get('language', 'en')
+        api = _api(language)
 
-        card_ids = await self._fetch_ids(set_id, rarity, ptype)
+        card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
         if not card_ids:
             return None
 
         sample = random.sample(card_ids, min(SAMPLE_SIZE, len(card_ids)))
-        results = await asyncio.gather(*[self._fetch_card(cid) for cid in sample], return_exceptions=True)
+        results = await asyncio.gather(*[self._fetch_card(api, cid) for cid in sample], return_exceptions=True)
         cards = [r for r in results if isinstance(r, dict)]
         return cards if cards else None
 
-    async def _fetch_ids(self, set_id: str, rarity: str, ptype: str) -> list[str] | None:
+    async def _fetch_ids(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str] | None:
         if set_id:
-            url = f'{TCGDEX_API}/sets/{set_id}'
+            url = f'{api}/sets/{set_id}'
             params = {}
         else:
-            url = f'{TCGDEX_API}/cards'
+            url = f'{api}/cards'
             params = {'category': 'Pokemon'}
             if rarity and rarity.lower() != 'any':
                 params['rarity'] = rarity
@@ -53,11 +60,11 @@ class PokemonProvider(BaseProvider):
             log.error('Error fetching card IDs: %s', exc)
             return None
 
-    async def _fetch_card(self, card_id: str) -> dict | None:
+    async def _fetch_card(self, api: str, card_id: str) -> dict | None:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f'{TCGDEX_API}/cards/{card_id}',
+                    f'{api}/cards/{card_id}',
                     timeout=aiohttp.ClientTimeout(total=10),
                 ) as resp:
                     resp.raise_for_status()

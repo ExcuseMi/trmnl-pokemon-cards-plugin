@@ -5,8 +5,8 @@ dark_mode: 'no'
 static_data: ''
 polling_verb: get
 framework_version: 3.1.0
-serverless_language: ''
-polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | url_encode }}&rarity={{ rarity | url_encode }}&set_id={{ set_id | url_encode }}
+serverless_language: node
+polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | url_encode }}&rarity={{ rarity | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}
 polling_headers: ''
 polling_body: ''
 id: 297288
@@ -17,6 +17,23 @@ custom_fields:
   description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/><strong>Data:</strong> <a href="https://tcgdex.net" target="_blank">TCGdex</a>.
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
+- keyname: language
+  field_type: select
+  name: Language
+  description: Card language served by TCGdex.
+  options:
+  - English: en
+  - French: fr
+  - Spanish: es
+  - Italian: it
+  - Portuguese (BR): pt-br
+  - German: de
+  - Japanese: ja
+  - Chinese (Traditional): zh-tw
+  - Indonesian: id
+  - Thai: th
+  default: en
+  optional: true
 - keyname: pokemon_type
   field_type: select
   name: Pokémon Type
