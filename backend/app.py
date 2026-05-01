@@ -58,6 +58,14 @@ async def card():
     return jsonify({'data': selected})
 
 
+async def _fetch_sets_with_dates():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'{TCGDEX_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
+            resp.raise_for_status()
+            raw_sets = await resp.json()
+            return raw_sets
+
+
 @app.route('/sets', methods=['GET', 'POST', 'OPTIONS'])
 async def sets():
     if request.method == 'OPTIONS':
