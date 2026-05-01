@@ -1,0 +1,80 @@
+{
+  "category": "Pokemon",
+  "id": "sv04-250",
+  "illustrator": "Toshinao Aoki",
+  "image": "https://assets.tcgdex.net/en/sv/sv04/250",
+  "localId": "250",
+  "name": "Sandy Shocks ex",
+  "rarity": "Special illustration rare",
+  "set": {
+    "cardCount": {
+      "official": 182,
+      "total": 266
+    },
+    "id": "sv04",
+    "logo": "https://assets.tcgdex.net/en/sv/sv04/logo",
+    "name": "Paradox Rift",
+    "symbol": "https://assets.tcgdex.net/univ/sv/sv04/symbol"
+  },
+  "variants": {
+    "firstEdition": false,
+    "holo": false,
+    "normal": false,
+    "reverse": false,
+    "wPromo": false
+  },
+  "dexId": [
+    989
+  ],
+  "hp": 220,
+  "types": [
+    "Fighting"
+  ],
+  "stage": "Basic",
+  "abilities": [
+    {
+      "type": "Ability",
+      "name": "Magnetic Absorption",
+      "effect": "Once during your turn, if your opponent has 4 or fewer Prize cards remaining, you may attach a Basic {F} Energy card from your discard pile to this Pok\u00e9mon."
+    }
+  ],
+  "attacks": [
+    {
+      "cost": [
+        "Fighting",
+        "Fighting",
+        "Colorless"
+      ],
+      "name": "Earthen Spike",
+      "effect": "During your next turn, this Pok\u00e9mon can't attack.",
+      "damage": 200
+    }
+  ],
+  "retreat": 2,
+  "regulationMark": "G",
+  "legal": {
+    "standard": true,
+    "expanded": true
+  },
+  "updated": "2026-03-15T19:15:35Z",
+  "pricing": {
+    "cardmarket": {
+      "updated": "2026-05-01T00:43:18.000Z",
+      "unit": "EUR",
+      "idProduct": 740793,
+      "avg": 6.1,
+      "low": 4,
+      "trend": 6.21,
+      "avg1": 5.75,
+      "avg7": 6.03,
+      "avg30": 6.02,
+      "avg-holo": null,
+      "low-holo": null,
+      "trend-holo": 0,
+      "avg1-holo": null,
+      "avg7-holo": null,
+      "avg30-holo": null
+    },
+    "tcgplayer": null
+  }
+}

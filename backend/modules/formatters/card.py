@@ -1,13 +1,17 @@
 import json
 import logging
-
 def shape_card(raw: dict) -> dict:
-    logging.info(f"{json.dumps(raw)}")
     types = raw.get('types') or []
     set_info = raw.get('set') or {}
     logo = set_info.get('logo', '')
     image = raw.get('image', '')
+    illustrator = raw.get('illustrator', '')
     hp = raw.get('hp')
+    variants = raw.get('variants', {})
+    abilities = raw.get('abilities', {})
+    pricing = raw.get('pricing', {})
+    attacks = raw.get('attacks', {})
+    dexId = raw.get('dexId')
     return {
         'id': raw.get('id', ''),
         'name': raw.get('name', ''),
@@ -18,4 +22,10 @@ def shape_card(raw: dict) -> dict:
         'set_logo': f'{logo}.png' if logo else '',
         'image_large': f'{image}/high.png' if image else '',
         'image_small': f'{image}/low.png' if image else '',
+        'variants': variants,
+        'abilities': abilities,
+        'pricing': pricing,
+        'attacks': attacks,
+        'illustrator': illustrator,
+        'dexId': dexId,
     }
