@@ -18,6 +18,7 @@ function transform(input) {
       types_str: types.join(' · '),
       rarity: d.rarity || '',
       set_name: d.set_name || '',
+      set_image: d.set_image || '',
       image_large: d.image_large || '',
       image_small: d.image_small || '',
     };
@@ -31,6 +32,7 @@ function transform(input) {
       types_str: '',
       rarity: '',
       set_name: '',
+      set_image: '',
       image_large: '',
       image_small: '',
     },

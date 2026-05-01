@@ -1,7 +1,6 @@
 import random
 import aiohttp
 import logging
-import asyncio
 from modules.formatters.card import shape_card
 from modules.providers.base import BaseProvider
 
@@ -12,27 +11,21 @@ YGO_API = 'https://db.ygoprodeck.com/api/v7/cardinfo.php'
 class YugiohProvider(BaseProvider):
     def __init__(self):
         super().__init__('yugioh')
-        self.total_cards = 14000 # Fallback
 
     async def _fetch_random_cards(self, **filters) -> list[dict] | None:
         try:
+            # We fetch all cards in one go. YGOPRODeck allows this.
+            # It's a large payload, but it's only 1 API call per TTL.
             async with aiohttp.ClientSession() as session:
-                async def fetch_one():
-                    offset = random.randint(0, self.total_cards)
-                    params = {'num': 1, 'offset': offset}
+                async with session.get(YGO_API, timeout=aiohttp.ClientTimeout(total=30)) as resp:
+                    resp.raise_for_status()
+                    result = await resp.json()
                     
-                    async with session.get(YGO_API, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
-                        resp.raise_for_status()
-                        result = await resp.json()
-                        
-                        if not result.get('data'):
-                            return None
-                        
-                        full_card = result['data'][0]
-                        
-                        if 'meta' in result:
-                            self.total_cards = result['meta'].get('total_rows', self.total_cards)
-
+                    if not result.get('data'):
+                        return None
+                    
+                    results = []
+                    for full_card in result['data']:
                         hp = ''
                         if 'atk' in full_card and 'def' in full_card:
                             hp = f"{full_card['atk']}/{full_card['def']}"
@@ -40,8 +33,11 @@ class YugiohProvider(BaseProvider):
                             hp = f"Lvl {full_card['level']}"
 
                         rarity = ''
+                        set_name = ''
                         if full_card.get('card_sets'):
-                            rarity = full_card['card_sets'][0].get('set_rarity', '')
+                            s = full_card['card_sets'][0]
+                            set_name = s.get('set_name', '')
+                            rarity = s.get('set_rarity', '')
 
                         mapped_card = {
                             'id': str(full_card.get('id', '')),
@@ -50,7 +46,8 @@ class YugiohProvider(BaseProvider):
                             'types': [full_card.get('race', ''), full_card.get('type', '')],
                             'rarity': rarity,
                             'set': {
-                                'name': full_card['card_sets'][0].get('set_name', '') if full_card.get('card_sets') else '',
+                                'name': set_name,
+                                'image': '', # Requires set icons pre-fetching
                                 'series': ''
                             },
                             'images': {
@@ -58,10 +55,8 @@ class YugiohProvider(BaseProvider):
                                 'small': full_card.get('card_images', [{}])[0].get('image_url_small', '')
                             }
                         }
-                        return shape_card(mapped_card)
-
-                results = await asyncio.gather(*(fetch_one() for _ in range(4)), return_exceptions=True)
-                return [r for r in results if not isinstance(r, Exception)]
+                        results.append(shape_card(mapped_card))
+                    return results
         except Exception as exc:
             log.error('Error fetching Yu-Gi-Oh cards: %s', exc)
             return None

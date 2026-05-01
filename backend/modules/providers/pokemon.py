@@ -1,7 +1,6 @@
 import random
 import aiohttp
 import logging
-import asyncio
 from modules.formatters.card import shape_card
 from modules.providers.base import BaseProvider
 
@@ -41,34 +40,37 @@ class PokemonProvider(BaseProvider):
                     if not all_cards:
                         return None
 
-                    # Pick 4 random cards (or fewer if not enough)
-                    count = min(4, len(all_cards))
-                    selected_briefs = random.sample(all_cards, count)
+                    # Return all cards found in this single call
+                    # Map them to the simplified structure TCGdex returns in lists
+                    # Note: TCGdex lists don't include full stats like HP, but they have id, name, and image URL.
+                    # To minimize API calls as requested, we use what's in the list.
                     
-                    async def fetch_full(brief):
-                        async with session.get(f'{TCGDEX_API}/cards/{brief["id"]}', timeout=aiohttp.ClientTimeout(total=15)) as resp_detail:
-                            resp_detail.raise_for_status()
-                            full_card = await resp_detail.json()
-                            
-                            mapped_card = {
-                                'id': full_card.get('id', ''),
-                                'name': full_card.get('name', ''),
-                                'hp': str(full_card.get('hp', '')),
-                                'types': full_card.get('types', []),
-                                'rarity': full_card.get('rarity', ''),
-                                'set': {
-                                    'name': full_card.get('set', {}).get('name', ''),
-                                    'series': ''
-                                },
-                                'images': {
-                                    'large': f"{full_card.get('image', '')}/high.png",
-                                    'small': f"{full_card.get('image', '')}/low.png"
-                                }
+                    results = []
+                    for full_card in all_cards:
+                        # TCGdex list items have 'image' which is the base URL
+                        # and other basic info. We'll map what we can.
+                        
+                        set_info = full_card.get('set', {})
+                        set_id_val = set_info.get('id', '')
+                        
+                        mapped_card = {
+                            'id': full_card.get('id', ''),
+                            'name': full_card.get('name', ''),
+                            'hp': str(full_card.get('hp', '')), # Might be empty in list
+                            'types': full_card.get('types', []),
+                            'rarity': full_card.get('rarity', ''),
+                            'set': {
+                                'name': set_info.get('name', ''),
+                                'image': f"{set_info.get('logo')}.png" if set_info.get('logo') else ""
+                            },
+                            'images': {
+                                'large': f"{full_card.get('image', '')}/high.png",
+                                'small': f"{full_card.get('image', '')}/low.png"
                             }
-                            return shape_card(mapped_card)
-
-                    results = await asyncio.gather(*(fetch_full(b) for b in selected_briefs), return_exceptions=True)
-                    return [r for r in results if not isinstance(r, Exception)]
+                        }
+                        results.append(shape_card(mapped_card))
+                    
+                    return results
                     
         except Exception as exc:
             log.error('Error fetching Pokemon cards: %s', exc)

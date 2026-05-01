@@ -1,44 +1,69 @@
-import asyncio
+import json
 import logging
 import time
+import redis
+import os
 
 log = logging.getLogger(__name__)
 
 class BaseProvider:
     def __init__(self, name: str):
         self.name = name
-        self._cache = {} # Key: filter_tuple, Value: (list_of_cards, timestamp)
-        self._locks = {} # Key: filter_tuple, Value: Lock
+        # Initialize Redis client
+        redis_host = os.getenv('REDIS_HOST', 'localhost')
+        redis_port = int(os.getenv('REDIS_PORT', 6379))
+        self.redis = redis.Redis(host=redis_host, port=redis_port, db=0, decode_responses=True)
+
+    def _get_cache_key(self, **filters) -> str:
+        filter_str = json.dumps(filters, sort_keys=True)
+        return f"tcg:{self.name}:cache:{filter_str}"
 
     def get_current_cards(self, **filters) -> list[dict] | None:
-        key = tuple(sorted(filters.items()))
-        cached = self._cache.get(key)
-        if cached:
-            return cached[0]
+        key = self._get_cache_key(**filters)
+        try:
+            cached = self.redis.get(key)
+            if cached:
+                data = json.loads(cached)
+                return data.get('cards')
+        except Exception as e:
+            log.error("Redis error in get_current_cards: %s", e)
         return None
 
     def is_cache_expired(self, ttl_seconds, **filters) -> bool:
-        key = tuple(sorted(filters.items()))
-        cached = self._cache.get(key)
-        if not cached:
+        key = self._get_cache_key(**filters)
+        try:
+            cached = self.redis.get(key)
+            if not cached:
+                return True
+            data = json.loads(cached)
+            timestamp = data.get('timestamp', 0)
+            return (time.time() - timestamp) > ttl_seconds
+        except Exception as e:
+            log.error("Redis error in is_cache_expired: %s", e)
             return True
-        return (time.time() - cached[1]) > ttl_seconds
 
     async def refresh_cards(self, **filters) -> list[dict] | None:
-        key = tuple(sorted(filters.items()))
-        
-        if key not in self._locks:
-            self._locks[key] = asyncio.Lock()
-            
-        async with self._locks[key]:
-            cards = await self._fetch_random_cards(**filters)
-            if cards:
-                self._cache[key] = (cards, time.time())
-                log.info('%s cards refreshed (count: %d) with filters %s', self.name.capitalize(), len(cards), filters)
-                return cards
-            else:
-                log.warning('Failed to fetch %s cards with filters %s', self.name, filters)
-                return None
+        # Use Redis as a lock to prevent concurrent refreshes for the same filters
+        lock_key = f"tcg:{self.name}:lock:{json.dumps(filters, sort_keys=True)}"
+        if self.redis.set(lock_key, "1", nx=True, ex=60): # 1 minute lock
+            try:
+                cards = await self._fetch_random_cards(**filters)
+                if cards:
+                    key = self._get_cache_key(**filters)
+                    self.redis.set(key, json.dumps({
+                        'cards': cards,
+                        'timestamp': time.time()
+                    }))
+                    log.info('%s cards refreshed (count: %d) with filters %s', self.name.capitalize(), len(cards), filters)
+                    return cards
+                else:
+                    log.warning('Failed to fetch %s cards with filters %s', self.name, filters)
+                    return None
+            finally:
+                self.redis.delete(lock_key)
+        else:
+            # Another process is already refreshing
+            return self.get_current_cards(**filters)
 
     async def _fetch_random_cards(self, **filters) -> list[dict] | None:
         raise NotImplementedError

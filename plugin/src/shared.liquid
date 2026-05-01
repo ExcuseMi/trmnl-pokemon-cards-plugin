@@ -42,7 +42,18 @@
     {% if card.set_name != '' %}
     <div class="flex gap--small" style="align-items: center;">
       <span class="label label--small">Set</span>
-      <span class="description">{{ card.set_name }}</span>
+      <div class="flex gap--small" style="align-items: center;">
+        {% if card.set_image != '' %}
+        <img src="{{ card.set_image }}" alt="{{ card.set_name }}" style="height: 24px; width: auto; object-fit: contain;">
+        {% endif %}
+        <span class="description">{{ card.set_name }}</span>
+      </div>
+    </div>
+    {% endif %}
+    {% else %}
+    {% if card.set_image != '' %}
+    <div style="margin-top: 4px;">
+      <img src="{{ card.set_image }}" alt="{{ card.set_name }}" style="height: 20px; width: auto; object-fit: contain;">
     </div>
     {% endif %}
     {% endif %}

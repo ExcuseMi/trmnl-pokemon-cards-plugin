@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import random
 
 from quart import Quart, jsonify, request
 
@@ -41,23 +42,28 @@ async def card():
     if not provider:
         return jsonify({'error': f'Unsupported game: {game}'}), 400
         
-    # Check if we need to refresh (if not in cache or expired)
     ttl_seconds = REFRESH_HOURS * 3600
-    if provider.is_cache_expired(ttl_seconds, **args):
-        current = provider.get_current_cards(**args)
-        if current:
-            asyncio.create_task(provider.refresh_cards(**args))
-            return jsonify({'data': current})
-        else:
-            # Wait for first fetch
-            data = await provider.refresh_cards(**args)
-            if data:
-                return jsonify({'data': data})
-            return jsonify({'error': f'Failed to fetch {game} cards'}), 503
     
-    # Return from cache
-    data = provider.get_current_cards(**args)
-    return jsonify({'data': data})
+    # Check if cache is expired
+    if provider.is_cache_expired(ttl_seconds, **args):
+        # Trigger refresh in background or wait if nothing in cache
+        cached_cards = provider.get_current_cards(**args)
+        if cached_cards:
+            asyncio.create_task(provider.refresh_cards(**args))
+        else:
+            cached_cards = await provider.refresh_cards(**args)
+            
+    else:
+        cached_cards = provider.get_current_cards(**args)
+        
+    if not cached_cards:
+        return jsonify({'error': f'Failed to fetch {game} cards'}), 503
+        
+    # Return 4 random items from the cached batch
+    count = min(4, len(cached_cards))
+    selected = random.sample(cached_cards, count)
+    
+    return jsonify({'data': selected})
 
 
 @app.route('/health')
@@ -73,9 +79,9 @@ async def manual_refresh():
     
     if game == 'all':
         for p in PROVIDERS.values():
-            for filter_key in list(p._cache.keys()):
-                filters = dict(filter_key)
-                asyncio.create_task(p.refresh_cards(**filters))
+            # In Redis version, we don't easily list all cached filter combos
+            # but we can refresh the 'any' filters at least
+            asyncio.create_task(p.refresh_cards())
     else:
         provider = PROVIDERS.get(game)
         if provider:

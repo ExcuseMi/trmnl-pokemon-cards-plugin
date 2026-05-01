@@ -9,6 +9,7 @@ def shape_card(raw: dict) -> dict:
         'types': types,
         'rarity': raw.get('rarity', ''),
         'set_name': set_info.get('name', ''),
+        'set_image': set_info.get('image', ''),
         'series': set_info.get('series', ''),
         'image_large': images.get('large', ''),
         'image_small': images.get('small', ''),
