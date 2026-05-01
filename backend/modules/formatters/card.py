@@ -2,6 +2,25 @@ import json
 import logging
 
 
+def _format_price(pricing: dict) -> dict:
+    cm = (pricing or {}).get('cardmarket') or {}
+    if not cm:
+        return {}
+    unit = cm.get('unit', '')
+    sym = '€' if unit == 'EUR' else ('$' if unit == 'USD' else unit + ' ')
+
+    def fmt(v):
+        return f"{sym}{v:.2f}" if v is not None else ''
+
+    return {
+        'avg': fmt(cm.get('avg')),
+        'avg7': fmt(cm.get('avg7')),
+        'avg30': fmt(cm.get('avg30')),
+        'low': fmt(cm.get('low')),
+        'trend': fmt(cm.get('trend')),
+    }
+
+
 def shape_card(raw: dict) -> dict:
     types = raw.get('types') or []
     set_info = raw.get('set') or {}
@@ -13,7 +32,7 @@ def shape_card(raw: dict) -> dict:
     abilities = raw.get('abilities', {})
     pricing = raw.get('pricing', {})
     attacks = raw.get('attacks', {})
-    dexId = raw.get('dexId')
+    dex_id = raw.get('dexId')
     set_symbol = set_info.get('symbol', '')
     return {
         'id': raw.get('id', ''),
@@ -32,5 +51,8 @@ def shape_card(raw: dict) -> dict:
         'pricing': pricing,
         'attacks': attacks,
         'illustrator': illustrator,
-        'dexId': dexId,
+        'dexId': dex_id,
+        'retreat': raw.get('retreat'),
+        'regulation_mark': raw.get('regulationMark', ''),
+        'price': _format_price(pricing),
     }

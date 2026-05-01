@@ -1,11 +1,3 @@
-{% template row %}
-<div class="pkmn-{{key}}-row hidden flex flex--row flex--center-y gap--small">
-  <span class="label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2">{{name}}</span>
-  <span class="description description--large lg:description--xlarge pkmn-{{key}}"></span>
-</div>
-
-{% endtemplate %}
-
 {% template main %}
 {% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
 
@@ -25,23 +17,47 @@
     {% elsif view == 3  %} hidden portrait:block lg:block
     {% elsif view == 4  %} hidden portrait:block
     {% endif %}"
+    alt="">
 
-    " alt="">
-
-  <div class="flex--col gap--small stretch-x flex--center-y outline
+  <div class="flex--col gap--small stretch-x
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
     {% endif %}" >
     <span class="label label--underline label--large lg:label--xxlarge pkmn-name" data-clamp="2"></span>
-    {% render "row", key:"illustrator", name: "Illustrator" %}
-    {% render "row", key:"hp", name: "HP" %}
-    {% render "row", key:"types", name: "Type" %}
 
-    {% if view == 1 or view == 3 %}
-        {% render "row", key:"rarity", name: "Rarity" %}
-    {% endif %}
+    <div class="pkmn-stats" style="display:grid;grid-template-columns:auto 1fr;column-gap:8px;row-gap:2px;align-items:baseline;">
+      <span class="pkmn-illustrator-label label label--small hidden">Artist</span>
+      <span class="description description--base pkmn-illustrator hidden"></span>
+
+      <span class="pkmn-hp-label label label--small hidden">HP</span>
+      <span class="description description--large pkmn-hp hidden"></span>
+
+      <span class="pkmn-types-label label label--small hidden">Type</span>
+      <span class="description description--base pkmn-types hidden"></span>
+
+      <span class="pkmn-stage-label label label--small hidden">Stage</span>
+      <span class="description description--base pkmn-stage hidden"></span>
+
+      {% if view == 1 or view == 3 %}
+      <span class="pkmn-rarity-label label label--small hidden">Rarity</span>
+      <span class="description description--base pkmn-rarity hidden"></span>
+
+      <span class="pkmn-retreat-label label label--small hidden">Retreat</span>
+      <span class="description description--base pkmn-retreat hidden"></span>
+
+      <span class="pkmn-regulation-label label label--small hidden">Mark</span>
+      <span class="description description--base pkmn-regulation hidden"></span>
+      {% endif %}
+
+      <span class="pkmn-price-avg-label label label--small hidden">Avg</span>
+      <span class="description description--base pkmn-price-avg hidden"></span>
+
+      <span class="pkmn-price-avg7-label label label--small hidden">7d avg</span>
+      <span class="description description--base pkmn-price-avg7 hidden"></span>
+    </div>
+
     <div class="pkmn-set-row hidden">
       <img class="pkmn-set-logo hidden image--contain w--max-48 lg:w--max-64" alt="">
     </div>
@@ -108,9 +124,7 @@
     var idx    = views.indexOf(host) % 4;
     var item   = (__pkmn || [])[idx] || null;
     var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
-    var isImageOnly = !host.querySelector('.pkmn-name');
     function q(sel) { return host.querySelector(sel); }
-    function show(el) { if (el) el.classList.remove('hidden'); }
 
     var titleEl = q('.pkmn-title');
     var instEl  = q('.pkmn-instance');
@@ -118,61 +132,47 @@
     if (!item || (!item.image_large && !item.name)) {
       show(q('.pkmn-empty'));
       if (titleEl) titleEl.textContent = name;
-      // Clear all images when no item
-      var allImgs = host.querySelectorAll('.pkmn-img');
-      allImgs.forEach(function(img) {
-        img.src = '';
-        img.alt = '';
-      });
+      host.querySelectorAll('.pkmn-img').forEach(function(img) { img.src = ''; img.alt = ''; });
       return;
     }
 
-    // Update ALL images with the same src/alt
-    var allImgs = host.querySelectorAll('.pkmn-img');
-    if (item.image_large) {
-      allImgs.forEach(function(img) {
-        img.src = item.image_large;
-        img.alt = item.name || '';
-      });
-    } else {
-      allImgs.forEach(function(img) {
-        img.src = '';
-        img.alt = '';
-      });
-      show(q('.pkmn-empty'));
-    }
-
+    host.querySelectorAll('.pkmn-img').forEach(function(img) {
+      if (item.image_large) { img.src = item.image_large; img.alt = item.name || ''; }
+      else { img.src = ''; img.alt = ''; }
+    });
 
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
 
-    if (item.hp) {
-      var hpEl = q('.pkmn-hp');
-      if (hpEl) hpEl.textContent = item.hp;
-      show(q('.pkmn-hp-row'));
+    function show2(key, value) {
+      if (!value && value !== 0) return;
+      var lbl = q('.pkmn-' + key + '-label');
+      var val = q('.pkmn-' + key);
+      if (lbl) lbl.classList.remove('hidden');
+      if (val) { val.textContent = String(value); val.classList.remove('hidden'); }
     }
-        if (item.illustrator) {
-      var el = q('.pkmn-illustrator');
-      if (el) el.textContent = item.illustrator;
-      show(q('.pkmn-illustrator'));
+
+    show2('illustrator', item.illustrator);
+    show2('hp', item.hp);
+    show2('types', item.types ? item.types.join(', ') : '');
+    show2('stage', item.stage);
+    show2('rarity', item.rarity);
+    show2('retreat', item.retreat != null ? item.retreat : '');
+    show2('regulation', item.regulation_mark);
+
+    if (item.price) {
+      show2('price-avg', item.price.avg);
+      show2('price-avg7', item.price.avg7);
     }
-    if (item.types) {
-      var typesEl = q('.pkmn-types');
-      if (typesEl) typesEl.textContent = item.types.join(", ");
-      show(q('.pkmn-types-row'));
-    }
-    if (item.rarity) {
-      var rarityEl = q('.pkmn-rarity');
-      if (rarityEl) rarityEl.textContent = item.rarity;
-      show(q('.pkmn-rarity-row'));
-    }
+
     if (item.set_logo) {
       var setLogoEl = q('.pkmn-set-logo');
       if (setLogoEl) {
         setLogoEl.src = item.set_logo;
         setLogoEl.alt = item.set_name || '';
-        show(setLogoEl);
-        show(q('.pkmn-set-row'));
+        setLogoEl.classList.remove('hidden');
+        var setRow = q('.pkmn-set-row');
+        if (setRow) setRow.classList.remove('hidden');
       }
     }
 
