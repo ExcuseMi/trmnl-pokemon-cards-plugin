@@ -368,9 +368,13 @@
       price.tcg_market = fmtT(normal.marketPrice);
       price.tcg_low    = fmtT(normal.lowPrice);
     }
-    show2('price-avg', price.avg);
+    if (price.avg && price.tcg_market) {
+      show2('price-avg', price.avg + ' · ' + price.tcg_market);
+    } else {
+      show2('price-avg', price.avg);
+      show2('price-tcg-market', price.tcg_market);
+    }
     show2('price-avg7', price.avg7);
-    show2('price-tcg-market', price.tcg_market);
     show2('price-tcg-low', price.tcg_low);
 
     var setYear = item.set_release_date ? item.set_release_date.slice(0, 4) : '';
