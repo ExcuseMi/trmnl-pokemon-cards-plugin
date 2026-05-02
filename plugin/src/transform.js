@@ -19,5 +19,6 @@ function transform(input) {
   return {
     items: raw.slice(0, 4),
     labels: labels,
+    pool_warning: typeof input.pool_warning === 'number' ? input.pool_warning : null,
   };
 }

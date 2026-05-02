@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 app = Quart(__name__)
 
 REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
+LOW_CARD_WARNING = int(os.getenv('LOW_CARD_WARNING_THRESHOLD', '10'))
 TCGDEX_SETS_API = 'https://api.tcgdex.net/v2/en'
 
 _redis = Redis(
@@ -73,7 +74,10 @@ async def card():
         return jsonify({'error': 'Failed to fetch cards'}), 503
 
     await _enrich_release_dates(selected)
-    return jsonify({'data': selected})
+    resp = {'data': selected}
+    if len(cached_ids) < LOW_CARD_WARNING:
+        resp['pool_warning'] = len(cached_ids)
+    return jsonify(resp)
 
 
 async def _enrich_release_dates(cards: list) -> None:
@@ -187,7 +191,7 @@ def _build_sets(raw_sets: list, search: str) -> list:
         if not search or search in label.lower():
             result.append({'id': sid, 'name': label, '_date': release_date})
     result.sort(key=lambda x: x.pop('_date'), reverse=True)
-    if not search or 'most recent' in search:
+    if not search or search in 'most recent ★':
         result.insert(0, {'id': 'most_recent', 'name': 'Most Recent ★'})
     return result
 

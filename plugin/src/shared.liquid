@@ -3,12 +3,12 @@
 {% if view == 1 %}
 {% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--2" %}
 {% assign val_cls = "description description--large lg:description--xxlarge" %}
-{% assign hp_cls  = "description description--xlarge lg:description--xxxlarge" %}
+{% assign hp_cls  = "description description--large lg:description--xxlarge" %}
 {% assign rar_cls = "label label--base lg:label--large" %}
 {% else %}
 {% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2" %}
 {% assign val_cls = "description description--large lg:description--xlarge" %}
-{% assign hp_cls  = "description description--xlarge lg:description--xxlarge" %}
+{% assign hp_cls  = "description description--large lg:description--xlarge" %}
 {% assign rar_cls = "label label--base" %}
 {% endif %}
 
@@ -184,7 +184,7 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden image--contain mt--20 w--max-64 lg:w--max-120" alt="">
+      <img class="pkmn-set-logo hidden image--contain mt--16 w--max-64 lg:w--max-120" alt="">
     </div>
     {% endif %}
   </div>
@@ -240,6 +240,7 @@
       C6.774,187.91,0,221.44,0,255.993C0,290.553,6.774,324.085,20.125,355.645z"/>
   </svg>
   <span class="title pkmn-title"></span>
+  {% if pool_warning %}<span class="label label--warning">{{ pool_warning }} cards</span>{% endif %}
   <span class="instance pkmn-instance
     {% if view >= 3 %}
     md:portrait:hidden
