@@ -40,6 +40,13 @@
 
     <div class="w--full {% if view == 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
 
+        <div class="item pkmn-dex-id-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">Pokédex</span>
+            <span class="{{ val_cls }} pkmn-dex-id"></span>
+          </div>
+        </div>
+
         <div class="item pkmn-illustrator-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
             <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
@@ -273,6 +280,7 @@
       return '';
     }
 
+    show2('dex-id', item.dexId ? '#' + item.dexId : '');
     show2('illustrator', item.illustrator);
     show2('hp', item.hp);
     show2('types', item.types ? item.types.join(', ') : '');
