@@ -59,7 +59,24 @@ async def card():
         return jsonify({'error': 'Failed to fetch cards'}), 503
 
     selected = random.sample(cached, min(4, len(cached)))
+    await _enrich_release_dates(selected)
     return jsonify({'data': selected})
+
+
+async def _enrich_release_dates(cards: list) -> None:
+    if all(c.get('set_release_date') for c in cards):
+        return
+    try:
+        cached = await _redis.get('pokemon:sets:enriched:v2')
+        if not cached:
+            return
+        release_map = {s['id']: s.get('releaseDate', '') for s in json.loads(cached) if s.get('id')}
+    except Exception:
+        return
+    for card in cards:
+        if not card.get('set_release_date'):
+            sid = (card.get('id') or '').rsplit('-', 1)[0]
+            card['set_release_date'] = release_map.get(sid, '')
 
 
 async def _fetch_set_detail(session: aiohttp.ClientSession, set_id: str) -> dict:
