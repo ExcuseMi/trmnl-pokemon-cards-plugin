@@ -14,7 +14,7 @@
 
 <script>var __pkmn = {{ items | json }};</script>
 
-<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full m--0 p--0">
+<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full layout--top m--0 p--0">
   <img class="pkmn-img image image image-dither image--contain h--full
     {% if view == 1  %}    portrait:hidden lg:portrait:block
     {% elsif view == 2  %}
@@ -36,9 +36,28 @@
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
     {% endif %}">
-    <span class="label label--underline label--large lg:label--xxlarge pkmn-name" data-clamp="2"></span>
-
-    <div class="w--full {% if view == 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
+        <span class="label label--filled label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
+        <div class="item pkmn-illustrator-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+            <span class="{{ val_cls }} pkmn-illustrator"></span>
+          </div>
+        </div>
+                <div class="item pkmn-rarity-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+            <span class="{{ rar_cls }} pkmn-rarity"></span>
+          </div>
+        </div>
+        {% unless view == 1 %}
+        <div class="item pkmn-set-name-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+            <span class="{{ val_cls }} pkmn-set-name"></span>
+          </div>
+        </div>
+        {% endunless %}
+    <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
 
         <div class="item pkmn-dex-id-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
@@ -47,12 +66,6 @@
           </div>
         </div>
 
-        <div class="item pkmn-illustrator-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
-            <span class="{{ val_cls }} pkmn-illustrator"></span>
-          </div>
-        </div>
 
         <div class="item pkmn-hp-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
@@ -76,12 +89,7 @@
         </div>
 
         {% if view == 1 or view == 3 %}
-        <div class="item pkmn-rarity-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
-            <span class="{{ rar_cls }} pkmn-rarity"></span>
-          </div>
-        </div>
+
 
         <div class="item pkmn-retreat-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
@@ -101,13 +109,6 @@
           <div class="content flex flex--row flex--center-y gap--small flex--wrap">
             <span class="{{ lbl_cls }}">{{ labels.print }}</span>
             <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
-          </div>
-        </div>
-
-        <div class="item pkmn-card-count-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.cards }}</span>
-            <span class="{{ val_cls }} pkmn-card-count"></span>
           </div>
         </div>
 
@@ -148,14 +149,7 @@
           </div>
         </div>
 
-        {% unless view == 1 %}
-        <div class="item pkmn-set-name-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.set }}</span>
-            <span class="{{ val_cls }} pkmn-set-name"></span>
-          </div>
-        </div>
-        {% endunless %}
+
 
     </div>
 
@@ -177,7 +171,7 @@
   {% elsif view == 4 %}
   lg:portrait:hidden
   {% endif %}">
-  <img class="image  h--8 set_symbol" />
+  <img class="image  h--12 set_symbol" />
   <svg class="image w--8 h--8 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 511.985 511.985" xml:space="preserve">
     <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
@@ -286,7 +280,7 @@
     show2('types', item.types ? item.types.join(', ') : '');
     show2('stage', item.stage);
     show2('rarity', item.rarity, rarityClass(item.rarity));
-    show2('retreat', item.retreat != null ? item.retreat : '');
+    //show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
 
     var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
