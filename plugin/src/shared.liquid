@@ -34,7 +34,7 @@
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
-    {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
+    {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
     {% endif %}">
     <span class="label label--filled label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
     {% unless view == 2 %}
@@ -93,14 +93,17 @@
       </div>
       {% endif %}
 
+      {% if view != 4 %}
       <div class="item pkmn-dex-id-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">Pokédex</span>
           <span class="{{ val_cls }} pkmn-dex-id"></span>
         </div>
       </div>
+      {% endif %}
 
 
+      {% if view != 4 %}
       <div class="item pkmn-hp-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
@@ -114,13 +117,16 @@
           <span class="{{ val_cls }} pkmn-types"></span>
         </div>
       </div>
+      {% endif %}
 
+      {% if view != 4 %}
       <div class="item pkmn-stage-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
           <span class="{{ val_cls }} pkmn-stage"></span>
         </div>
       </div>
+      {% endif %}
 
       {% if view == 1 or view == 3 %}
 
@@ -157,12 +163,14 @@
         </div>
       </div>
 
+      {% if view != 4 %}
       <div class="item pkmn-price-avg7-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
           <span class="{{ val_cls }} pkmn-price-avg7"></span>
         </div>
       </div>
+      {% endif %}
 
       <div class="item pkmn-price-tcg-market-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -171,12 +179,14 @@
         </div>
       </div>
 
+      {% if view != 4 %}
       <div class="item pkmn-price-tcg-low-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
           <span class="{{ val_cls }} pkmn-price-tcg-low"></span>
         </div>
       </div>
+      {% endif %}
 
 
 
