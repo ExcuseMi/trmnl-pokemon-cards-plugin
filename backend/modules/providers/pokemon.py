@@ -20,19 +20,23 @@ def _api(language: str) -> str:
     return f'{TCGDEX_BASE}/{lang}'
 
 
+def _parse_multi(value: str) -> list[str]:
+    return [v.strip() for v in (value or '').split(',') if v.strip() and v.strip().lower() != 'any']
+
+
 class PokemonProvider(BaseProvider):
 
     async def _fetch(self, **filters) -> list | None:
         set_id = filters.get('set_id', '').strip()
-        rarity = filters.get('rarity', '').strip()
-        ptype = filters.get('pokemon_type', '').strip()
+        rarities = _parse_multi(filters.get('rarity', ''))
+        ptypes = _parse_multi(filters.get('pokemon_type', ''))
         language = filters.get('language', 'en')
         api = _api(language)
 
-        card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
+        card_ids = await self._fetch_ids(api, set_id, rarities, ptypes)
         if not card_ids and language != 'en':
             log.info('No cards found for language=%s, falling back to en', language)
-            card_ids = await self._fetch_ids(_api('en'), set_id, rarity, ptype)
+            card_ids = await self._fetch_ids(_api('en'), set_id, rarities, ptypes)
         if not card_ids:
             return None
 
@@ -41,16 +45,31 @@ class PokemonProvider(BaseProvider):
 
         return card_ids
 
-    async def _fetch_ids(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str] | None:
+    async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str]) -> list[str] | None:
+        if set_id:
+            return await self._fetch_ids_single(api, set_id, '', '')
+
+        r_list = rarities or ['']
+        p_list = ptypes or ['']
+        tasks = [self._fetch_ids_single(api, '', r, p) for r in r_list for p in p_list]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        seen = {}
+        for res in results:
+            if isinstance(res, list):
+                for i in res:
+                    seen[i] = None
+        return list(seen) if seen else None
+
+    async def _fetch_ids_single(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str]:
         if set_id:
             url = f'{api}/sets/{set_id}'
             params = {}
         else:
             url = f'{api}/cards'
             params = {'category': 'Pokemon'}
-            if rarity and rarity.lower() != 'any':
+            if rarity:
                 params['rarity'] = rarity
-            if ptype and ptype.lower() != 'any':
+            if ptype:
                 params['types'] = ptype
 
         try:
@@ -63,7 +82,7 @@ class PokemonProvider(BaseProvider):
             return [c['id'] for c in cards if c.get('id')]
         except Exception as exc:
             log.error('Error fetching card IDs: %s', exc)
-            return None
+            return []
 
     async def get_card_detail(self, api: str, card_id: str) -> dict | None:
         cache_key = f'pokemon:card:v1:{card_id}'

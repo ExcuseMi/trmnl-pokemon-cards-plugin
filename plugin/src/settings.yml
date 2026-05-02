@@ -6,7 +6,7 @@ static_data: ''
 polling_verb: get
 framework_version: 3.1.0
 serverless_language: node
-polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | url_encode }}&rarity={{ rarity | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}
+polling_url: https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | join: ',' | url_encode }}&rarity={{ rarity | join: ',' | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}
 polling_headers: ''
 polling_body: ''
 id: 297288
@@ -36,10 +36,11 @@ custom_fields:
   optional: true
 - keyname: pokemon_type
   field_type: select
+  multiple: true
   name: Pokémon Type
-  description: Show only cards of a specific type.
+  description: Show only cards of one or more types. Leave empty for all types.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
   options:
-  - Any: any
   - Fire: Fire
   - Water: Water
   - Grass: Grass
@@ -51,14 +52,14 @@ custom_fields:
   - Dragon: Dragon
   - Colorless: Colorless
   - Fairy: Fairy
-  default: any
   optional: true
 - keyname: rarity
   field_type: select
+  multiple: true
   name: Rarity
-  description: Show only cards of a specific rarity. Great for browsing valuable or illustration cards.
+  description: Show only cards of one or more rarities. Leave empty for all rarities. Great for browsing valuable or illustration cards.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
   options:
-  - Any: any
   - Common: Common
   - Uncommon: Uncommon
   - Rare: Rare
@@ -67,7 +68,6 @@ custom_fields:
   - Ultra Rare: Ultra Rare
   - Illustration Rare: Illustration Rare
   - Special Illustration Rare: Special Illustration Rare
-  default: any
   optional: true
 - keyname: set_id
   field_type: xhrSelectSearch

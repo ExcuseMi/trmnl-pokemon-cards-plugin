@@ -8,7 +8,7 @@ import aiohttp
 from quart import Quart, Response, jsonify, request
 from redis.asyncio import Redis
 
-from modules.providers.pokemon import PokemonProvider, _api as _pokemon_api
+from modules.providers.pokemon import PokemonProvider, _api as _pokemon_api, _parse_multi
 from modules.utils.ip_whitelist import init_ip_whitelist, require_tiered_access
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -44,6 +44,9 @@ async def card():
     if set_id == 'most_recent':
         set_id = await _resolve_most_recent_set_id() or ''
     args['set_id'] = set_id
+    # Normalize multi-select fields so cache key is order-independent
+    args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
+    args['pokemon_type'] = ','.join(sorted(_parse_multi(args.get('pokemon_type', ''))))
     ttl = REFRESH_HOURS * 3600
 
     if await _provider.is_expired(ttl, **args):
