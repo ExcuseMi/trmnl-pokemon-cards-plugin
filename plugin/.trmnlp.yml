@@ -37,6 +37,7 @@ variables:
     set: Set
     tcg_market: TCG Mkt
     tcg_low: TCG Low
+    released: Released
   items:
     - name: "Charizard"
       hp: "120"

@@ -30,7 +30,7 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col gap--small stretch-x
+  <div class="flex--col gap--small stretch-x w--full
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
@@ -38,7 +38,7 @@
     {% endif %}">
     <span class="label label--underline label--large lg:label--xxlarge pkmn-name" data-clamp="2"></span>
 
-    <div class="{% if view == 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
+    <div class="w--full {% if view == 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
 
         <div class="item pkmn-illustrator-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
@@ -101,6 +101,13 @@
           <div class="content flex flex--row flex--center-y gap--small">
             <span class="{{ lbl_cls }}">{{ labels.cards }}</span>
             <span class="{{ val_cls }} pkmn-card-count"></span>
+          </div>
+        </div>
+
+        <div class="item pkmn-release-date-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+            <span class="{{ val_cls }} pkmn-release-date"></span>
           </div>
         </div>
         {% endif %}
@@ -326,6 +333,7 @@
     var setLabel = item.set_name || '';
     if (setYear) setLabel += ' (' + setYear + ')';
     show2('set-name', setLabel);
+    show2('release-date', item.set_release_date);
 
     if (item.set_logo) {
       var setLogoEl = q('.pkmn-set-logo');

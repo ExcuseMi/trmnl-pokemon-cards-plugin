@@ -38,8 +38,12 @@ async def _startup():
 @require_tiered_access(lambda: _redis, prefix='card')
 async def card():
     args = dict(request.args)
-    if '::' in args.get('set_id', ''):
-        args['set_id'] = args['set_id'].split('::')[0]
+    set_id = args.get('set_id', '')
+    if '::' in set_id:
+        set_id = set_id.split('::')[0]
+    if set_id == 'most_recent':
+        set_id = await _resolve_most_recent_set_id() or ''
+    args['set_id'] = set_id
     ttl = REFRESH_HOURS * 3600
 
     if await _provider.is_expired(ttl, **args):
@@ -58,12 +62,26 @@ async def card():
     return jsonify({'data': selected})
 
 
+async def _fetch_set_detail(session: aiohttp.ClientSession, set_id: str) -> dict:
+    try:
+        async with session.get(f'{TCGDEX_SETS_API}/sets/{set_id}', timeout=aiohttp.ClientTimeout(total=10)) as resp:
+            resp.raise_for_status()
+            return await resp.json()
+    except Exception as exc:
+        log.warning('Could not fetch set detail for %s: %s', set_id, exc)
+        return {'id': set_id}
+
+
 async def _fetch_sets_with_dates():
     async with aiohttp.ClientSession() as session:
         async with session.get(f'{TCGDEX_SETS_API}/sets', timeout=aiohttp.ClientTimeout(total=15)) as resp:
             resp.raise_for_status()
-            raw_sets = await resp.json()
-            return raw_sets
+            sets_list = await resp.json()
+
+    async with aiohttp.ClientSession() as session:
+        details = await asyncio.gather(*[_fetch_set_detail(session, s['id']) for s in sets_list if s.get('id')])
+
+    return list(details)
 
 
 @app.route('/sets', methods=['GET', 'POST', 'OPTIONS'])
@@ -73,7 +91,7 @@ async def sets():
 
     search = await _parse_search()
 
-    cache_key = 'pokemon:sets:enriched:v1'
+    cache_key = 'pokemon:sets:enriched:v2'
     raw_sets = None
     try:
         cached = await _redis.get(cache_key)
@@ -113,6 +131,16 @@ async def _parse_search() -> str:
     return request.args.get('q', '').lower().strip()
 
 
+async def _resolve_most_recent_set_id() -> str | None:
+    try:
+        cached = await _redis.get('pokemon:sets:enriched:v2')
+        raw_sets = json.loads(cached) if cached else await _fetch_sets_with_dates()
+    except Exception:
+        return None
+    best = max((s for s in raw_sets if s.get('releaseDate')), key=lambda s: s['releaseDate'], default=None)
+    return best.get('id') if best else None
+
+
 def _build_sets(raw_sets: list, search: str) -> list:
     result = []
     for s in raw_sets:
@@ -127,7 +155,10 @@ def _build_sets(raw_sets: list, search: str) -> list:
         if not sid or not label:
             continue
         if not search or search in label.lower():
-            result.append({'id': sid, 'name': label})
+            result.append({'id': sid, 'name': label, '_date': release_date})
+    result.sort(key=lambda x: x.pop('_date'), reverse=True)
+    if not search or 'most recent' in search:
+        result.insert(0, {'id': 'most_recent', 'name': '★ Most Recent'})
     return result
 
 
