@@ -1,15 +1,15 @@
 {% template main %}
 {% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
 {% if view == 1 %}
-  {% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--2" %}
-  {% assign val_cls = "description description--large lg:description--xxlarge" %}
-  {% assign hp_cls  = "description description--xlarge lg:description--xxxlarge" %}
-  {% assign rar_cls = "label label--base lg:label--large" %}
+{% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--2" %}
+{% assign val_cls = "description description--large lg:description--xxlarge" %}
+{% assign hp_cls  = "description description--xlarge lg:description--xxxlarge" %}
+{% assign rar_cls = "label label--base lg:label--large" %}
 {% else %}
-  {% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2" %}
-  {% assign val_cls = "description description--large lg:description--xlarge" %}
-  {% assign hp_cls  = "description description--xlarge lg:description--xxlarge" %}
-  {% assign rar_cls = "label label--base" %}
+{% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2" %}
+{% assign val_cls = "description description--large lg:description--xlarge" %}
+{% assign hp_cls  = "description description--xlarge lg:description--xxlarge" %}
+{% assign rar_cls = "label label--base" %}
 {% endif %}
 
 <script>var __pkmn = {{ items | json }};</script>
@@ -36,118 +36,120 @@
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}hidden portrait:m::flex lg:portrait:hidden
     {% endif %}">
-        <span class="label label--filled label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
-        <div class="item pkmn-illustrator-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
-            <span class="{{ val_cls }} pkmn-illustrator"></span>
-          </div>
-        </div>
-                <div class="item pkmn-rarity-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
-            <span class="{{ rar_cls }} pkmn-rarity"></span>
-          </div>
-        </div>
-        {% unless view == 1 %}
-        <div class="item pkmn-set-name-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.set }}</span>
-            <span class="{{ val_cls }} pkmn-set-name"></span>
-          </div>
-        </div>
-        {% endunless %}
+    <span class="label label--filled label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
+    <div class="item pkmn-illustrator-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+        <span class="{{ val_cls }} pkmn-illustrator"></span>
+      </div>
+    </div>
+    <div class="item pkmn-rarity-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+        <span class="{{ rar_cls }} pkmn-rarity"></span>
+      </div>
+    </div>
+
+    <div class="item pkmn-release-date-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+        <span class="{{ val_cls }} pkmn-release-date"></span>
+      </div>
+    </div>
+    {% unless view == 1 %}
+    <div class="item pkmn-set-name-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+        <span class="{{ val_cls }} pkmn-set-name"></span>
+      </div>
+    </div>
+    {% endunless %}
     <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
 
-        <div class="item pkmn-dex-id-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">Pokédex</span>
-            <span class="{{ val_cls }} pkmn-dex-id"></span>
-          </div>
+      <div class="item pkmn-dex-id-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">Pokédex</span>
+          <span class="{{ val_cls }} pkmn-dex-id"></span>
         </div>
+      </div>
 
 
-        <div class="item pkmn-hp-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
-            <span class="{{ hp_cls }} pkmn-hp"></span>
-          </div>
+      <div class="item pkmn-hp-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
+          <span class="{{ hp_cls }} pkmn-hp"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-types-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.type }}</span>
-            <span class="{{ val_cls }} pkmn-types"></span>
-          </div>
+      <div class="item pkmn-types-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.type }}</span>
+          <span class="{{ val_cls }} pkmn-types"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-stage-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
-            <span class="{{ val_cls }} pkmn-stage"></span>
-          </div>
+      <div class="item pkmn-stage-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
+          <span class="{{ val_cls }} pkmn-stage"></span>
         </div>
+      </div>
 
-        {% if view == 1 or view == 3 %}
+      {% if view == 1 or view == 3 %}
 
 
-        <div class="item pkmn-retreat-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
-            <span class="{{ val_cls }} pkmn-retreat"></span>
-          </div>
+      <div class="item pkmn-retreat-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
+          <span class="{{ val_cls }} pkmn-retreat"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-regulation-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
-            <span class="{{ val_cls }} pkmn-regulation"></span>
-          </div>
+      <div class="item pkmn-regulation-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
+          <span class="{{ val_cls }} pkmn-regulation"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-variants-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-            <span class="{{ lbl_cls }}">{{ labels.print }}</span>
-            <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
-          </div>
+      <div class="item pkmn-variants-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+          <span class="{{ lbl_cls }}">{{ labels.print }}</span>
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
         </div>
+      </div>
 
-        {% endif %}
+      {% endif %}
 
-        <div class="item pkmn-release-date-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.released }}</span>
-            <span class="{{ val_cls }} pkmn-release-date"></span>
-          </div>
+
+
+      <div class="item pkmn-price-avg-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.avg }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-price-avg-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.avg }}</span>
-            <span class="{{ val_cls }} pkmn-price-avg"></span>
-          </div>
+      <div class="item pkmn-price-avg7-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg7"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-price-avg7-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
-            <span class="{{ val_cls }} pkmn-price-avg7"></span>
-          </div>
+      <div class="item pkmn-price-tcg-market-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.tcg_market }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-market"></span>
         </div>
+      </div>
 
-        <div class="item pkmn-price-tcg-market-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.tcg_market }}</span>
-            <span class="{{ val_cls }} pkmn-price-tcg-market"></span>
-          </div>
+      <div class="item pkmn-price-tcg-low-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-low"></span>
         </div>
-
-        <div class="item pkmn-price-tcg-low-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
-            <span class="{{ val_cls }} pkmn-price-tcg-low"></span>
-          </div>
-        </div>
+      </div>
 
 
 
@@ -155,7 +157,7 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden image--contain w--max-48 lg:w--max-64" alt="">
+      <img class="pkmn-set-logo hidden image--contain mt--20 w--max-64 lg:w--max-120" alt="">
     </div>
     {% endif %}
   </div>
@@ -212,10 +214,10 @@
   </svg>
   <span class="title pkmn-title"></span>
   <span class="instance pkmn-instance
-  {% if view >= 3 %}
-  md:portrait:hidden
-  {% endif %}"></span>
-  </div>
+    {% if view >= 3 %}
+    md:portrait:hidden
+    {% endif %}"></span>
+</div>
 
 <script>
   (function() {
@@ -240,18 +242,18 @@
       else { img.src = ''; img.alt = ''; }
     });
     if (item && item.set_symbol) {
-        host.querySelectorAll('.set_symbol').forEach(function(img) {
-          img.src = item.set_symbol; }
-        );
+      host.querySelectorAll('.set_symbol').forEach(function(img) {
+        img.src = item.set_symbol; }
+                                                  );
     } else {
-        show('pokemon-logo');
+      show('pokemon-logo');
     }
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
     function show(key) {
-        host.querySelectorAll('.' + key).forEach(function(el) {
-            el.classList.remove('hidden');
-         });
+      host.querySelectorAll('.' + key).forEach(function(el) {
+        el.classList.remove('hidden');
+      });
     }
 
     function show2(key, value, extraClass) {

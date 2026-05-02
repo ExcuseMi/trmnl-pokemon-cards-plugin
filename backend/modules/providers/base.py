@@ -13,10 +13,10 @@ class BaseProvider:
         self.redis = redis
 
     def _cache_key(self, **filters) -> str:
-        return f'tcg:{self.name}:cache:{json.dumps(filters, sort_keys=True)}'
+        return f'tcg:{self.name}:cache:v2:{json.dumps(filters, sort_keys=True)}'
 
     def _lock_key(self, **filters) -> str:
-        return f'tcg:{self.name}:lock:{json.dumps(filters, sort_keys=True)}'
+        return f'tcg:{self.name}:lock:v2:{json.dumps(filters, sort_keys=True)}'
 
     async def get_cached(self, **filters) -> list[dict] | None:
         try:

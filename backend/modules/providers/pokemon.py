@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import random
 
@@ -10,7 +11,8 @@ from modules.providers.base import BaseProvider
 log = logging.getLogger(__name__)
 
 TCGDEX_BASE = 'https://api.tcgdex.net/v2'
-SAMPLE_SIZE = 20
+CARD_DETAIL_TTL = 86400
+ID_CAP = 200
 
 
 def _api(language: str) -> str:
@@ -20,7 +22,7 @@ def _api(language: str) -> str:
 
 class PokemonProvider(BaseProvider):
 
-    async def _fetch(self, **filters) -> list[dict] | None:
+    async def _fetch(self, **filters) -> list | None:
         set_id = filters.get('set_id', '').strip()
         rarity = filters.get('rarity', '').strip()
         ptype = filters.get('pokemon_type', '').strip()
@@ -30,15 +32,14 @@ class PokemonProvider(BaseProvider):
         card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
         if not card_ids and language != 'en':
             log.info('No cards found for language=%s, falling back to en', language)
-            api = _api('en')
-            card_ids = await self._fetch_ids(api, set_id, rarity, ptype)
+            card_ids = await self._fetch_ids(_api('en'), set_id, rarity, ptype)
         if not card_ids:
             return None
 
-        sample = random.sample(card_ids, min(SAMPLE_SIZE, len(card_ids)))
-        results = await asyncio.gather(*[self._fetch_card(api, cid) for cid in sample], return_exceptions=True)
-        cards = [r for r in results if isinstance(r, dict) and r.get('image_large')]
-        return cards if cards else None
+        if not set_id and len(card_ids) > ID_CAP:
+            card_ids = random.sample(card_ids, ID_CAP)
+
+        return card_ids
 
     async def _fetch_ids(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str] | None:
         if set_id:
@@ -63,6 +64,22 @@ class PokemonProvider(BaseProvider):
         except Exception as exc:
             log.error('Error fetching card IDs: %s', exc)
             return None
+
+    async def get_card_detail(self, api: str, card_id: str) -> dict | None:
+        cache_key = f'pokemon:card:v1:{card_id}'
+        try:
+            cached = await self.redis.get(cache_key)
+            if cached:
+                return json.loads(cached)
+        except Exception:
+            pass
+        card = await self._fetch_card(api, card_id)
+        if card:
+            try:
+                await self.redis.set(cache_key, json.dumps(card), ex=CARD_DETAIL_TTL)
+            except Exception:
+                pass
+        return card
 
     async def _fetch_card(self, api: str, card_id: str) -> dict | None:
         try:

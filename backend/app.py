@@ -8,7 +8,7 @@ import aiohttp
 from quart import Quart, Response, jsonify, request
 from redis.asyncio import Redis
 
-from modules.providers.pokemon import PokemonProvider
+from modules.providers.pokemon import PokemonProvider, _api as _pokemon_api
 from modules.utils.ip_whitelist import init_ip_whitelist, require_tiered_access
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -47,18 +47,28 @@ async def card():
     ttl = REFRESH_HOURS * 3600
 
     if await _provider.is_expired(ttl, **args):
-        cached = await _provider.get_cached(**args)
-        if cached:
+        cached_ids = await _provider.get_cached(**args)
+        if cached_ids:
             asyncio.create_task(_provider.refresh(**args))
         else:
-            cached = await _provider.refresh(**args)
+            cached_ids = await _provider.refresh(**args)
     else:
-        cached = await _provider.get_cached(**args)
+        cached_ids = await _provider.get_cached(**args)
 
-    if not cached:
+    if not cached_ids:
         return jsonify({'error': 'Failed to fetch cards'}), 503
 
-    selected = random.sample(cached, min(4, len(cached)))
+    api = _pokemon_api(args.get('language', 'en'))
+    pick = random.sample(cached_ids, min(8, len(cached_ids)))
+    results = await asyncio.gather(
+        *[_provider.get_card_detail(api, cid) for cid in pick],
+        return_exceptions=True,
+    )
+    selected = [r for r in results if isinstance(r, dict) and r.get('image_large')][:4]
+
+    if not selected:
+        return jsonify({'error': 'Failed to fetch cards'}), 503
+
     await _enrich_release_dates(selected)
     return jsonify({'data': selected})
 
