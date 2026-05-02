@@ -175,7 +175,7 @@ def _build_sets(raw_sets: list, search: str) -> list:
             result.append({'id': sid, 'name': label, '_date': release_date})
     result.sort(key=lambda x: x.pop('_date'), reverse=True)
     if not search or 'most recent' in search:
-        result.insert(0, {'id': 'most_recent', 'name': '★ Most Recent'})
+        result.insert(0, {'id': 'most_recent', 'name': 'Most Recent ★'})
     return result
 
 

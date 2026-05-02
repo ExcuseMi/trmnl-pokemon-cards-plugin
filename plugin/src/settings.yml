@@ -73,7 +73,7 @@ custom_fields:
   field_type: xhrSelectSearch
   name: Set
   description: Filter to a specific set
-  help_text: Choose <strong>★ Most Recent</strong> to always show the latest released set.
+  help_text: Choose <strong>Most Recent ★</strong> to always show the latest released set.
   endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
   http_verb: post
   exclude_csrf_token: true
