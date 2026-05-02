@@ -47,7 +47,22 @@ class PokemonProvider(BaseProvider):
 
     async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str]) -> list[str] | None:
         if set_id:
-            return await self._fetch_ids_single(api, set_id, '', '')
+            set_ids = set(await self._fetch_ids_single(api, set_id, '', '') or [])
+            if not set_ids:
+                return None
+            if not rarities and not ptypes:
+                return list(set_ids)
+            # Intersect set cards with globally-filtered cards to respect rarity/type within the set
+            r_list = rarities or ['']
+            p_list = ptypes or ['']
+            tasks = [self._fetch_ids_single(api, '', r, p) for r in r_list for p in p_list]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            filter_ids = set()
+            for res in results:
+                if isinstance(res, list):
+                    filter_ids.update(res)
+            combined = list(set_ids & filter_ids)
+            return combined if combined else None
 
         r_list = rarities or ['']
         p_list = ptypes or ['']
