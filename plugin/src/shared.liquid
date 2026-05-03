@@ -416,7 +416,13 @@
     }
 
     if (titleEl) titleEl.textContent = item.name || '';
-    if (instEl)  instEl.textContent  = item.set_name || '';
+    var cardCountRow = q('.pkmn-card-count-row');
+    var cardCountShown = cardCountRow && !cardCountRow.classList.contains('hidden');
+    var instLabel = item.set_name || '';
+    if (!cardCountShown && item.localId && item.card_count && item.card_count.official) {
+      instLabel += ' (' + item.localId + '/' + item.card_count.official + ')';
+    }
+    if (instEl) instEl.textContent = instLabel;
   })();
 </script>
 
