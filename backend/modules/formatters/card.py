@@ -67,6 +67,7 @@ def shape_card(raw: dict) -> dict:
         'dexId': dex_id,
         'localId': raw.get('localId', ''),
         'retreat': raw.get('retreat'),
+        'serie_name': '',
         'regulation_mark': raw.get('regulationMark', ''),
         'price': _format_price(pricing),
         'card_count': {

@@ -47,6 +47,8 @@ async def card():
         set_id = await _resolve_most_recent_set_id() or ''
     elif set_id in ('last_year', 'current_generation'):
         set_id = await _resolve_multi_set_filter(set_id)
+    elif set_id.startswith('serie::'):
+        set_id = await _resolve_serie_set_ids(set_id[7:])
     args['set_id'] = set_id
     # Normalize multi-select fields so cache key is order-independent
     args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
@@ -84,7 +86,7 @@ async def card():
 
 
 async def _enrich_release_dates(cards: list) -> None:
-    if all(c.get('set_release_date') for c in cards):
+    if all(c.get('set_release_date') and c.get('serie_name') for c in cards):
         return
     try:
         cache_key = 'pokemon:sets:enriched:v2'
@@ -95,12 +97,15 @@ async def _enrich_release_dates(cards: list) -> None:
             raw_sets = await _fetch_sets_with_dates()
             await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
         release_map = {s['id']: s.get('releaseDate', '') for s in raw_sets if s.get('id')}
+        serie_map = {s['id']: (s.get('serie') or {}).get('name', '') for s in raw_sets if s.get('id')}
     except Exception:
         return
     for card in cards:
+        sid = (card.get('id') or '').rsplit('-', 1)[0]
         if not card.get('set_release_date'):
-            sid = (card.get('id') or '').rsplit('-', 1)[0]
             card['set_release_date'] = release_map.get(sid, '')
+        if not card.get('serie_name'):
+            card['serie_name'] = serie_map.get(sid, '')
 
 
 async def _fetch_set_detail(session: aiohttp.ClientSession, set_id: str) -> dict:
@@ -218,6 +223,19 @@ def _resolve_current_generation_ids(raw_sets: list) -> list[str]:
     return [s['id'] for s in raw_sets if (s.get('serie') or {}).get('id') == current_serie and s.get('id')]
 
 
+async def _resolve_serie_set_ids(serie_id: str) -> str:
+    """Return comma-separated set IDs for all sets belonging to a given serie ID."""
+    try:
+        cache_key = 'pokemon:sets:enriched:v2'
+        cached = await _redis.get(cache_key)
+        raw_sets = json.loads(cached) if cached else await _fetch_sets_with_dates()
+        ids = [s['id'] for s in raw_sets if (s.get('serie') or {}).get('id') == serie_id and s.get('id')]
+        return ','.join(ids)
+    except Exception as exc:
+        log.error('Error resolving serie %s: %s', serie_id, exc)
+        return ''
+
+
 async def _resolve_most_recent_set_id() -> str | None:
     try:
         cached = await _redis.get('pokemon:sets:enriched:v2')
@@ -230,20 +248,30 @@ async def _resolve_most_recent_set_id() -> str | None:
 
 def _build_sets(raw_sets: list, search: str) -> list:
     result = []
+    serie_latest: dict[str, str] = {}
+    serie_names: dict[str, str] = {}
+
     for s in raw_sets:
         sid = s.get('id', '')
         name = s.get('name', '')
-        year_text = ""
         release_date = s.get('releaseDate', '')
-        if release_date:
-            year = release_date[:4]
-            year_text = f" ({year})"
+        year_text = f" ({release_date[:4]})" if release_date else ''
         label = f"{name}{year_text}"
         if not sid or not label:
             continue
+
+        serie = s.get('serie') or {}
+        serie_id = serie.get('id') if isinstance(serie, dict) else None
+        if serie_id:
+            serie_names.setdefault(serie_id, (serie.get('name') or ''))
+            if release_date > serie_latest.get(serie_id, ''):
+                serie_latest[serie_id] = release_date
+
         if not search or search in label.lower():
             result.append({'id': sid, 'name': label, '_date': release_date})
+
     result.sort(key=lambda x: x.pop('_date'), reverse=True)
+
     specials = []
     if not search or search in 'most recent ★':
         specials.append({'id': 'most_recent', 'name': 'Most Recent ★'})
@@ -251,8 +279,14 @@ def _build_sets(raw_sets: list, search: str) -> list:
         specials.append({'id': 'last_year', 'name': 'All Sets In The Last Year ★'})
     if not search or search in 'all sets current generation ★':
         specials.append({'id': 'current_generation', 'name': 'All Sets Current Generation ★'})
-    for i, s in enumerate(specials):
-        result.insert(i, s)
+
+    for serie_id in sorted(serie_latest, key=lambda k: serie_latest[k], reverse=True):
+        label = f'All {serie_names[serie_id]} Sets ★'
+        if not search or search in label.lower():
+            specials.append({'id': f'serie::{serie_id}', 'name': label})
+
+    for i, entry in enumerate(specials):
+        result.insert(i, entry)
     return result
 
 

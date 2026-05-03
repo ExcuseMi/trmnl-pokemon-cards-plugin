@@ -14,7 +14,7 @@
 
 <script>var __pkmn = {{ items | json }};</script>
 
-<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full layout--top m--0 p--0">
+<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full layout--top">
   <img class="pkmn-img image image image-dither image--contain h--full
     {% if view == 1  %}    portrait:hidden lg:portrait:block
     {% elsif view == 2  %}
@@ -56,6 +56,12 @@
         <span class="{{ val_cls }} pkmn-set-name"></span>
       </div>
     </div>
+    <div class="item pkmn-serie-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.serie }}</span>
+        <span class="{{ val_cls }} pkmn-serie"></span>
+      </div>
+    </div>
     <div class="item pkmn-illustrator-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
         <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
@@ -89,6 +95,12 @@
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.set }}</span>
           <span class="{{ val_cls }} pkmn-set-name"></span>
+        </div>
+      </div>
+      <div class="item pkmn-serie-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.serie }}</span>
+          <span class="{{ val_cls }} pkmn-serie"></span>
         </div>
       </div>
       <div class="item pkmn-illustrator-row hidden">
@@ -402,6 +414,7 @@
     show2('price-tcg-low', price.tcg_low);
 
     show2('set-name', item.set_name);
+    show2('serie', item.serie_name);
     show2('release-date', item.set_release_date);
 
     if (item.set_logo) {
