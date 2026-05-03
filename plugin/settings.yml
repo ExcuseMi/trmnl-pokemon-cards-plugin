@@ -1,0 +1,82 @@
+---
+strategy: polling
+no_screen_padding: 'yes'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: 3.1.0
+serverless_language: node
+polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | join: '','' | url_encode }}&rarity={{ rarity | join: '','' | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}'
+polling_headers: ''
+polling_body: ''
+id: 297288
+custom_fields:
+- keyname: author_info
+  name: About This Plugin
+  field_type: author_bio
+  description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/><strong>Data:</strong> <a href="https://tcgdex.net" target="_blank">TCGdex</a>.
+  github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
+  category: games,art
+- keyname: language
+  field_type: select
+  name: Language
+  description: Card language served by TCGdex.
+  options:
+  - English: en
+  - French: fr
+  - Spanish: es
+  - Italian: it
+  - Portuguese (BR): pt-br
+  - German: de
+  - Japanese: ja
+  - Chinese (Traditional): zh-tw
+  - Indonesian: id
+  - Thai: th
+  default: en
+  optional: true
+- keyname: pokemon_type
+  field_type: select
+  multiple: true
+  name: Pokémon Type
+  description: Show only cards of one or more types. Leave empty for all types.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  options:
+  - Fire: Fire
+  - Water: Water
+  - Grass: Grass
+  - Lightning: Lightning
+  - Psychic: Psychic
+  - Fighting: Fighting
+  - Darkness: Darkness
+  - Metal: Metal
+  - Dragon: Dragon
+  - Colorless: Colorless
+  - Fairy: Fairy
+  optional: true
+- keyname: rarity
+  field_type: select
+  multiple: true
+  name: Rarity
+  description: Show only cards of one or more rarities. Leave empty for all rarities. Great for browsing valuable or illustration cards.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  options:
+  - Common: Common
+  - Uncommon: Uncommon
+  - Rare: Rare
+  - Rare Holo: Rare Holo
+  - Double Rare: Double Rare
+  - Ultra Rare: Ultra Rare
+  - Illustration Rare: Illustration Rare
+  - Special Illustration Rare: Special Illustration Rare
+  optional: true
+- keyname: set_id
+  field_type: xhrSelectSearch
+  name: Set
+  description: Filter to a specific set
+  help_text: Choose <strong>Most Recent ★</strong> to always show the latest released set.
+  endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
+  http_verb: post
+  exclude_csrf_token: true
+  optional: true
+name: Pokemon Cards
+refresh_interval: 15

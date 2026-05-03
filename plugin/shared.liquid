@@ -1,0 +1,403 @@
+{% template main %}
+{% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
+{% if view == 1 %}
+{% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--2" %}
+{% assign val_cls = "description description--large lg:description--xxlarge" %}
+{% assign hp_cls  = "description description--large lg:description--xxlarge" %}
+{% assign rar_cls = "label label--base lg:label--large" %}
+{% else %}
+{% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--2" %}
+{% assign val_cls = "description description--large lg:description--xlarge" %}
+{% assign hp_cls  = "description description--large lg:description--xlarge" %}
+{% assign rar_cls = "label label--base" %}
+{% endif %}
+
+<script>var __pkmn = {{ items | json }};</script>
+
+<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full layout--top">
+  <img class="pkmn-img image image image-dither image--contain h--full
+    {% if view == 1  %}    portrait:hidden lg:portrait:block
+    {% elsif view == 2  %}
+    {% elsif view == 3  %} portrait:hidden lg:hidden
+    {% elsif view == 4  %} portrait:hidden
+    {% endif %}"
+    alt="height">
+  <img class="pkmn-img image image-dither image--contain w--full
+    {% if view == 1  %}    hidden portrait:block lg:portrait:hidden
+    {% elsif view == 2  %} hidden
+    {% elsif view == 3  %} hidden portrait:block lg:block
+    {% elsif view == 4  %} hidden portrait:block
+    {% endif %}"
+    alt="">
+
+  <div class="flex--col gap--small stretch-x w--full
+    {% if view == 1 %}   flex portrait:hidden
+    {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
+    {% elsif view == 3 %}hidden portrait:flex
+    {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
+    {% endif %}">
+    <span class="label label--primary label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
+    {% unless view == 2 %}
+    <div class="item pkmn-illustrator-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+        <span class="{{ val_cls }} pkmn-illustrator"></span>
+      </div>
+    </div>
+    <div class="item pkmn-rarity-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+        <span class="{{ rar_cls }} pkmn-rarity"></span>
+      </div>
+    </div>
+    <div class="item pkmn-release-date-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+        <span class="{{ val_cls }} pkmn-release-date"></span>
+      </div>
+    </div>
+    {% endunless %}
+    {% unless view == 1 or view == 2 %}
+    <div class="item pkmn-set-name-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+        <span class="{{ val_cls }} pkmn-set-name"></span>
+      </div>
+    </div>
+    {% endunless %}
+    <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% if view == 2 %} lg:portrait:flex lg:portrait:flex--col{% endif %}{% else %}flex flex--col{% endif %}">
+      {% if view == 2 %}
+      <div class="item pkmn-illustrator-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+          <span class="{{ val_cls }} pkmn-illustrator"></span>
+        </div>
+      </div>
+      <div class="item pkmn-rarity-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+          <span class="{{ rar_cls }} pkmn-rarity"></span>
+        </div>
+      </div>
+      <div class="item pkmn-release-date-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+          <span class="{{ val_cls }} pkmn-release-date"></span>
+        </div>
+      </div>
+      <div class="item pkmn-set-name-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+          <span class="{{ val_cls }} pkmn-set-name"></span>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if view != 4 %}
+      <div class="item pkmn-dex-id-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">Pokédex</span>
+          <span class="{{ val_cls }} pkmn-dex-id"></span>
+        </div>
+      </div>
+      {% endif %}
+
+
+      {% if view != 4 %}
+      <div class="item pkmn-hp-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
+          <span class="{{ hp_cls }} pkmn-hp"></span>
+        </div>
+      </div>
+
+      <div class="item pkmn-types-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.type }}</span>
+          <span class="{{ val_cls }} pkmn-types"></span>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if view != 4 %}
+      <div class="item pkmn-stage-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
+          <span class="{{ val_cls }} pkmn-stage"></span>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if view == 1 or view == 2 or view == 3 %}
+
+      <div class="w--full flex flex--col gap--small {% if view == 2 %}hidden lg:portrait:flex{% endif %}">
+      <div class="item pkmn-retreat-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
+          <span class="{{ val_cls }} pkmn-retreat"></span>
+        </div>
+      </div>
+
+      <div class="item pkmn-regulation-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
+          <span class="{{ val_cls }} pkmn-regulation"></span>
+        </div>
+      </div>
+
+      <div class="item pkmn-variants-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+          <span class="{{ lbl_cls }}">{{ labels.print }}</span>
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
+        </div>
+      </div>
+      </div>
+
+      {% endif %}
+
+
+
+      <div class="item pkmn-price-avg-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.avg }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg"></span>
+        </div>
+      </div>
+
+      {% if view != 4 %}
+      <div class="item pkmn-price-avg7-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg7"></span>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="item pkmn-price-tcg-market-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.tcg_market }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-market"></span>
+        </div>
+      </div>
+
+      {% if view != 4 %}
+      <div class="item pkmn-price-tcg-low-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-low"></span>
+        </div>
+      </div>
+      {% endif %}
+
+
+
+    </div>
+
+    {% if view == 1 %}
+    <div class="pkmn-set-row hidden">
+      <img class="pkmn-set-logo hidden image--contain mt--16 w--max-64 lg:w--max-120" alt="">
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="title_bar
+  {% if view == 1 %}
+  lg:portrait:hidden
+  {% elsif view == 2 %}
+
+  {% elsif view == 3 %}
+  md:hidden portrait:flex lg:flex
+  {% elsif view == 4 %}
+  lg:portrait:hidden
+  {% endif %}">
+  <img class="image  h--12 set_symbol" />
+  <svg class="image w--8 h--8 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 511.985 511.985" xml:space="preserve">
+    <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
+      c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-34.554,0-68.083,6.773-99.645,20.125
+      c-30.483,12.89-57.865,31.351-81.373,54.85c-23.499,23.507-41.959,50.889-54.85,81.372C6.774,187.91,0,221.44,0,255.993
+      c0,34.56,6.773,68.091,20.125,99.652c12.89,30.469,31.351,57.857,54.85,81.357c23.507,23.516,50.889,41.967,81.373,54.857
+      c31.562,13.344,65.091,20.125,99.645,20.125c34.561,0,68.092-6.781,99.652-20.125c30.469-12.891,57.857-31.342,81.373-54.857
+      c23.5-23.5,41.951-50.889,54.842-81.357c13.344-31.561,20.125-65.092,20.125-99.652C511.984,221.44,505.203,187.91,491.859,156.348z
+      "/>
+    <path style="fill:#E6E9ED;" d="M0.102,263.18c0.875,32.014,7.593,63.092,20.023,92.465c12.89,30.469,31.351,57.857,54.85,81.357
+      c23.507,23.516,50.889,41.967,81.373,54.857c31.562,13.344,65.091,20.125,99.645,20.125c34.561,0,68.092-6.781,99.652-20.125
+      c30.469-12.891,57.857-31.342,81.373-54.857c23.5-23.5,41.951-50.889,54.842-81.357c12.438-29.373,19.156-60.451,20.031-92.465
+      H0.102z"/>
+    <path style="fill:#434A54;" d="M510.765,281.211c0.812-8.344,1.219-16.75,1.219-25.218c0-9.516-0.516-18.953-1.531-28.289
+      c-12.719,1.961-30.984,4.516-53.998,7.054c-43.688,4.82-113.904,10.57-200.463,10.57c-86.552,0-156.776-5.75-200.455-10.57
+      c-23.022-2.539-41.28-5.093-53.998-7.054C0.516,237.04,0,246.478,0,255.993c0,8.468,0.406,16.875,1.219,25.218
+      c41.53,6.25,133.027,17.436,254.773,17.436S469.234,287.461,510.765,281.211z"/>
+    <path style="fill:#E6E9ED;" d="M309.334,266.656c0,29.459-23.891,53.334-53.342,53.334c-29.452,0-53.334-23.875-53.334-53.334
+      c0-29.453,23.882-53.327,53.334-53.327C285.443,213.33,309.334,237.204,309.334,266.656z"/>
+    <path style="fill:#434A54;" d="M255.992,170.66c-52.936,0-95.997,43.069-95.997,95.997s43.062,95.988,95.997,95.988
+      s95.996-43.061,95.996-95.988C351.988,213.729,308.928,170.66,255.992,170.66z M255.992,309.335
+      c-23.522,0-42.663-19.156-42.663-42.678c0-23.523,19.14-42.663,42.663-42.663c23.531,0,42.654,19.14,42.654,42.663
+      C298.646,290.178,279.523,309.335,255.992,309.335z"/>
+    <path style="opacity:0.2;fill:#FFFFFF;enable-background:new    ;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
+      c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-3.57,0-7.125,0.078-10.664,0.219
+      c30.789,1.25,60.662,7.93,88.974,19.906c30.498,12.89,57.873,31.351,81.371,54.85c23.5,23.507,41.969,50.889,54.857,81.372
+      c13.359,31.562,20.109,65.092,20.109,99.646c0,34.56-6.75,68.091-20.109,99.652c-12.889,30.469-31.357,57.857-54.857,81.357
+      c-23.498,23.516-50.873,41.967-81.371,54.857c-28.312,11.969-58.186,18.656-88.974,19.906c3.539,0.141,7.093,0.219,10.664,0.219
+      c34.561,0,68.092-6.781,99.652-20.125c30.469-12.891,57.857-31.342,81.373-54.857c23.5-23.5,41.951-50.889,54.842-81.357
+      c13.344-31.561,20.125-65.092,20.125-99.652C511.984,221.44,505.203,187.91,491.859,156.348z"/>
+    <path style="opacity:0.1;enable-background:new    ;" d="M20.125,355.645c12.89,30.469,31.351,57.857,54.85,81.357
+      c23.507,23.516,50.889,41.967,81.373,54.857c31.562,13.344,65.091,20.125,99.645,20.125c3.57,0,7.125-0.078,10.664-0.219
+      c-30.789-1.25-60.67-7.938-88.982-19.906c-30.483-12.891-57.857-31.342-81.364-54.857c-23.507-23.5-41.96-50.889-54.858-81.357
+      c-13.352-31.56-20.117-65.091-20.117-99.652c0-34.554,6.765-68.084,20.116-99.646C54.35,125.864,72.803,98.481,96.31,74.983
+      c23.507-23.507,50.881-41.968,81.364-54.858c28.312-11.976,58.193-18.656,88.982-19.906c-3.539-0.14-7.094-0.218-10.664-0.218
+      c-34.554,0-68.083,6.773-99.645,20.125c-30.483,12.89-57.865,31.351-81.373,54.858c-23.499,23.499-41.959,50.881-54.85,81.364
+      C6.774,187.91,0,221.44,0,255.993C0,290.553,6.774,324.085,20.125,355.645z"/>
+  </svg>
+  <span class="title pkmn-title"></span>
+  {% if pool_warning %}<span class="label label--warning">{{ pool_warning }} cards</span>{% endif %}
+  <span class="instance pkmn-instance
+    {% if view >= 3 %}
+    md:portrait:hidden
+    {% endif %}"></span>
+</div>
+
+<script>
+  (function() {
+    var views  = Array.from(document.querySelectorAll('.view'));
+    var host   = document.currentScript.closest('.view') || document.body;
+    var pool   = __pkmn || [];
+    var idx    = views.indexOf(host) % 4;
+    var item   = pool.length ? pool[idx % pool.length] : null;
+    var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
+    function q(sel) { return host.querySelector(sel); }
+
+    var titleEl = q('.pkmn-title');
+    var instEl  = q('.pkmn-instance');
+
+    if (!item || (!item.image_large && !item.name)) {
+      if (titleEl) titleEl.textContent = name;
+      host.querySelectorAll('.pkmn-img').forEach(function(img) { img.src = ''; img.alt = ''; });
+      return;
+    }
+
+    host.querySelectorAll('.pkmn-img').forEach(function(img) {
+      if (item.image_large) { img.src = item.image_large; img.alt = item.name || ''; }
+      else { img.src = ''; img.alt = ''; }
+    });
+    if (item && item.set_symbol) {
+      host.querySelectorAll('.set_symbol').forEach(function(img) {
+        img.src = item.set_symbol; }
+                                                  );
+    } else {
+      show('pokemon-logo');
+    }
+    var nameEl = q('.pkmn-name');
+    if (nameEl) nameEl.textContent = item.name || '';
+    function show(key) {
+      host.querySelectorAll('.' + key).forEach(function(el) {
+        el.classList.remove('hidden');
+      });
+    }
+
+    function show2(key, value, extraClass) {
+      if (!value && value !== 0) return;
+      var val = q('.pkmn-' + key);
+      var row = q('.pkmn-' + key + '-row');
+      if (val) {
+        val.textContent = String(value);
+        if (extraClass) val.classList.add(extraClass);
+      }
+      if (row) row.classList.remove('hidden');
+    }
+
+    function rarityClass(r) {
+      r = (r || '').toLowerCase();
+      if (r.includes('special illustration') || r.includes('hyper')) return 'label--error';
+      if (r.includes('illustration'))  return 'label--warning';
+      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) return 'label--primary';
+      if (r.includes('rare')) return 'label--primary';
+      return '';
+    }
+
+    show2('dex-id', item.dexId ? '#' + item.dexId : '');
+    show2('illustrator', item.illustrator);
+    show2('hp', item.hp);
+    show2('types', item.types ? item.types.join(', ') : '');
+    show2('stage', item.stage);
+    show2('rarity', item.rarity, rarityClass(item.rarity));
+    //show2('retreat', item.retreat != null ? item.retreat : '');
+    show2('regulation', item.regulation_mark);
+
+    var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
+    var variantOrder = ['holo', 'reverse', 'firstEdition', 'normal', 'wPromo'];
+    if (item.variants) {
+      var container = q('.pkmn-variants');
+      var hasAny = false;
+      variantOrder.forEach(function(key) {
+        if (!item.variants[key]) return;
+        hasAny = true;
+        var span = document.createElement('span');
+        span.className = 'label label--base label--inverted rounded pl--2 pr--2';
+        span.textContent = VARIANT_LABELS[key];
+        if (container) container.appendChild(span);
+      });
+      if (hasAny) {
+        var vrow = q('.pkmn-variants-row');
+        if (vrow) vrow.classList.remove('hidden');
+      }
+    }
+
+    if (item.card_count) {
+      var official = item.card_count.official;
+      var total = item.card_count.total;
+      if (official != null && total != null) {
+        show2('card-count', official + ' / ' + total);
+      }
+    }
+
+    var price = item.price || {};
+    if (!price.avg && item.pricing && item.pricing.cardmarket) {
+      var cm = item.pricing.cardmarket;
+      var sym = cm.unit === 'EUR' ? '€' : (cm.unit === 'USD' ? '$' : (cm.unit || '') + ' ');
+      function fmtP(v) { return v != null ? sym + Number(v).toFixed(2) : ''; }
+      price.avg  = fmtP(cm.avg);
+      price.avg7 = fmtP(cm.avg7);
+      price.low  = fmtP(cm.low);
+    }
+    if (!price.tcg_market && item.pricing && item.pricing.tcgplayer) {
+      var tcg = item.pricing.tcgplayer;
+      var tsym = tcg.unit === 'USD' ? '$' : (tcg.unit === 'EUR' ? '€' : (tcg.unit || '') + ' ');
+      var normal = tcg.normal || {};
+      function fmtT(v) { return v != null ? tsym + Number(v).toFixed(2) : ''; }
+      price.tcg_market = fmtT(normal.marketPrice);
+      price.tcg_low    = fmtT(normal.lowPrice);
+    }
+    if (price.avg && price.tcg_market) {
+      show2('price-avg', price.avg + ' · ' + price.tcg_market);
+    } else {
+      show2('price-avg', price.avg);
+      show2('price-tcg-market', price.tcg_market);
+    }
+    show2('price-avg7', price.avg7);
+    show2('price-tcg-low', price.tcg_low);
+
+    var setYear = item.set_release_date ? item.set_release_date.slice(0, 4) : '';
+    var setLabel = item.set_name || '';
+    if (setYear) setLabel += ' (' + setYear + ')';
+    show2('set-name', setLabel);
+    show2('release-date', item.set_release_date);
+
+    if (item.set_logo) {
+      var setLogoEl = q('.pkmn-set-logo');
+      if (setLogoEl) {
+        setLogoEl.src = item.set_logo;
+        setLogoEl.alt = item.set_name || '';
+        setLogoEl.classList.remove('hidden');
+        var setRow = q('.pkmn-set-row');
+        if (setRow) setRow.classList.remove('hidden');
+      }
+    }
+
+    if (titleEl) titleEl.textContent = item.name || '';
+    if (instEl)  instEl.textContent  = item.set_name || '';
+  })();
+</script>
+
+{% endtemplate %}
