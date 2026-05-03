@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import random
+from datetime import datetime
 
 import aiohttp
 from quart import Quart, Response, jsonify, request
@@ -44,6 +45,8 @@ async def card():
         set_id = set_id.split('::')[0]
     if set_id == 'most_recent':
         set_id = await _resolve_most_recent_set_id() or ''
+    elif set_id in ('last_year', 'current_generation'):
+        set_id = await _resolve_multi_set_filter(set_id)
     args['set_id'] = set_id
     # Normalize multi-select fields so cache key is order-independent
     args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
@@ -169,6 +172,52 @@ async def _parse_search() -> str:
     return request.args.get('q', '').lower().strip()
 
 
+async def _resolve_multi_set_filter(filter_name: str) -> str:
+    """Resolve 'last_year' or 'current_generation' to a comma-separated string of set IDs."""
+    try:
+        cache_key = 'pokemon:sets:enriched:v2'
+        cached = await _redis.get(cache_key)
+        if cached:
+            raw_sets = json.loads(cached)
+        else:
+            raw_sets = await _fetch_sets_with_dates()
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+
+        if filter_name == 'last_year':
+            cutoff = (datetime.now().replace(year=datetime.now().year - 1)).strftime('%Y-%m-%d')
+            ids = [s['id'] for s in raw_sets if s.get('releaseDate', '') >= cutoff and s.get('id')]
+        elif filter_name == 'current_generation':
+            ids = _resolve_current_generation_ids(raw_sets)
+        else:
+            return ''
+        return ','.join(ids)
+    except Exception as exc:
+        log.error('Error resolving set filter %s: %s', filter_name, exc)
+        return ''
+
+
+def _resolve_current_generation_ids(raw_sets: list) -> list[str]:
+    """Return IDs of all sets belonging to the current (most recent) TCG series.
+
+    Series are detected from the 'serie.id' field on each set detail record.
+    The current series is whichever has the most-recent first-release date.
+    """
+    serie_first: dict[str, str] = {}
+    for s in raw_sets:
+        serie = s.get('serie') or {}
+        serie_id = serie.get('id') if isinstance(serie, dict) else None
+        release = s.get('releaseDate', '')
+        if serie_id and release:
+            if serie_id not in serie_first or release < serie_first[serie_id]:
+                serie_first[serie_id] = release
+
+    if not serie_first:
+        return []
+
+    current_serie = max(serie_first, key=lambda k: serie_first[k])
+    return [s['id'] for s in raw_sets if (s.get('serie') or {}).get('id') == current_serie and s.get('id')]
+
+
 async def _resolve_most_recent_set_id() -> str | None:
     try:
         cached = await _redis.get('pokemon:sets:enriched:v2')
@@ -195,8 +244,15 @@ def _build_sets(raw_sets: list, search: str) -> list:
         if not search or search in label.lower():
             result.append({'id': sid, 'name': label, '_date': release_date})
     result.sort(key=lambda x: x.pop('_date'), reverse=True)
+    specials = []
     if not search or search in 'most recent ★':
-        result.insert(0, {'id': 'most_recent', 'name': 'Most Recent ★'})
+        specials.append({'id': 'most_recent', 'name': 'Most Recent ★'})
+    if not search or search in 'all sets in the last year ★':
+        specials.append({'id': 'last_year', 'name': 'All Sets In The Last Year ★'})
+    if not search or search in 'all sets current generation ★':
+        specials.append({'id': 'current_generation', 'name': 'All Sets Current Generation ★'})
+    for i, s in enumerate(specials):
+        result.insert(i, s)
     return result
 
 

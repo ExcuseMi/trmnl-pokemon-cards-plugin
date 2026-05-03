@@ -47,7 +47,16 @@ class PokemonProvider(BaseProvider):
 
     async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str]) -> list[str] | None:
         if set_id:
-            set_ids = set(await self._fetch_ids_single(api, set_id, '', '') or [])
+            sid_list = [s.strip() for s in set_id.split(',') if s.strip()]
+            if len(sid_list) == 1:
+                set_ids = set(await self._fetch_ids_single(api, sid_list[0], '', '') or [])
+            else:
+                tasks = [self._fetch_ids_single(api, sid, '', '') for sid in sid_list]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                set_ids = set()
+                for res in results:
+                    if isinstance(res, list):
+                        set_ids.update(res)
             if not set_ids:
                 return None
             if not rarities and not ptypes:
