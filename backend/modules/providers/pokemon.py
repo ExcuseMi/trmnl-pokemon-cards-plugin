@@ -14,9 +14,13 @@ TCGDEX_BASE = 'https://api.tcgdex.net/v2'
 CARD_DETAIL_TTL = 86400
 ID_CAP = 200
 
+_VALID_LANGS = {'en', 'fr', 'es', 'it', 'pt-br', 'de', 'ja', 'zh-tw', 'id', 'th'}
+
 
 def _api(language: str) -> str:
-    lang = (language or 'en').strip().lower() or 'en'
+    lang = (language or '').strip().lower().split()[0] if language else ''
+    if lang not in _VALID_LANGS:
+        lang = 'en'
     return f'{TCGDEX_BASE}/{lang}'
 
 

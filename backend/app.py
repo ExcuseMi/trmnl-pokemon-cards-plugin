@@ -9,7 +9,7 @@ import aiohttp
 from quart import Quart, Response, jsonify, request
 from redis.asyncio import Redis
 
-from modules.providers.pokemon import PokemonProvider, _api as _pokemon_api, _parse_multi
+from modules.providers.pokemon import PokemonProvider, _api as _pokemon_api, _parse_multi, _VALID_LANGS
 from modules.utils.ip_whitelist import init_ip_whitelist, require_tiered_access
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -40,15 +40,17 @@ async def _startup():
 @require_tiered_access(lambda: _redis, prefix='card')
 async def card():
     args = dict(request.args)
+    raw_lang = (args.get('language') or '').strip().lower().split()[0]
+    args['language'] = raw_lang if raw_lang in _VALID_LANGS else 'en'
     set_id = args.get('set_id', '')
-    if '::' in set_id:
-        set_id = set_id.split('::')[0]
     if set_id == 'most_recent':
         set_id = await _resolve_most_recent_set_id() or ''
     elif set_id in ('last_year', 'current_generation'):
         set_id = await _resolve_multi_set_filter(set_id)
     elif set_id.startswith('serie::'):
         set_id = await _resolve_serie_set_ids(set_id[7:])
+    elif '::' in set_id:
+        set_id = set_id.split('::')[0]
     args['set_id'] = set_id
     # Normalize multi-select fields so cache key is order-independent
     args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
