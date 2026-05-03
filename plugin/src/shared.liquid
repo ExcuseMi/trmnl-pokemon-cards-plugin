@@ -36,7 +36,7 @@
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
     {% endif %}">
-    <span class="label label--filled label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
+    <span class="label label--primary label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2"></span>
     {% unless view == 2 %}
     <div class="item pkmn-illustrator-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
@@ -65,7 +65,7 @@
       </div>
     </div>
     {% endunless %}
-    <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
+    <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% if view == 2 %} lg:portrait:flex lg:portrait:flex--col{% endif %}{% else %}flex flex--col{% endif %}">
       {% if view == 2 %}
       <div class="item pkmn-illustrator-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -128,9 +128,9 @@
       </div>
       {% endif %}
 
-      {% if view == 1 or view == 3 %}
+      {% if view == 1 or view == 2 or view == 3 %}
 
-
+      <div class="w--full flex flex--col gap--small {% if view == 2 %}hidden lg:portrait:flex{% endif %}">
       <div class="item pkmn-retreat-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
@@ -150,6 +150,7 @@
           <span class="{{ lbl_cls }}">{{ labels.print }}</span>
           <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
         </div>
+      </div>
       </div>
 
       {% endif %}
