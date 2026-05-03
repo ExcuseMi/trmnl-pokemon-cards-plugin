@@ -84,10 +84,14 @@ async def _enrich_release_dates(cards: list) -> None:
     if all(c.get('set_release_date') for c in cards):
         return
     try:
-        cached = await _redis.get('pokemon:sets:enriched:v2')
-        if not cached:
-            return
-        release_map = {s['id']: s.get('releaseDate', '') for s in json.loads(cached) if s.get('id')}
+        cache_key = 'pokemon:sets:enriched:v2'
+        cached = await _redis.get(cache_key)
+        if cached:
+            raw_sets = json.loads(cached)
+        else:
+            raw_sets = await _fetch_sets_with_dates()
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+        release_map = {s['id']: s.get('releaseDate', '') for s in raw_sets if s.get('id')}
     except Exception:
         return
     for card in cards:
