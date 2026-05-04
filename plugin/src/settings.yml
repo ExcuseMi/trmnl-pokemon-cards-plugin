@@ -21,7 +21,7 @@ custom_fields:
   field_type: xhrSelectSearch
   name: Set
   description: Filter to a specific set, or use a smart filter to browse across multiple sets at once.
-  help_text: "<strong>Most Recent ★</strong> — always shows cards from the latest released set.<br/> <strong>All Sets In The Last Year ★</strong> — pools cards from every set released in the past 12 months.<br/> <strong>All Sets Current Generation ★</strong> — pools cards from all sets in the current TCG series (e.g. all Scarlet &amp; Violet sets).\n"
+  help_text: "<strong>Most Recent ★</strong> — always shows cards from the latest released set.<br/> <strong>All Sets In The Last Year ★</strong> — pools cards from every set released in the past 12 months.<br/> <strong>All Sets Current Series ★</strong> — pools cards from all sets in the current TCG series (e.g. all Scarlet &amp; Violet sets).\n"
   endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
   http_verb: post
   exclude_csrf_token: true

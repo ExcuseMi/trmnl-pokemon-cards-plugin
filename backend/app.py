@@ -283,8 +283,8 @@ def _build_sets(raw_sets: list, search: str) -> list:
         specials.append({'id': 'most_recent', 'name': 'Most Recent ★'})
     if not search or search in 'all sets in the last year ★':
         specials.append({'id': 'last_year', 'name': 'All Sets In The Last Year ★'})
-    if not search or search in 'all sets current generation ★':
-        specials.append({'id': 'current_generation', 'name': 'All Sets Current Generation ★'})
+    if not search or search in 'all sets current series ★':
+        specials.append({'id': 'current_generation', 'name': 'All Sets Current Series ★'})
 
     for serie_id in sorted(serie_latest, key=lambda k: serie_latest[k], reverse=True):
         label = f'All {serie_names[serie_id]} Sets ★'
