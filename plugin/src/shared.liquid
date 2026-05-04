@@ -151,7 +151,6 @@
       <div class="hidden lg:flex lg:flex--col gap--small w--full">
         <div class="item pkmn-variants-row hidden">
           <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-            <span class="{{ lbl_cls }}">{{ labels.print }}</span>
             <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
           </div>
         </div>
@@ -179,7 +178,6 @@
       </div>
       <div class="item pkmn-variants-row hidden">
         <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-          <span class="{{ lbl_cls }}">{{ labels.print }}</span>
           <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
         </div>
       </div>
@@ -199,13 +197,14 @@
           <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
           <span class="{{ val_cls }} pkmn-price-avg7"></span>
         </div>
-         <div class="item pkmn-hp-row hidden">
+      </div>
+      <div class="item pkmn-hp-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
           <span class="{{ hp_cls }} pkmn-hp"></span>
         </div>
       </div>
-      </div>
+
       {% endif %}
 
       <div class="item pkmn-price-tcg-market-row hidden">
