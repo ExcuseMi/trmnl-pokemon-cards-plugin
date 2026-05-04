@@ -209,24 +209,23 @@ async def _resolve_multi_set_filter(filter_name: str) -> str:
 
 
 def _resolve_current_generation_ids(raw_sets: list) -> list[str]:
-    """Return IDs of all sets belonging to the current (most recent) TCG series.
+    """Return IDs of all sets belonging to the current (most recently active) TCG series.
 
-    Series are detected from the 'serie.id' field on each set detail record.
-    The current series is whichever has the most-recent first-release date.
+    The current series is whichever has the most recently released set.
     """
-    serie_first: dict[str, str] = {}
+    serie_latest: dict[str, str] = {}
     for s in raw_sets:
         serie = s.get('serie') or {}
         serie_id = serie.get('id') if isinstance(serie, dict) else None
         release = s.get('releaseDate', '')
         if serie_id and release:
-            if serie_id not in serie_first or release < serie_first[serie_id]:
-                serie_first[serie_id] = release
+            if serie_id not in serie_latest or release > serie_latest[serie_id]:
+                serie_latest[serie_id] = release
 
-    if not serie_first:
+    if not serie_latest:
         return []
 
-    current_serie = max(serie_first, key=lambda k: serie_first[k])
+    current_serie = max(serie_latest, key=lambda k: serie_latest[k])
     return [s['id'] for s in raw_sets if (s.get('serie') or {}).get('id') == current_serie and s.get('id')]
 
 
