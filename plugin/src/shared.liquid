@@ -415,7 +415,9 @@
     show2('price-avg7', price.avg7);
     show2('price-tcg-low', price.tcg_low);
 
-    show2('set-name', item.set_name);
+    var titleBarEl = host.querySelector('.title_bar');
+    var titleBarVisible = titleBarEl && titleBarEl.offsetHeight > 0;
+    if (!titleBarVisible) show2('set-name', item.set_name);
     show2('serie', item.serie_name);
     show2('release-date', item.set_release_date);
 
