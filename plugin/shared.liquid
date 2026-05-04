@@ -30,7 +30,7 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col gap--small stretch-x w--full
+  <div class="flex--col gap--small stretch-x w--full h--full
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
@@ -179,7 +179,7 @@
       <div class="item pkmn-regulation-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
-          <span class="{{ val_cls }} pkmn-regulation label--outline"></span>
+          <span class="{{ val_cls }} w--4 text--center pkmn-regulation label--outline"></span>
         </div>
       </div>
       <div class="item pkmn-variants-row hidden">
