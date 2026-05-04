@@ -1,6 +1,6 @@
 ---
 strategy: polling
-no_screen_padding: 'yes'
+no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
@@ -17,6 +17,15 @@ custom_fields:
   description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/><strong>Data:</strong> <a href="https://tcgdex.net" target="_blank">TCGdex</a>.
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
+- keyname: set_id
+  field_type: xhrSelectSearch
+  name: Set
+  description: Filter to a specific set, or use a smart filter to browse across multiple sets at once.
+  help_text: "<strong>Most Recent ★</strong> — always shows cards from the latest released set.<br/> <strong>All Sets In The Last Year ★</strong> — pools cards from every set released in the past 12 months.<br/> <strong>All Sets Current Series ★</strong> — pools cards from all sets in the current TCG series (e.g. all Scarlet &amp; Violet sets).\n"
+  endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
+  http_verb: post
+  exclude_csrf_token: true
+  optional: true
 - keyname: language
   field_type: select
   name: Language
@@ -33,6 +42,22 @@ custom_fields:
   - Indonesian: id
   - Thai: th
   default: en
+  optional: true
+- keyname: rarity
+  field_type: select
+  multiple: true
+  name: Rarity
+  description: Show only cards of one or more rarities. Leave empty for all rarities. Great for browsing valuable or illustration cards.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  options:
+  - Common: Common
+  - Uncommon: Uncommon
+  - Rare: Rare
+  - Rare Holo: Rare Holo
+  - Double Rare: Double Rare
+  - Ultra Rare: Ultra Rare
+  - Illustration Rare: Illustration Rare
+  - Special Illustration Rare: Special Illustration Rare
   optional: true
 - keyname: pokemon_type
   field_type: select
@@ -52,31 +77,6 @@ custom_fields:
   - Dragon: Dragon
   - Colorless: Colorless
   - Fairy: Fairy
-  optional: true
-- keyname: rarity
-  field_type: select
-  multiple: true
-  name: Rarity
-  description: Show only cards of one or more rarities. Leave empty for all rarities. Great for browsing valuable or illustration cards.
-  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
-  options:
-  - Common: Common
-  - Uncommon: Uncommon
-  - Rare: Rare
-  - Rare Holo: Rare Holo
-  - Double Rare: Double Rare
-  - Ultra Rare: Ultra Rare
-  - Illustration Rare: Illustration Rare
-  - Special Illustration Rare: Special Illustration Rare
-  optional: true
-- keyname: set_id
-  field_type: xhrSelectSearch
-  name: Set
-  description: Filter to a specific set
-  help_text: Choose <strong>Most Recent ★</strong> to always show the latest released set.
-  endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
-  http_verb: post
-  exclude_csrf_token: true
   optional: true
 name: Pokemon Cards
 refresh_interval: 15
