@@ -40,7 +40,7 @@ async def _startup():
 @require_tiered_access(lambda: _redis, prefix='card')
 async def card():
     args = dict(request.args)
-    raw_lang = (args.get('language') or '').strip().lower().split()[0]
+    raw_lang = ((args.get('language') or '').strip().lower().split() or [''])[0]
     args['language'] = raw_lang if raw_lang in _VALID_LANGS else 'en'
     set_id = args.get('set_id', '')
     # xhrSelect appends '::label' to every value; strip it first
