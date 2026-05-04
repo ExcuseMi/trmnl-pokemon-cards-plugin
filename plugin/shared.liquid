@@ -230,7 +230,8 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden image--contain mt--1 w--max-64 lg:w--max-120" alt="">
+      {% comment %}Image could be bigger, but it takes away to much attention from the card.{% endcomment %}
+      <img class="pkmn-set-logo hidden image--contain w--[30cqw] mt--1 lg:mt--8 md:h--max-32 lg:h--max-64" alt="">
     </div>
     {% endif %}
   </div>
@@ -246,8 +247,8 @@
   {% elsif view == 4 %}
   md:hidden md:portrait:flex lg:portrait:hidden
   {% endif %}">
-  <img class="image  h--12 set_symbol" />
-  <svg class="image w--8 h--8 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  <img class="image h--12 set_symbol" />
+  <svg class="image w--8 h--10 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 511.985 511.985" xml:space="preserve">
     <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
       c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-34.554,0-68.083,6.773-99.645,20.125
