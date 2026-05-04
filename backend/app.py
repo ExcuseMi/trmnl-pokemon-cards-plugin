@@ -43,14 +43,19 @@ async def card():
     raw_lang = (args.get('language') or '').strip().lower().split()[0]
     args['language'] = raw_lang if raw_lang in _VALID_LANGS else 'en'
     set_id = args.get('set_id', '')
+    # xhrSelect appends '::label' to every value; strip it first
+    if '::' in set_id:
+        if set_id.startswith('serie::'):
+            parts = set_id.split('::')
+            set_id = '::'.join(parts[:2])  # keep 'serie::<id>', drop label
+        else:
+            set_id = set_id.split('::')[0]
     if set_id == 'most_recent':
         set_id = await _resolve_most_recent_set_id() or ''
     elif set_id in ('last_year', 'current_generation'):
         set_id = await _resolve_multi_set_filter(set_id)
     elif set_id.startswith('serie::'):
         set_id = await _resolve_serie_set_ids(set_id[7:])
-    elif '::' in set_id:
-        set_id = set_id.split('::')[0]
     args['set_id'] = set_id
     # Normalize multi-select fields so cache key is order-independent
     args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
