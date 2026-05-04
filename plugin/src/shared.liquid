@@ -112,12 +112,14 @@
       {% endif %}
 
       {% if view != 4 %}
+      {% if view != 2 %}
       <div class="item pkmn-hp-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
           <span class="{{ hp_cls }} pkmn-hp"></span>
         </div>
       </div>
+      {% endif %}
       <div class="item pkmn-types-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.type }}</span>
@@ -228,7 +230,7 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden image--contain mt--8 w--max-64 lg:w--max-120" alt="">
+      <img class="pkmn-set-logo hidden image--contain mt--1 w--max-64 lg:w--max-120" alt="">
     </div>
     {% endif %}
   </div>
