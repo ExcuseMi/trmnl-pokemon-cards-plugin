@@ -74,4 +74,6 @@ def shape_card(raw: dict) -> dict:
             'official': card_count.get('official'),
             'total': card_count.get('total'),
         },
+        'description': raw.get('description',''),
+        'evolveFrom': raw.get('evolveFrom', '')
     }
