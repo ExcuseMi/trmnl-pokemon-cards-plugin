@@ -14,7 +14,7 @@
 
 <script>var __pkmn = {{ items | json }};</script>
 
-<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full layout--top">
+<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} gap--medium h--full">
   <img class="pkmn-img image image image-dither image--contain h--full
     {% if view == 1  %}    portrait:hidden lg:portrait:block
     {% elsif view == 2  %}
@@ -416,7 +416,7 @@
     show2('price-tcg-low', price.tcg_low);
 
     var titleBarEl = host.querySelector('.title_bar');
-    var titleBarVisible = titleBarEl && titleBarEl.offsetHeight > 0;
+    var titleBarVisible = {{ view }} !== 4 && titleBarEl && titleBarEl.offsetHeight > 0;
     if (!titleBarVisible) show2('set-name', item.set_name);
     show2('serie', item.serie_name);
     show2('release-date', item.set_release_date);
