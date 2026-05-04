@@ -14,9 +14,10 @@ custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/><strong>Data:</strong> <a href="https://tcgdex.net" target="_blank">TCGdex</a>.
+  description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/>
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
+  learn_more_url: https://tcgdex.net/
 - keyname: set_id
   field_type: xhrSelectSearch
   name: Set

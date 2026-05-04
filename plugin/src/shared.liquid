@@ -30,7 +30,7 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col gap--small stretch-x w--full
+  <div class="flex--col gap--small stretch-x w--full h--full
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
@@ -117,6 +117,12 @@
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
           <span class="{{ hp_cls }} pkmn-hp"></span>
+        </div>
+      </div>
+      <div class="item pkmn-evolve-from-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.evolve_from }}</span>
+          <span class="{{ val_cls }} pkmn-evolve-from"></span>
         </div>
       </div>
       {% endif %}
@@ -232,6 +238,10 @@
     <div class="pkmn-set-row hidden">
       <img class="pkmn-set-logo hidden image--contain mt--1 w--max-64 lg:w--max-120" alt="">
     </div>
+    <div class="item pkmn-description description outline hidden">
+
+    </div>
+
     {% endif %}
   </div>
 </div>
@@ -356,6 +366,8 @@
     show2('hp', item.hp);
     show2('types', item.types ? item.types.join(', ') : '');
     show2('stage', item.stage);
+    show2('evolve-from', item.evolve_from);
+
     show2('rarity', item.rarity, rarityClass(item.rarity));
     //show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
