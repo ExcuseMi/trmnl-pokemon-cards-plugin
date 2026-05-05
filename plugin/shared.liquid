@@ -1,23 +1,31 @@
 {% template main %}
 {% if view == 1 %}
-{% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--3 pt--1 pb--1 m--0_5" %}
-{% assign val_cls = "description description--large lg:description--xxlarge m--0_5 p--1" %}
-{% assign hp_cls  = "description description--large lg:description--xxlarge m--1 p--1" %}
-{% assign rar_cls = "label label--base lg:label--large p--1 ml--1 rounded " %}
+{% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
+{% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
+{% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2 " %}
+
 {% assign gap = "gap--none lg:gap--small " %}
 
 {% else %}
-{% assign lbl_cls = "label label--small lg:label--base bg--gray-75 rounded p--1 pb--1 mr--1" %}
-{% assign val_cls = "description description--base lg:description--large m--0_5 p--1" %}
-{% assign hp_cls  = "description description--base lg:description--large m--0_5 p--1" %}
-{% assign rar_cls = "label label--small lg:label--base m--0_5 p--1 rounded" %}
-{% assign gap = "gap--none lg:gap--small " %}
+{% assign lbl_cls = "label label--small lg:label--base p--1 pb--1 mr--1" %}
+{% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2" %}
+{% assign mark_cls = "description description--base lg:description--large bg--white m--0_5 p--1 pl--2 pr--2" %}
 
+{% assign gap = "gap--none lg:gap--small portrait:gap--none " %}
 {% endif %}
 
 <script>var __pkmn = {{ items | json }};</script>
 
-<div class="layout {% unless view == 3%}layout--row {% else %}layout--col{% endunless %} {% if view <= 2 %} gap--medium {% else %} gap--small {% endif %} h--full">
+<div class="layout h--full
+  {% if view == 1 %}
+  layout--row gap--medium
+  {% elsif view == 2 %}
+  layout--row gap--medium
+  {% elsif view == 3 %}
+  layout--col gap--small
+  {% elsif view == 4 %}
+  layout--row gap--small p--1
+  {% endif %}">
   <img class="pkmn-img image image image-dither image--contain h--full
     {% if view == 1  %}    portrait:hidden lg:portrait:block
     {% elsif view == 2  %}
@@ -33,20 +41,20 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col stretch-x w--full h--full
+  <div class="flex--col stretch-x w--full h--full bg--gray-75 1bit:bg--white p--1 lg:p--2 m--1 outline {{gap}}
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
-    {% endif %} {{gap}} outline p--1 lg:p--2 m--1">
-    <span class="label label--primary rounded p--1 pl--3 pr--3 
-      label--xlarge lg:label--xxlarge
+    {% endif %}">
+    <span class="label rounded rounded--small p--1 pl--3 pr--3
+      label--xlarge lg:label--xxlarge w--full text--stroke
       pkmn-name" data-clamp="2"></span>
     {% unless view == 2 %}
-    <div class="item pkmn-rarity-row hidden">
+    <div class="item pkmn-rarity-row hidden ">
       <div class="content flex flex--row flex--center-y gap--small">
         <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
-        <span class="{{ rar_cls }} pkmn-rarity" data-clamp="2"></span>
+        <span class="{{ val_cls }} pkmn-rarity "></span>
       </div>
     </div>
     <div class="item pkmn-card-count-row hidden">
@@ -93,10 +101,10 @@
     {% endunless %}
     <div class="w--full {{gap}} {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %} gap--none{% else %}flex flex--col{% endif %}">
       {% if view == 2 %}
-      <div class="item pkmn-rarity-row hidden">
+      <div class="item pkmn-rarity-row  hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
-          <span class="{{ rar_cls }} pkmn-rarity" data-clamp="2"></span>
+          <span class="{{ val_cls }} pkmn-rarity"></span>
         </div>
       </div>
       <div class="item pkmn-card-count-row hidden">
@@ -179,7 +187,7 @@
       <div class="item pkmn-regulation-row hidden">
         <div class=" content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }} ">{{ labels.mark }}</span>
-          <span class="{{ val_cls }} pkmn-regulation label--outline p--2 pt--1 pb--1 text--center" ></span>
+          <span class="{{ mark_cls }} pkmn-regulation label--outline p--2 pt--1 pb--1 text--center" ></span>
         </div>
       </div>
       <div class="item pkmn-variants-row hidden">
@@ -242,9 +250,9 @@
   {% elsif view == 2 %}
 
   {% elsif view == 3 %}
-  md:hidden portrait:flex lg:flex
+  md:hidden portrait:flex lg:flex lg:portrait:hidden
   {% elsif view == 4 %}
-  md:hidden md:portrait:flex lg:portrait:hidden
+  md:hidden md:portrait:hidden lg:portrait:hidden
   {% endif %}">
   <img class="image  h--12 image--stroke image-dither set_symbol" />
   <svg class="image w--8 h--8 pokemon-logo image--stroke image-dither hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -339,6 +347,10 @@
     }
     var nameEl = q('.pkmn-name');
     if (nameEl) nameEl.textContent = item.name || '';
+    var rarityClasses = rarityClass(item.rarity);
+    rarityClasses.trim().split(/\s+/).forEach(className => {
+        if (className) nameEl.classList.add(className);
+      });
     function show(key) {
       host.querySelectorAll('.' + key).forEach(function(el) {
         el.classList.remove('hidden');
@@ -351,17 +363,22 @@
       var row = q('.pkmn-' + key + '-row');
       if (val) {
         val.textContent = String(value);
-        if (extraClass) val.classList.add(extraClass);
+
+        if (extraClass) {
+          extraClass.trim().split(/\s+/).forEach(className => {
+            if (className) val.classList.add(className);
+          });
+        }
       }
       if (row) row.classList.remove('hidden');
     }
 
     function rarityClass(r) {
       r = (r || '').toLowerCase();
-      if (r.includes('special illustration') || r.includes('hyper')) return 'label--error';
-      if (r.includes('illustration'))  return 'label--warning';
-      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) return 'label--primary';
-      if (r.includes('rare')) return 'label--primary';
+      if (r.includes('special illustration') || r.includes('hyper')) return 'label--error 1bit:bg--white 1bit:text--black ';
+      if (r.includes('illustration'))  return 'label--warning 1bit:text--black 1bit:bg--white 2bit:label--filled 2bit:text--white 2bit:bg--gray-50 4bit:text--white 4bit:label--filled 4bit:bg--gray-50';
+      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) return 'label--primary 1bit:bg--white  1bit:text--black';
+      if (r.includes('rare')) return 'label--primary 1bit:bg--white 1bit:text--black ';
       return '';
     }
 
@@ -372,7 +389,7 @@
     show2('stage', item.stage);
     show2('evolve-from', item.evolve_from);
 
-    show2('rarity', item.rarity, rarityClass(item.rarity));
+    show2('rarity', item.rarity);
     //show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
 
