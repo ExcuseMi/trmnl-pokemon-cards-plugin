@@ -50,7 +50,7 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75 2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline {{gap}}
+  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75 2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline rounded {{gap}}
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
@@ -101,7 +101,7 @@
         <span class="{{ val_cls }} pkmn-illustrator" data-clamp="2"></span>
       </div>
     </div>
-        <div class="item pkmn-evolve-from-row hidden">
+        <div class="item pkmn-evolve-from-row hidden md:hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.evolve_from }}</span>
           <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
