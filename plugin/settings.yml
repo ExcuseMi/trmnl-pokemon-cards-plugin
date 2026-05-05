@@ -4,7 +4,7 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-framework_version: 3.1.0
+framework_version: 3.1.1
 serverless_language: node
 polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | join: '','' | url_encode }}&rarity={{ rarity | join: '','' | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}'
 polling_headers: ''
@@ -14,9 +14,10 @@ custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh.<br/><br/><strong>Data:</strong> <a href="https://tcgdex.net" target="_blank">TCGdex</a>.
+  description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh. Optimized for mashups.<br/><br/>
   github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
+  learn_more_url: https://tcgdex.net/
 - keyname: set_id
   field_type: xhrSelectSearch
   name: Set
@@ -42,6 +43,19 @@ custom_fields:
   - Indonesian: id
   - Thai: th
   default: en
+  optional: true
+- keyname: pricing_source
+  field_type: select
+  name: Pricing
+  description: Choose which pricing source to display, or hide pricing entirely.
+  help_text: Pricing data is a new feature from TCGdex — TCGPlayer data is not always available for every card.
+  options:
+  - CardMarket (€), TCGPlayer fallback: eu_prefer
+  - TCGPlayer ($), CardMarket fallback: na_prefer
+  - CardMarket only (€): eu
+  - TCGPlayer only ($): na
+  - Hidden: hidden
+  default: eu_prefer
   optional: true
 - keyname: rarity
   field_type: select
