@@ -1,31 +1,33 @@
 {% template main %}
+{% assign first_column_label_width = "w--24 no-shrink" %}
+{% assign dual_column_label_width = "w--20 no-shrink" %}
 
 {% if view == 1 %}
-{% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
-{% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
-{% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2 ml--3 " %}
-{% assign first_column_label_width = "w--28" %}
-{% assign dual_column_label_width = "w--28" %}
+    {% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
+    {% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
+    {% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2 " %}
 
-{% assign gap = "gap--none lg:gap--small " %}
+    {% assign gap = "gap--none lg:gap--small " %}
 
 {% else %}
-{% assign lbl_cls = "label label--small lg:label--base p--1 pb--1 mr--1" %}
-{% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2" %}
-{% assign mark_cls = "description description--base lg:description--large bg--white m--0_5 p--1 ml--3 pr--2" %}
-{% assign first_column_label_width = "w--24" %}
-{% assign dual_column_label_width = "w--24" %}
+    {% assign lbl_cls = "label label--small lg:label--base m--0_5" %}
+    {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small  p--1 pl--2 pr--2" %}
+    {% assign mark_cls = "description description--base lg:description--large bgHOLO--white p--1 pr--2" %}
+    {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none " %}
 
-{% assign gap = "gap--none lg:gap--small portrait:gap--none " %}
+    {% if view == 4 %}
+        {% assign first_column_label_width = "w--16 no-shrink" %}
+        {% assign dual_column_label_width = "w--16 no-shrink" %}
+    {% endif %}
 {% endif %}
 
 <script>var __pkmn = {{ items | json }};</script>
 
 <div class="layout h--full
   {% if view == 1 %}
-  layout--row gap--medium
+  layout--row gap--small
   {% elsif view == 2 %}
-  layout--row gap--medium
+  layout--row gap--small
   {% elsif view == 3 %}
   layout--col gap--small
   {% elsif view == 4 %}
@@ -46,7 +48,7 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75  2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline {{gap}}
+  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75 2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline {{gap}}
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
@@ -398,8 +400,8 @@
 
       // Illustration Rare
       if (r.includes('illustration')) {
-        return 'bg--red-50  ' +
-               '1bit:text--black 1bit:bg--gray-20 ' +
+        return 'bg--red-50 ' +
+               '1bit:text--white 1bit:bg--gray-20 ' +
                '2bit:text--white 2bit:bg--gray-20 ' +
                '4bit:text--white 4bit:bg--gray-20';
       }
@@ -444,7 +446,7 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label label--base lg:label--large lg:portrait:label--base label--inverted rounded p--1';
+        span.className = 'label md:label--small lg:label--base label--inverted rounded p--1';
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
