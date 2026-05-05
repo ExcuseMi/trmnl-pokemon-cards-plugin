@@ -1,15 +1,20 @@
 {% template main %}
+
 {% if view == 1 %}
 {% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
 {% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
-{% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2 " %}
+{% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2 ml--3 " %}
+{% assign first_column_label_width = "w--28" %}
+{% assign dual_column_label_width = "w--28" %}
 
 {% assign gap = "gap--none lg:gap--small " %}
 
 {% else %}
 {% assign lbl_cls = "label label--small lg:label--base p--1 pb--1 mr--1" %}
 {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2" %}
-{% assign mark_cls = "description description--base lg:description--large bg--white m--0_5 p--1 pl--2 pr--2" %}
+{% assign mark_cls = "description description--base lg:description--large bg--white m--0_5 p--1 ml--3 pr--2" %}
+{% assign first_column_label_width = "w--24" %}
+{% assign dual_column_label_width = "w--24" %}
 
 {% assign gap = "gap--none lg:gap--small portrait:gap--none " %}
 {% endif %}
@@ -41,31 +46,38 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col stretch-x w--full h--full bg--gray-75 1bit:bg--white p--1 lg:p--2 m--1 outline {{gap}}
+  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75  2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline {{gap}}
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
     {% endif %}">
-    <span class="label rounded rounded--small p--1 pl--3 pr--3
-      label--xlarge lg:label--xxlarge w--full text--stroke
-      pkmn-name" data-clamp="2"></span>
+    <span class="label rounded rounded--small p--1 pl--3 pr--3 w--full text--stroke pkmn-name
+      {% if view == 1 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 2 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 3 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 4 %}
+      label--base lg:label--large
+      {% endif %}" data-clamp="2"></span>
     {% unless view == 2 %}
     <div class="item pkmn-rarity-row hidden ">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.rarity }}</span>
         <span class="{{ val_cls }} pkmn-rarity "></span>
       </div>
     </div>
     <div class="item pkmn-card-count-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.number }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.number }}</span>
         <span class="{{ val_cls }} pkmn-card-count" data-clamp="2"></span>
       </div>
     </div>
     <div class="item pkmn-set-name-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.set }}</span>
         <span class="{{ val_cls }} pkmn-set-name" data-clamp="2"></span>
       </div>
     </div>
@@ -75,25 +87,25 @@
     {% unless view == 4 %}
         <div class="item pkmn-serie-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.serie }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.serie }}</span>
         <span class="{{ val_cls }} pkmn-serie" data-clamp="2"></span>
       </div>
     </div>
         <div class="item pkmn-illustrator-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.artist }}</span>
         <span class="{{ val_cls }} pkmn-illustrator" data-clamp="2"></span>
       </div>
     </div>
         <div class="item pkmn-evolve-from-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.evolve_from }}</span>
+          <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.evolve_from }}</span>
           <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
         </div>
       </div>
     <div class="item pkmn-release-date-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.released }}</span>
         <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
       </div>
     </div>
@@ -103,37 +115,37 @@
       {% if view == 2 %}
       <div class="item pkmn-rarity-row  hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.rarity }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.rarity }}</span>
           <span class="{{ val_cls }} pkmn-rarity"></span>
         </div>
       </div>
       <div class="item pkmn-card-count-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.number }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.number }}</span>
           <span class="{{ val_cls }} pkmn-card-count" data-clamp="2"></span>
         </div>
       </div>
       <div class="item pkmn-set-name-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.set }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.set }}</span>
           <span class="{{ val_cls }} pkmn-set-name" data-clamp="2"></span>
         </div>
       </div>
       <div class="item pkmn-serie-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.serie }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.serie }}</span>
           <span class="{{ val_cls }} pkmn-serie" data-clamp="2"></span>
         </div>
       </div>
       <div class="item pkmn-illustrator-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.artist }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.artist }}</span>
           <span class="{{ val_cls }} pkmn-illustrator" data-clamp="2"></span>
         </div>
       </div>
         <div class="item pkmn-evolve-from-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.evolve_from }}</span>
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.evolve_from }}</span>
             <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
           </div>
         </div>
@@ -141,20 +153,20 @@
       {% endif %}
       <div class="item pkmn-release-date-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.released }}</span>
           <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
         </div>
       </div>
       {% if view != 4 %}
       <div class="item pkmn-types-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.type }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.type }}</span>
           <span class="{{ val_cls }} pkmn-types" data-clamp="2"></span>
         </div>
       </div>
       <div class="item pkmn-stage-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.stage }}</span>
           <span class="{{ val_cls }} pkmn-stage" data-clamp="2"></span>
         </div>
       </div>
@@ -170,13 +182,13 @@
         </div>
         <div class="item pkmn-types-row hidden md:hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.type }}</span>
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.type }}</span>
             <span class="{{ val_cls }} pkmn-types" data-clamp="2"></span>
           </div>
         </div>
         <div class="item pkmn-stage-row hidden">
           <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.stage }}</span>
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.stage }}</span>
             <span class="{{ val_cls }} pkmn-stage" data-clamp="2"></span>
           </div>
         </div>
@@ -186,7 +198,7 @@
       {% if view == 1 or view == 3 %}
       <div class="item pkmn-regulation-row hidden">
         <div class=" content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }} ">{{ labels.mark }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.mark }}</span>
           <span class="{{ mark_cls }} pkmn-regulation label--outline p--2 pt--1 pb--1 text--center" ></span>
         </div>
       </div>
@@ -201,14 +213,14 @@
 
       <div class="item pkmn-price-avg-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.avg }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.avg }}</span>
           <span class="{{ val_cls }} pkmn-price-avg" data-clamp="2"></span>
         </div>
       </div>
       {% if view != 4 %}
       <div class="item pkmn-price-avg7-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.avg7 }}</span>
           <span class="{{ val_cls }} pkmn-price-avg7" data-clamp="2"></span>
         </div>
       </div>
@@ -217,7 +229,7 @@
 
       <div class="item pkmn-price-tcg-market-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.tcg_market }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.tcg_market }}</span>
           <span class="{{ val_cls }} pkmn-price-tcg-market" data-clamp="2"></span>
         </div>
       </div>
@@ -225,7 +237,7 @@
       {% if view != 4 %}
       <div class="item pkmn-price-tcg-low-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.tcg_low }}</span>
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.tcg_low }}</span>
           <span class="{{ val_cls }} pkmn-price-tcg-low" data-clamp="2"></span>
         </div>
       </div>
@@ -375,11 +387,41 @@
 
     function rarityClass(r) {
       r = (r || '').toLowerCase();
-      if (r.includes('special illustration') || r.includes('hyper')) return 'label--error 1bit:bg--white 1bit:text--black ';
-      if (r.includes('illustration'))  return 'label--warning 1bit:text--black 1bit:bg--white 2bit:label--filled 2bit:text--white 2bit:bg--gray-50 4bit:text--white 4bit:label--filled 4bit:bg--gray-50';
-      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) return 'label--primary 1bit:bg--white  1bit:text--black';
-      if (r.includes('rare')) return 'label--primary 1bit:bg--white 1bit:text--black ';
-      return '';
+
+      // Special Illustration / Hyper – highest rarity
+      if (r.includes('special illustration') || r.includes('hyper')) {
+        return 'bg--red  ' +
+               '1bit:text--white 1bit:bg--black ' +
+               '2bit:text--white 2bit:bg--black  ' +
+               '4bit:text--white 4bit:bg--black ';
+      }
+
+      // Illustration Rare
+      if (r.includes('illustration')) {
+        return 'bg--red-50  ' +
+               '1bit:text--black 1bit:bg--gray-20 ' +
+               '2bit:text--white 2bit:bg--gray-20 ' +
+               '4bit:text--white 4bit:bg--gray-20';
+      }
+
+      // Ultra Rare / Secret Rare / Rainbow Rare
+      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) {
+        return 'bg--yellow  ' +
+               '1bit:text--white 1bit:bg--gray-30 ' +
+               '2bit:text--white 2bit:bg--gray-30  ' +
+               '4bit:text--white 4bit:bg--gray-30 ';
+      }
+
+      // Rare (including Holo Rare)
+      if (r.includes('rare')) {
+        return 'bg--yellow-50  ' +
+               '1bit:text--white 1bit:bg--gray-40 ' +
+               '2bit:text--white 2bit:bg--gray-40  ' +
+               '4bit:text--white 4bit:bg--gray-40 ';
+      }
+
+      // Fallback for Common / Uncommon / unknown
+      return 'bg--gray-50 text--black';
     }
 
     show2('dex-id', item.dexId ? '#' + item.dexId : '');
@@ -402,7 +444,7 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label label--base lg:label--large label--inverted rounded p--1';
+        span.className = 'label label--base lg:label--large lg:portrait:label--base label--inverted rounded p--1';
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
