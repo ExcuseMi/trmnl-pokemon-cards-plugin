@@ -35,8 +35,10 @@
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
-    {% endif %}">
-    <span class="label label--primary rounded p--1 pl--3 pr--3 label--xlarge lg:label--xxxlarge pkmn-name" data-clamp="2">Pokemon</span>
+    {% endif %} outline p--2 m--1">
+    <span class="label label--primary rounded p--1 pl--3 pr--3 
+      label--xlarge lg:label--xxlarge
+      pkmn-name" data-clamp="2">Pokemon</span>
     {% unless view == 2 %}
     <div class="item pkmn-rarity-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
@@ -86,7 +88,7 @@
     </div>
     {% endunless %}
     {% endunless %}
-    <div class="w--full {% if view <= 2 %}grid grid--cols-2 gap--small{% else %}flex flex--col{% endif %}">
+    <div class="w--full {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %} gap--none{% else %}flex flex--col{% endif %}">
       {% if view == 2 %}
       <div class="item pkmn-rarity-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -233,7 +235,7 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--24 w--max-full" alt="">
+      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--18 w--max-full" alt="">
       <img class="pkmn-set-logo hidden lg:block image--contain mt--8 h--28 w--max-full" alt="">
     </div>
     <div class="item pkmn-description description outline hidden">
@@ -302,6 +304,20 @@
 </div>
 
 <script>
+  function parseISODate(dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // month is 0-indexed in JS
+  }
+
+  function strftime(date, formatStr) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const replacements = {
+      '%Y': date.getFullYear(),
+      '%m': pad(date.getMonth() + 1),
+      '%d': pad(date.getDate())
+    };
+    return formatStr.replace(/%[Ymd]/g, (match) => replacements[match] || match);
+  }
   (function() {
     var views  = Array.from(document.querySelectorAll('.view'));
     var host   = document.currentScript.closest('.view') || document.body;
@@ -426,7 +442,10 @@
     var titleBarVisible = {{ view }} !== 4 && titleBarEl && titleBarEl.offsetHeight > 0;
     if (!titleBarVisible) show2('set-name', item.set_name);
     show2('serie', item.serie_name);
-    show2('release-date', item.set_release_date);
+    var format = {{ trmnl.plugin_settings.custom_fields_values.date_format | default: "%Y-%m-%d" | json }};
+    var releaseDate = parseISODate(item.set_release_date);
+    var formatted = strftime(releaseDate, format);
+    show2('release-date', formatted);
 
     if (item.set_logo) {
       host.querySelectorAll('.pkmn-set-logo').forEach(function(img) {

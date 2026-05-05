@@ -12,25 +12,26 @@ polling_body: ''
 id: 297288
 custom_fields:
 - keyname: author_info
-  name: About This Plugin
   field_type: author_bio
+  name: About This Plugin
   description: Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh. Optimized for mashups.<br/><br/>
-  github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   category: games,art
+  github_url: https://github.com/ExcuseMi/trmnl-pokemon-cards-plugin
   learn_more_url: https://tcgdex.net/
 - keyname: set_id
   field_type: xhrSelectSearch
   name: Set
   description: Filter to a specific set, or use a smart filter to browse across multiple sets at once.
   help_text: "<strong>Most Recent ★</strong> — always shows cards from the latest released set.<br/> <strong>All Sets In The Last Year ★</strong> — pools cards from every set released in the past 12 months.<br/> <strong>All Sets Current Series ★</strong> — pools cards from all sets in the current TCG series (e.g. all Scarlet &amp; Violet sets).\n"
+  optional: true
   endpoint: https://trmnl.bettens.dev/pokemon-cards/sets
   http_verb: post
-  exclude_csrf_token: true
-  optional: true
 - keyname: language
   field_type: select
   name: Language
   description: Card language served by TCGdex.
+  default: en
+  optional: true
   options:
   - English: en
   - French: fr
@@ -42,27 +43,35 @@ custom_fields:
   - Chinese (Traditional): zh-tw
   - Indonesian: id
   - Thai: th
-  default: en
+- keyname: date_format
+  field_type: select
+  name: Date format
+  description: Select the date format you'd like to be used
   optional: true
+  options:
+  - Month/Day/Year: "%m/%d/%Y"
+  - Year-Month-Day: "%Y-%m-%d"
+  - Day/Month/Year: "%d/%m/%Y"
+  default: "%Y-%m-%d"
 - keyname: pricing_source
   field_type: select
   name: Pricing
   description: Choose which pricing source to display, or hide pricing entirely.
   help_text: Pricing data is a new feature from TCGdex — TCGPlayer data is not always available for every card.
+  default: eu_prefer
+  optional: true
   options:
   - CardMarket (€), TCGPlayer fallback: eu_prefer
   - TCGPlayer ($), CardMarket fallback: na_prefer
   - CardMarket only (€): eu
   - TCGPlayer only ($): na
   - Hidden: hidden
-  default: eu_prefer
-  optional: true
 - keyname: rarity
   field_type: select
-  multiple: true
   name: Rarity
   description: Show only cards of one or more rarities. Leave empty for all rarities. Great for browsing valuable or illustration cards.
   help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  optional: true
   options:
   - Common: Common
   - Uncommon: Uncommon
@@ -72,13 +81,13 @@ custom_fields:
   - Ultra Rare: Ultra Rare
   - Illustration Rare: Illustration Rare
   - Special Illustration Rare: Special Illustration Rare
-  optional: true
+  multiple: true
 - keyname: pokemon_type
   field_type: select
-  multiple: true
   name: Pokémon Type
   description: Show only cards of one or more types. Leave empty for all types.
   help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  optional: true
   options:
   - Fire: Fire
   - Water: Water
@@ -91,6 +100,6 @@ custom_fields:
   - Dragon: Dragon
   - Colorless: Colorless
   - Fairy: Fairy
-  optional: true
+  multiple: true
 name: Pokemon Cards
 refresh_interval: 15
