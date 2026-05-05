@@ -233,8 +233,8 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--28" alt="">
-      <img class="pkmn-set-logo hidden lg:block image--contain mt--8 h--48" alt="">
+      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--24 w--max-full" alt="">
+      <img class="pkmn-set-logo hidden lg:block image--contain mt--8 h--28 w--max-full" alt="">
     </div>
     <div class="item pkmn-description description outline hidden">
 
@@ -379,7 +379,7 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label label--base label--inverted rounded p--1 pb--0_5';
+        span.className = 'label label--base label--inverted rounded p--1';
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
