@@ -13,8 +13,11 @@
     {% assign lbl_cls = "label label--small lg:label--base m--0_5" %}
     {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small  p--1 pl--2 pr--2" %}
     {% assign mark_cls = "description description--base lg:description--large bg--white p--1 pr--2" %}
-    {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none " %}
-    {% if view == 3 %}
+    {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none lg:portrait:gap--small " %}
+    {% if view == 2 %}
+    
+    
+    {% elsif view == 3 %}
         {% assign first_column_label_width = "w--16 no-shrink" %}
         {% assign dual_column_label_width = "w--16 no-shrink" %}
     {% elsif view == 4 %}
