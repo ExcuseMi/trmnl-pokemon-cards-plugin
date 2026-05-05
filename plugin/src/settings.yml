@@ -53,12 +53,6 @@ custom_fields:
   - Year-Month-Day: "%Y-%m-%d"
   - Day/Month/Year: "%d/%m/%Y"
   default: "%Y-%m-%d"
-- keyname: show_price_overlay
-  field_type: boolean
-  name: Show price on card-only views
-  description: Show the card price as an overlay when only the card image is displayed (portrait and quadrant views).
-  default: 'false'
-  optional: true
 - keyname: pricing_source
   field_type: select
   name: Pricing
@@ -72,6 +66,16 @@ custom_fields:
   - CardMarket only (€): eu
   - TCGPlayer only ($): na
   - Hidden: hidden
+  conditional_validation:
+  - when: hidden
+    hidden:
+    - show_price_overlay
+- keyname: show_price_overlay
+  field_type: boolean
+  name: Show price on card-only views
+  description: Show the card price as an overlay when only the card image is displayed (portrait and quadrant views).
+  default: 'false'
+  optional: true
 - keyname: rarity
   field_type: select
   name: Rarity

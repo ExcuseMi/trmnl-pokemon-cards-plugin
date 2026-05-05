@@ -275,7 +275,7 @@
     </div>
     {% endif %}
   </div>
-  {% if view != 4 and trmnl.plugin_settings.custom_fields_values.show_price_overlay == "true" %}
+  {% if view != 4 and trmnl.plugin_settings.custom_fields_values.pricing_source != "hidden" and  trmnl.plugin_settings.custom_fields_values.show_price_overlay == "true" %}
   <div class="
     {% if view == 1 %}hidden portrait:flex
     {% elsif view == 3 %}flex portrait:hidden
