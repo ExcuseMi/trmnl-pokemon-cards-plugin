@@ -15,8 +15,8 @@
     {% assign mark_cls = "description description--base lg:description--large bg--white p--1 pr--2" %}
     {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none lg:portrait:gap--small " %}
     {% if view == 2 %}
-    
-    
+
+
     {% elsif view == 3 %}
         {% assign first_column_label_width = "w--16 no-shrink" %}
         {% assign dual_column_label_width = "w--16 no-shrink" %}
@@ -460,10 +460,10 @@
           return 'bg--red label--filled  ';
         case 'reverse':
           // Illustration‑like tier
-          return 'bg--red-50 text--stroke  ';
+          return 'bg--red-30 label--filled  ';
         case 'firstEdition':
           // Ultra / Secret / Rainbow tier
-          return 'bg--yellow-50 ';
+          return 'bg--yellow ';
         case 'wPromo':
           // Rare tier (lowest of the special variants)
           return 'bg--yellow-50';
@@ -473,29 +473,39 @@
       }
     }
 
-    // Your existing variant label code, updated to include color classes
-    var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
-    var variantOrder = ['normal', 'holo', 'reverse', 'firstEdition', 'wPromo'];
+// Your existing variant label code, updated to include color classes
+var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
+var variantOrder = ['normal', 'holo', 'reverse', 'firstEdition', 'wPromo'];
 
-    if (item.variants) {
-      var container = q('.pkmn-variants');
-      var hasAny = false;
-      variantOrder.forEach(function(key) {
-        if (!item.variants[key]) return;
-        hasAny = true;
-        var span = document.createElement('span');
-        // Merge base label classes with variant-specific color classes
-        var variantClasses = variantClass(key);
-        console.log(variantClasses)
-        span.className = 'label md:label--base {% if view == 2 or view == 4  %} lg:label--base {% else %} lg:label--large {% endif %} rounded p--1 ' + variantClasses;
-        span.textContent = VARIANT_LABELS[key];
-        if (container) container.appendChild(span);
-      });
-      if (hasAny) {
-        var vrow = q('.pkmn-variants-row');
-        if (vrow) vrow.classList.remove('hidden');
-      }
-    }
+if (item.variants) {
+  var container = q('.pkmn-variants');
+  var hasAny = false;
+  
+  // Count total active variants
+  var totalVariants = variantOrder.filter(function(key) {
+    return item.variants[key];
+  }).length;
+
+  variantOrder.forEach(function(key) {
+    if (!item.variants[key]) return;
+    
+    // Skip 'normal' if more than 2 variants exist
+    if (key === 'normal' && totalVariants > 2) return;
+    
+    hasAny = true;
+    var span = document.createElement('span');
+    var variantClasses = variantClass(key);
+    console.log(variantClasses);
+    span.className = 'label md:label--base {% if view >= 2 %} lg:label--base {% else %} lg:label--large {% endif %} rounded p--1 ' + variantClasses;
+    span.textContent = VARIANT_LABELS[key];
+    if (container) container.appendChild(span);
+  });
+  
+  if (hasAny) {
+    var vrow = q('.pkmn-variants-row');
+    if (vrow) vrow.classList.remove('hidden');
+  }
+}
 
     if (item.card_count) {
       var official = item.card_count.official;
