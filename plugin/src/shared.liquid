@@ -37,7 +37,7 @@
   layout--col gap--small
   {% elsif view == 4 %}
   layout--row gap--small p--1
-  {% endif %}">
+  {% endif %}" style="position:relative">
   <img class="pkmn-img image image image-dither image--contain h--full
     {% if view == 1  %}    portrait:hidden lg:portrait:block
     {% elsif view == 2  %}
@@ -275,6 +275,16 @@
     </div>
     {% endif %}
   </div>
+  {% if view != 4 and trmnl.plugin_settings.custom_fields_values.show_price_overlay == "true" %}
+  <div class="
+    {% if view == 1 %}hidden portrait:flex
+    {% elsif view == 3 %}flex portrait:hidden
+    {% elsif view == 4 %}hidden portrait:flex
+    {% endif %}"
+    style="position:absolute;{% if view == 4 %}bottom{% else %}top{% endif %}:5px;right:8px;z-index:10;pointer-events:none">
+    <span class="label label--base lg:label--large bg--gray-20 text--white pkmn-price-overlay rounded rounded--small p--1 pl--2 pr--2 hidden"></span>
+  </div>
+  {% endif %}
 </div>
 
 <div class="title_bar
@@ -528,18 +538,28 @@ if (item.variants) {
       var tcgNorm = tcg.normal || tcg[Object.keys(tcg)[0]] || {};
       var cmAvg   = cmNorm.avg     || '';
       var tcgMkt  = tcgNorm.market || '';
+      var overlayPrice = '';
       if (pricePref === 'eu_prefer') {
         show2('price-avg',  cmAvg || tcgMkt);
         show2('price-avg7', cmNorm.avg7);
+        overlayPrice = cmAvg || tcgMkt;
       } else if (pricePref === 'na_prefer') {
         show2('price-tcg-market', tcgMkt || cmAvg);
         show2('price-tcg-low',    tcgNorm.low);
+        overlayPrice = tcgMkt || cmAvg;
       } else if (pricePref === 'eu') {
         show2('price-avg',  cmAvg);
         show2('price-avg7', cmNorm.avg7);
+        overlayPrice = cmAvg;
       } else if (pricePref === 'na') {
         show2('price-tcg-market', tcgMkt);
         show2('price-tcg-low',    tcgNorm.low);
+        overlayPrice = tcgMkt;
+      }
+      var overlaySpan = q('.pkmn-price-overlay');
+      if (overlaySpan && overlayPrice) {
+        overlaySpan.textContent = overlayPrice;
+        overlaySpan.classList.remove('hidden');
       }
     }
 

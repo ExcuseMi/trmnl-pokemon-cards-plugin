@@ -17,6 +17,7 @@ variables:
       dark_mode: "no"
       no_screen_padding: "yes"
       custom_fields_values:
+        show_price_overlay: true
         display_mode: "stats"
         language: "en"
         pokemon_type: "any"
