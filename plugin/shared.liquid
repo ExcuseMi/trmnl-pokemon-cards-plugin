@@ -1,15 +1,18 @@
 {% template main %}
-{% assign display_mode = trmnl.plugin_settings.custom_fields_values.display_mode | default: 'stats' %}
 {% if view == 1 %}
-{% assign lbl_cls = "label label--base lg:label--xlarge bg--gray-75 rounded pl--2 pr--3 pt--1 pb--1 m--0_5" %}
+{% assign lbl_cls = "label label--base lg:label--large bg--gray-75 rounded pl--2 pr--3 pt--1 pb--1 m--0_5" %}
 {% assign val_cls = "description description--large lg:description--xxlarge m--0_5 p--1" %}
 {% assign hp_cls  = "description description--large lg:description--xxlarge m--1 p--1" %}
 {% assign rar_cls = "label label--base lg:label--large p--1 ml--1 rounded " %}
+{% assign gap = "gap--none lg:gap--small " %}
+
 {% else %}
 {% assign lbl_cls = "label label--small lg:label--base bg--gray-75 rounded p--1 pb--1 mr--1" %}
 {% assign val_cls = "description description--base lg:description--large m--0_5 p--1" %}
 {% assign hp_cls  = "description description--base lg:description--large m--0_5 p--1" %}
 {% assign rar_cls = "label label--small lg:label--base m--0_5 p--1 rounded" %}
+{% assign gap = "gap--none lg:gap--small " %}
+
 {% endif %}
 
 <script>var __pkmn = {{ items | json }};</script>
@@ -30,15 +33,15 @@
     {% endif %}"
     alt="">
 
-  <div class="flex--col gap--xsmall stretch-x w--full h--full
+  <div class="flex--col stretch-x w--full h--full
     {% if view == 1 %}   flex portrait:hidden
     {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
     {% elsif view == 3 %}hidden portrait:flex
     {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
-    {% endif %} outline p--2 m--1">
+    {% endif %} {{gap}} outline p--1 lg:p--2 m--1">
     <span class="label label--primary rounded p--1 pl--3 pr--3 
       label--xlarge lg:label--xxlarge
-      pkmn-name" data-clamp="2">Pokemon</span>
+      pkmn-name" data-clamp="2"></span>
     {% unless view == 2 %}
     <div class="item pkmn-rarity-row hidden">
       <div class="content flex flex--row flex--center-y gap--small">
@@ -88,7 +91,7 @@
     </div>
     {% endunless %}
     {% endunless %}
-    <div class="w--full {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %} gap--none{% else %}flex flex--col{% endif %}">
+    <div class="w--full {{gap}} {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %} gap--none{% else %}flex flex--col{% endif %}">
       {% if view == 2 %}
       <div class="item pkmn-rarity-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -128,10 +131,13 @@
         </div>
 
       {% endif %}
-
+      <div class="item pkmn-release-date-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }}">{{ labels.released }}</span>
+          <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
+        </div>
+      </div>
       {% if view != 4 %}
-
-      
       <div class="item pkmn-types-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.type }}</span>
@@ -144,23 +150,11 @@
           <span class="{{ val_cls }} pkmn-stage" data-clamp="2"></span>
         </div>
       </div>
-      <div class="item pkmn-retreat-row hidden">
-        <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.retreat }}</span>
-          <span class="{{ val_cls }} pkmn-retreat" data-clamp="2"></span>
-        </div>
-      </div>
- 
-      <div class="item pkmn-release-date-row hidden">
-        <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.released }}</span>
-          <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
-        </div>
-      </div>
+
       {% endif %}
 
       {% if view == 4 %}
-      <div class="hidden lg:flex lg:flex--col gap--small w--full">
+      <div class="hidden lg:flex lg:flex--col {{gap}} w--full">
         <div class="item pkmn-variants-row hidden">
           <div class="content flex flex--row flex--center-y gap--small flex--wrap">
             <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
@@ -183,14 +177,14 @@
 
       {% if view == 1 or view == 3 %}
       <div class="item pkmn-regulation-row hidden">
-        <div class="flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
-          <span class="{{ val_cls }} pkmn-regulation label--outline pb--0" data-clamp="2"></span>
+        <div class=" content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} ">{{ labels.mark }}</span>
+          <span class="{{ val_cls }} pkmn-regulation label--outline p--2 pt--1 pb--1 text--center" ></span>
         </div>
       </div>
       <div class="item pkmn-variants-row hidden">
         <div class="flex flex--row flex--center-y gap--small flex--wrap">
-          <div class="pkmn-variants flex flex--row gap--small flex--wrap "></div>
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap ml--2 "></div>
         </div>
       </div>
       {% endif %}
@@ -203,7 +197,7 @@
           <span class="{{ val_cls }} pkmn-price-avg" data-clamp="2"></span>
         </div>
       </div>
-      {% if view != 4 and view != 2 %}
+      {% if view != 4 %}
       <div class="item pkmn-price-avg7-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
@@ -235,13 +229,9 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--18 w--max-full" alt="">
-      <img class="pkmn-set-logo hidden lg:block image--contain mt--8 h--28 w--max-full" alt="">
+      <img class="pkmn-set-logo image-dither lg:hidden image--contain h--14 w--max-full" alt="">
+      <img class="pkmn-set-logo image-dither hidden lg:block image--contain mt--8 h--28 w--max-full" alt="">
     </div>
-    <div class="item pkmn-description description outline hidden">
-
-    </div>
-
     {% endif %}
   </div>
 </div>
@@ -256,8 +246,8 @@
   {% elsif view == 4 %}
   md:hidden md:portrait:flex lg:portrait:hidden
   {% endif %}">
-  <img class="image  h--12 set_symbol" />
-  <svg class="image w--8 h--8 pokemon-logo hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  <img class="image  h--12 image--stroke image-dither set_symbol" />
+  <svg class="image w--8 h--8 pokemon-logo image--stroke image-dither hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 511.985 511.985" xml:space="preserve">
     <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
       c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-34.554,0-68.083,6.773-99.645,20.125
@@ -295,9 +285,9 @@
       c-34.554,0-68.083,6.773-99.645,20.125c-30.483,12.89-57.865,31.351-81.373,54.858c-23.499,23.499-41.959,50.881-54.85,81.364
       C6.774,187.91,0,221.44,0,255.993C0,290.553,6.774,324.085,20.125,355.645z"/>
   </svg>
-  <span class="title pkmn-title"></span>
+  <span class="title pkmn-title text--stroke"></span>
   {% if pool_warning %}<span class="label label--warning">{{ pool_warning }} cards</span>{% endif %}
-  <span class="instance pkmn-instance
+  <span class="instance pkmn-instance text--stroke
     {% if view >= 3 %}
     md:portrait:hidden
     {% endif %}"></span>
@@ -395,7 +385,7 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label label--base label--inverted rounded p--1';
+        span.className = 'label label--base lg:label--large label--inverted rounded p--1';
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
