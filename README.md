@@ -53,16 +53,22 @@ The backend expects a Redis instance. Docker Compose starts one automatically.
 <!-- PLUGIN_STATS_START -->
 ## 🚀 TRMNL Plugin(s)
 
-*Last updated: 2026-05-04 08:14:37 UTC*
+*Last updated: 2026-05-05 07:52:40 UTC*
 
 
-## 🔒 Plugin ID: 297288
+## <img src="assets/plugin-images/297288_icon.png" alt="Pokemon Cards icon" width="32"/> [Pokemon Cards](https://usetrmnl.com/recipes/297288)
 
-**Status**: ⏳ Not yet published on TRMNL or API unavailable
+![Pokemon Cards screenshot](assets/plugin-images/297288_screenshot.png)
 
-This plugin is configured but either hasn't been published to the TRMNL marketplace yet or the API is temporarily unavailable.
+### Description
+Discover Pokémon cards on your TRMNL — browse packs, hunt for rares, or enjoy the artwork. Filter by type, rarity, or set. A new selection appears each refresh. Optimized for mashups.<br/><br/>
 
-**Plugin URL**: https://usetrmnl.com/recipes/297288
+### 📊 Statistics
+
+| Metric | Value |
+|--------|-------|
+| Installs | 2 |
+| Forks | 1 |
 
 ---
 
