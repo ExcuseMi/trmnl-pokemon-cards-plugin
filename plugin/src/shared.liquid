@@ -338,10 +338,12 @@
   </svg>
   <span class="title pkmn-title text--stroke"></span>
   {% if pool_warning %}<span class="label label--warning">{{ pool_warning }} cards</span>{% endif %}
-  <span class="instance pkmn-instance text--stroke
+  <span class="instance  
     {% if view >= 3 %}
     md:portrait:hidden
-    {% endif %}"></span>
+    {% endif %}">
+    <span class="pkmn-instance text--strokelabel rounded rounded--small p--1 bg--gray-50"></span>
+    </span>
 </div>
 
 <script>
