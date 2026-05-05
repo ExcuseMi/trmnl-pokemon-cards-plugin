@@ -124,12 +124,7 @@
             <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
           </div>
         </div>
-        <div class="item pkmn-hp-row hidden">
-          <div class="content flex flex--row flex--center-y gap--small">
-            <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
-            <span class="{{ hp_cls }} pkmn-hp" data-clamp="2"></span>
-          </div>
-        </div>
+
       {% endif %}
 
       {% if view != 4 %}
@@ -186,14 +181,14 @@
 
       {% if view == 1 or view == 3 %}
       <div class="item pkmn-regulation-row hidden">
-        <div class="content flex flex--row flex--center-y gap--small">
+        <div class="flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.mark }}</span>
-          <span class="{{ val_cls }} pkmn-regulation label--outline" data-clamp="2"></span>
+          <span class="{{ val_cls }} pkmn-regulation label--outline pb--0" data-clamp="2"></span>
         </div>
       </div>
       <div class="item pkmn-variants-row hidden">
-        <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-          <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
+        <div class="flex flex--row flex--center-y gap--small flex--wrap">
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap "></div>
         </div>
       </div>
       {% endif %}
@@ -211,12 +206,6 @@
         <div class="content flex flex--row flex--center-y gap--small">
           <span class="{{ lbl_cls }}">{{ labels.avg7 }}</span>
           <span class="{{ val_cls }} pkmn-price-avg7" data-clamp="2"></span>
-        </div>
-      </div>
-      <div class="item pkmn-hp-row hidden">
-        <div class="content flex flex--row flex--center-y gap--small">
-          <span class="{{ lbl_cls }}">{{ labels.hp }}</span>
-          <span class="{{ hp_cls }} pkmn-hp" data-clamp="2"></span>
         </div>
       </div>
 
@@ -244,7 +233,8 @@
 
     {% if view == 1 %}
     <div class="pkmn-set-row hidden">
-      <img class="pkmn-set-logo hidden image--contain mt--1 w--max-64 lg:w--max-120" alt="">
+      <img class="pkmn-set-logo lg:hidden image--contain mt--1 h--28" alt="">
+      <img class="pkmn-set-logo hidden lg:block image--contain mt--8 h--48" alt="">
     </div>
     <div class="item pkmn-description description outline hidden">
 
@@ -389,7 +379,7 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label label--base label--inverted rounded pl--2 pr--2';
+        span.className = 'label label--base label--inverted rounded p--1 pb--0_5';
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
@@ -439,14 +429,12 @@
     show2('release-date', item.set_release_date);
 
     if (item.set_logo) {
-      var setLogoEl = q('.pkmn-set-logo');
-      if (setLogoEl) {
-        setLogoEl.src = item.set_logo;
-        setLogoEl.alt = item.set_name || '';
-        setLogoEl.classList.remove('hidden');
-        var setRow = q('.pkmn-set-row');
-        if (setRow) setRow.classList.remove('hidden');
-      }
+      host.querySelectorAll('.pkmn-set-logo').forEach(function(img) {
+        img.src = item.set_logo;
+        img.alt = item.set_name || '';
+    });
+      var setRow = q('.pkmn-set-row');
+      if (setRow) setRow.classList.remove('hidden');
     }
 
     if (titleEl) titleEl.textContent = item.name || '';
