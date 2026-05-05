@@ -12,10 +12,12 @@
 {% else %}
     {% assign lbl_cls = "label label--small lg:label--base m--0_5" %}
     {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small  p--1 pl--2 pr--2" %}
-    {% assign mark_cls = "description description--base lg:description--large bgHOLO--white p--1 pr--2" %}
+    {% assign mark_cls = "description description--base lg:description--large bg--white p--1 pr--2" %}
     {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none " %}
-
-    {% if view == 4 %}
+    {% if view == 3 %}
+        {% assign first_column_label_width = "w--16 no-shrink" %}
+        {% assign dual_column_label_width = "w--16 no-shrink" %}
+    {% elsif view == 4 %}
         {% assign first_column_label_width = "w--16 no-shrink" %}
         {% assign dual_column_label_width = "w--16 no-shrink" %}
     {% endif %}
@@ -244,9 +246,6 @@
         </div>
       </div>
       {% endif %}
-
-
-
     </div>
 
     {% if view == 1 %}
@@ -437,8 +436,30 @@
     //show2('retreat', item.retreat != null ? item.retreat : '');
     show2('regulation', item.regulation_mark);
 
+    function variantClass(key) {
+      switch (key) {
+        case 'holo':
+          // Highest rarity among variants → similar to Special Illustration / Hyper
+          return 'bg--red label--filled  ';
+        case 'reverse':
+          // Illustration‑like tier
+          return 'bg--red-50 text--stroke  ';
+        case 'firstEdition':
+          // Ultra / Secret / Rainbow tier
+          return 'bg--yellow-50 ';
+        case 'wPromo':
+          // Rare tier (lowest of the special variants)
+          return 'bg--yellow-50';
+
+        default:
+          return ' label--outline bg--white';
+      }
+    }
+
+    // Your existing variant label code, updated to include color classes
     var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
     var variantOrder = ['normal', 'holo', 'reverse', 'firstEdition', 'wPromo'];
+
     if (item.variants) {
       var container = q('.pkmn-variants');
       var hasAny = false;
@@ -446,7 +467,10 @@
         if (!item.variants[key]) return;
         hasAny = true;
         var span = document.createElement('span');
-        span.className = 'label md:label--small lg:label--base label--inverted rounded p--1';
+        // Merge base label classes with variant-specific color classes
+        var variantClasses = variantClass(key);
+        console.log(variantClasses)
+        span.className = 'label md:label--base lg:label--large rounded p--1 ' + variantClasses;
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
