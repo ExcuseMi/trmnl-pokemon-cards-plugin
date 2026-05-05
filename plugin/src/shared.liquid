@@ -1,19 +1,18 @@
 {% template main %}
-{% assign first_column_label_width = "w--24 no-shrink" %}
-{% assign dual_column_label_width = "w--20 no-shrink" %}
+{% assign first_column_label_width = "w--24  lg:w--32 no-shrink" %}
+{% assign dual_column_label_width = "w--24 lg:w--32 no-shrink" %}
 
 {% if view == 1 %}
-    {% assign first_column_label_width = "w--20 no-shrink" %}
     {% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
     {% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
-    {% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2  pt--0 pb--0 " %}
+    {% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 pl--2 pr--2  pt--0 pb--0 " %}
 
     {% assign gap = "gap--none md:gap--none lg:gap--small " %}
 
 {% else %}
     {% assign lbl_cls = "label label--small lg:label--base m--0_5" %}
     {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small  p--1 pl--2 pr--2" %}
-    {% assign mark_cls = "description description--base lg:description--large bg--white p--1 pr--2" %}
+    {% assign mark_cls = "description description--base lg:description--large bg--white pr--2" %}
     {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none lg:portrait:gap--small " %}
     {% if view == 2 %}
         {% assign first_column_label_width = "w--16 no-shrink" %}
