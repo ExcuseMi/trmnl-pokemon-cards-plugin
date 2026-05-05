@@ -113,7 +113,7 @@
         <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
       </div>
     </div>
-     <div class="item pkmn-variants-row hidden">
+     <div class="item pkmn-variants-row hidden ">
         <div class="content flex flex--row flex--center-y gap--small">
         <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.variants }}</span>
       <div class="content flex flex--row flex--center-y gap--small flex--wrap">
@@ -167,6 +167,14 @@
           <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
         </div>
       </div>
+       <div class="item pkmn-variants-row hidden">
+            <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
+          <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+            <div class="pkmn-variants flex flex--row gap--small flex--wrap m--0_5"></div>
+          </div>
+          </div>
+        </div>
       {% endif %}
 
 
@@ -476,7 +484,7 @@
         // Merge base label classes with variant-specific color classes
         var variantClasses = variantClass(key);
         console.log(variantClasses)
-        span.className = 'label md:label--base {% if view == 4 %} lg:label--base {% else %} lg:label--large {% endif %} rounded p--1 ' + variantClasses;
+        span.className = 'label md:label--base {% if view == 2 or view == 4  %} lg:label--base {% else %} lg:label--large {% endif %} rounded p--1 ' + variantClasses;
         span.textContent = VARIANT_LABELS[key];
         if (container) container.appendChild(span);
       });
