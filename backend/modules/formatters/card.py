@@ -10,6 +10,9 @@ def _fmt(sym: str, v) -> str:
     return f"{sym}{v:.2f}" if v is not None else ''
 
 
+_TCG_META = {'unit', 'updated'}
+
+
 def _format_price(pricing: dict) -> dict:
     result = {}
     pricing = pricing or {}
@@ -17,17 +20,33 @@ def _format_price(pricing: dict) -> dict:
     cm = pricing.get('cardmarket') or {}
     if cm:
         sym = _sym(cm.get('unit', ''))
-        result['avg']  = _fmt(sym, cm.get('avg'))
-        result['avg7'] = _fmt(sym, cm.get('avg7'))
-        result['low']  = _fmt(sym, cm.get('low'))
-        result['trend'] = _fmt(sym, cm.get('trend'))
+        cm_normal = {
+            'avg':   _fmt(sym, cm.get('avg')),
+            'avg7':  _fmt(sym, cm.get('avg7')),
+            'low':   _fmt(sym, cm.get('low')),
+            'trend': _fmt(sym, cm.get('trend')),
+        }
+        result['cm'] = {'normal': cm_normal}
+        if cm.get('avg-holo') is not None:
+            result['cm']['holo'] = {
+                'avg':  _fmt(sym, cm.get('avg-holo')),
+                'avg7': _fmt(sym, cm.get('avg7-holo')),
+                'low':  _fmt(sym, cm.get('low-holo')),
+            }
 
     tcg = pricing.get('tcgplayer') or {}
     if tcg:
         sym = _sym(tcg.get('unit', ''))
-        normal = tcg.get('normal') or {}
-        result['tcg_market'] = _fmt(sym, normal.get('marketPrice'))
-        result['tcg_low']    = _fmt(sym, normal.get('lowPrice'))
+        variants = {}
+        for key, data in tcg.items():
+            if key in _TCG_META or not isinstance(data, dict):
+                continue
+            variants[key] = {
+                'market': _fmt(sym, data.get('marketPrice')),
+                'low':    _fmt(sym, data.get('lowPrice')),
+            }
+        if variants:
+            result['tcg'] = variants
 
     return result
 
