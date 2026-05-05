@@ -3,6 +3,7 @@
 {% assign dual_column_label_width = "w--20 no-shrink" %}
 
 {% if view == 1 %}
+    {% assign first_column_label_width = "w--20 no-shrink" %}
     {% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
     {% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
     {% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 p--1 pl--2 pr--2  pt--0 pb--0 " %}
@@ -116,17 +117,9 @@
         <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
       </div>
     </div>
-     <div class="item pkmn-variants-row hidden ">
-        <div class="content flex flex--row flex--center-y gap--small">
-        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.variants }}</span>
-      <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-        <div class="pkmn-variants flex flex--row gap--small flex--wrap m--0_5"></div>
-      </div>
-      </div>
-    </div>
     {% endunless %}
     {% endunless %}
-    <div class="w--full {{gap}} p--0 m--0 mt--1 {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %} gap--none{% else %}flex flex--col{% endif %}">
+    <div class="w--full {{gap}}  {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %}{% else %}flex flex--col{% endif %}">
       {% if view == 2 %}
       <div class="item pkmn-rarity-row  hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -181,6 +174,17 @@
       {% endif %}
 
 
+      {% if view == 1 or view == 3 %}
+      <div class="item pkmn-variants-row hidden" style="grid-column: 1 / -1">
+          <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
+        <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap ml--1"></div>
+        </div>
+        </div>
+      </div>
+      {% endif %}
+
       {% if view != 4 %}
       <div class="item pkmn-types-row hidden">
         <div class="content flex flex--row flex--center-y gap--small">
@@ -202,7 +206,7 @@
             <div class="content flex flex--row flex--center-y gap--small">
             <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
           <div class="content flex flex--row flex--center-y gap--small flex--wrap">
-            <div class="pkmn-variants flex flex--row gap--small flex--wrap m--0_5"></div>
+            <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
           </div>
           </div>
         </div>
@@ -496,7 +500,7 @@ if (item.variants) {
     var span = document.createElement('span');
     var variantClasses = variantClass(key);
     console.log(variantClasses);
-    span.className = 'label md:label--base {% if view >= 2 %} lg:label--base {% else %} lg:label--large {% endif %} rounded p--1 ' + variantClasses;
+    span.className = 'label md:label--base{% if view == 4 %} md:label--small lg:label--base {% elsif view >= 2 %} md:label--small lg:label--base {% else %} lg:label--large {% endif %} rounded rounded--small p--1 ' + variantClasses;
     span.textContent = VARIANT_LABELS[key];
     if (container) container.appendChild(span);
   });
