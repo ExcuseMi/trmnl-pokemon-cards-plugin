@@ -411,24 +411,27 @@
       }
     }
 
-    var pricePref = "{{ trmnl.plugin_settings.custom_fields_values.pricing_source | default: 'both' }}";
+    var pricePref = "{{ trmnl.plugin_settings.custom_fields_values.pricing_source | default: 'eu_prefer' }}";
     if (pricePref !== 'hidden') {
-      var price    = item.price || {};
-      var cmNorm   = (price.cm  || {}).normal || {};
-      var tcg      = price.tcg  || {};
-      var tcgNorm  = tcg.normal || tcg[Object.keys(tcg)[0]] || {};
-      var showCm   = pricePref === 'both' || pricePref === 'eu';
-      var showTcg  = pricePref === 'both' || pricePref === 'na';
-      var cmAvg    = showCm  ? (cmNorm.avg   || '') : '';
-      var tcgMkt   = showTcg ? (tcgNorm.market || '') : '';
-      if (cmAvg && tcgMkt) {
-        show2('price-avg', cmAvg + ' · ' + tcgMkt);
-      } else {
-        show2('price-avg', cmAvg);
+      var price   = item.price || {};
+      var cmNorm  = (price.cm || {}).normal || {};
+      var tcg     = price.tcg || {};
+      var tcgNorm = tcg.normal || tcg[Object.keys(tcg)[0]] || {};
+      var cmAvg   = cmNorm.avg     || '';
+      var tcgMkt  = tcgNorm.market || '';
+      if (pricePref === 'eu_prefer') {
+        show2('price-avg',  cmAvg || tcgMkt);
+        show2('price-avg7', cmNorm.avg7);
+      } else if (pricePref === 'na_prefer') {
+        show2('price-tcg-market', tcgMkt || cmAvg);
+        show2('price-tcg-low',    tcgNorm.low);
+      } else if (pricePref === 'eu') {
+        show2('price-avg',  cmAvg);
+        show2('price-avg7', cmNorm.avg7);
+      } else if (pricePref === 'na') {
         show2('price-tcg-market', tcgMkt);
+        show2('price-tcg-low',    tcgNorm.low);
       }
-      if (showCm)  show2('price-avg7',    cmNorm.avg7);
-      if (showTcg) show2('price-tcg-low', tcgNorm.low);
     }
 
     var titleBarEl = host.querySelector('.title_bar');

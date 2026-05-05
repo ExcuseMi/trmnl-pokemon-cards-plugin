@@ -48,13 +48,14 @@ custom_fields:
   field_type: select
   name: Pricing
   description: Choose which pricing source to display, or hide pricing entirely.
-  help_text: "Pricing data is a new feature from TCGdex — TCGPlayer (NA) data is not always available for every card."
+  help_text: Pricing data is a new feature from TCGdex — TCGPlayer data is not always available for every card.
   options:
-  - Both (EU + NA): both
-  - EU only (CardMarket €): eu
-  - NA only (TCGPlayer $): na
+  - CardMarket (€), TCGPlayer fallback: eu_prefer
+  - TCGPlayer ($), CardMarket fallback: na_prefer
+  - CardMarket only (€): eu
+  - TCGPlayer only ($): na
   - Hidden: hidden
-  default: both
+  default: eu_prefer
   optional: true
 - keyname: rarity
   field_type: select
