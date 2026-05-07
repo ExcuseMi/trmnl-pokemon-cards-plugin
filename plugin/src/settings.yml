@@ -82,7 +82,6 @@ custom_fields:
   description: Show only Pokémon, Trainer, or Energy cards, or any mix. Leave empty for all.
   help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
   optional: true
-  default: Pokemon
   options:
   - Pokémon: Pokemon
   - Trainer: Trainer

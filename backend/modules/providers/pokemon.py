@@ -16,6 +16,20 @@ ID_CAP = 200
 
 _VALID_LANGS = {'en', 'fr', 'es', 'it', 'pt-br', 'de', 'ja', 'zh-tw', 'id', 'th'}
 
+# Category names as returned by each language's /categories endpoint
+_CATEGORY_I18N: dict[str, dict[str, str]] = {
+    'en':    {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+    'fr':    {'Pokemon': 'Pokémon',  'Trainer': 'Dresseur',   'Energy': 'Énergie'},
+    'es':    {'Pokemon': 'Pokémon',  'Trainer': 'Entrenador', 'Energy': 'Energía'},
+    'it':    {'Pokemon': 'Pokémon',  'Trainer': 'Allenatore', 'Energy': 'Energia'},
+    'pt-br': {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+    'de':    {'Pokemon': 'Pokémon',  'Trainer': 'Trainer',    'Energy': 'Energie'},
+    'ja':    {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+    'zh-tw': {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+    'id':    {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+    'th':    {'Pokemon': 'Pokemon',  'Trainer': 'Trainer',    'Energy': 'Energy'},
+}
+
 
 def _api(language: str) -> str:
     lang = (language or '').strip().lower().split()[0] if language else ''
@@ -38,10 +52,10 @@ class PokemonProvider(BaseProvider):
         language = filters.get('language', 'en')
         api = _api(language)
 
-        card_ids = await self._fetch_ids(api, set_id, rarities, ptypes, categories)
+        card_ids = await self._fetch_ids(api, set_id, rarities, ptypes, categories, language)
         if not card_ids and language != 'en':
             log.info('No cards found for language=%s, falling back to en', language)
-            card_ids = await self._fetch_ids(_api('en'), set_id, rarities, ptypes, categories)
+            card_ids = await self._fetch_ids(_api('en'), set_id, rarities, ptypes, categories, 'en')
         if not card_ids:
             return None
 
@@ -50,7 +64,9 @@ class PokemonProvider(BaseProvider):
 
         return card_ids
 
-    async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str], categories: list[str]) -> list[str] | None:
+    async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str], categories: list[str], language: str = 'en') -> list[str] | None:
+        cat_map = _CATEGORY_I18N.get(language, _CATEGORY_I18N['en'])
+        loc_categories = [cat_map.get(c, c) for c in categories]
         if set_id:
             sid_list = [s.strip() for s in set_id.split(',') if s.strip()]
             if len(sid_list) == 1:
@@ -64,10 +80,10 @@ class PokemonProvider(BaseProvider):
                         set_ids.update(res)
             if not set_ids:
                 return None
-            if not rarities and not ptypes and not categories:
+            if not rarities and not ptypes and not loc_categories:
                 return list(set_ids)
             # Intersect set cards with globally-filtered cards to respect rarity/type/category within the set
-            c_list = categories or ['']
+            c_list = loc_categories or ['']
             r_list = rarities or ['']
             p_list = ptypes or ['']
             tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
@@ -79,7 +95,7 @@ class PokemonProvider(BaseProvider):
             combined = list(set_ids & filter_ids)
             return combined if combined else None
 
-        c_list = categories or ['']
+        c_list = loc_categories or ['']
         r_list = rarities or ['']
         p_list = ptypes or ['']
         tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
