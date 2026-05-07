@@ -1,0 +1,73 @@
+{
+  "category": "Pokemon",
+  "id": "A4-001",
+  "illustrator": "ryoma uratsuka",
+  "image": "https://assets.tcgdex.net/en/tcgp/A4/001",
+  "localId": "001",
+  "name": "Oddish",
+  "rarity": "One Diamond",
+  "set": {
+    "cardCount": {
+      "official": 161,
+      "total": 241
+    },
+    "id": "A4",
+    "logo": "https://assets.tcgdex.net/en/tcgp/A4/logo",
+    "name": "Wisdom of Sea and Sky"
+  },
+  "variants": {
+    "firstEdition": false,
+    "holo": false,
+    "normal": true,
+    "reverse": false,
+    "wPromo": false
+  },
+  "variants_detailed": [
+    {
+      "type": "normal",
+      "size": "standard",
+      "variantId": "generated"
+    }
+  ],
+  "dexId": [
+    43
+  ],
+  "hp": 50,
+  "types": [
+    "Grass"
+  ],
+  "description": "If exposed to moonlight, it starts to move.\nIt roams far and wide at night to scatter its seeds.",
+  "stage": "Basic",
+  "attacks": [
+    {
+      "cost": [
+        "Grass"
+      ],
+      "name": "Poison Powder",
+      "effect": "Your opponent's Active Pokémon is now Poisoned.",
+      "damage": 10
+    }
+  ],
+  "weaknesses": [
+    {
+      "type": "Fire",
+      "value": "+20"
+    }
+  ],
+  "retreat": 1,
+  "legal": {
+    "standard": false,
+    "expanded": false
+  },
+  "boosters": [
+    {
+      "id": "boo_A4-lugia",
+      "name": "Lugia"
+    }
+  ],
+  "updated": "2026-03-06T14:10:14Z",
+  "pricing": {
+    "cardmarket": null,
+    "tcgplayer": null
+  }
+}

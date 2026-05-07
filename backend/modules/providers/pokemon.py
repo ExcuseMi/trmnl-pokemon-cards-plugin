@@ -34,13 +34,14 @@ class PokemonProvider(BaseProvider):
         set_id = filters.get('set_id', '').strip()
         rarities = _parse_multi(filters.get('rarity', ''))
         ptypes = _parse_multi(filters.get('pokemon_type', ''))
+        categories = _parse_multi(filters.get('category', ''))
         language = filters.get('language', 'en')
         api = _api(language)
 
-        card_ids = await self._fetch_ids(api, set_id, rarities, ptypes)
+        card_ids = await self._fetch_ids(api, set_id, rarities, ptypes, categories)
         if not card_ids and language != 'en':
             log.info('No cards found for language=%s, falling back to en', language)
-            card_ids = await self._fetch_ids(_api('en'), set_id, rarities, ptypes)
+            card_ids = await self._fetch_ids(_api('en'), set_id, rarities, ptypes, categories)
         if not card_ids:
             return None
 
@@ -49,13 +50,13 @@ class PokemonProvider(BaseProvider):
 
         return card_ids
 
-    async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str]) -> list[str] | None:
+    async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str], categories: list[str]) -> list[str] | None:
         if set_id:
             sid_list = [s.strip() for s in set_id.split(',') if s.strip()]
             if len(sid_list) == 1:
-                set_ids = set(await self._fetch_ids_single(api, sid_list[0], '', '') or [])
+                set_ids = set(await self._fetch_ids_single(api, sid_list[0], '', '', '') or [])
             else:
-                tasks = [self._fetch_ids_single(api, sid, '', '') for sid in sid_list]
+                tasks = [self._fetch_ids_single(api, sid, '', '', '') for sid in sid_list]
                 results = await asyncio.gather(*tasks, return_exceptions=True)
                 set_ids = set()
                 for res in results:
@@ -63,12 +64,13 @@ class PokemonProvider(BaseProvider):
                         set_ids.update(res)
             if not set_ids:
                 return None
-            if not rarities and not ptypes:
+            if not rarities and not ptypes and not categories:
                 return list(set_ids)
-            # Intersect set cards with globally-filtered cards to respect rarity/type within the set
+            # Intersect set cards with globally-filtered cards to respect rarity/type/category within the set
+            c_list = categories or ['']
             r_list = rarities or ['']
             p_list = ptypes or ['']
-            tasks = [self._fetch_ids_single(api, '', r, p) for r in r_list for p in p_list]
+            tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
             results = await asyncio.gather(*tasks, return_exceptions=True)
             filter_ids = set()
             for res in results:
@@ -77,9 +79,10 @@ class PokemonProvider(BaseProvider):
             combined = list(set_ids & filter_ids)
             return combined if combined else None
 
+        c_list = categories or ['']
         r_list = rarities or ['']
         p_list = ptypes or ['']
-        tasks = [self._fetch_ids_single(api, '', r, p) for r in r_list for p in p_list]
+        tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         seen = {}
         for res in results:
@@ -88,13 +91,15 @@ class PokemonProvider(BaseProvider):
                     seen[i] = None
         return list(seen) if seen else None
 
-    async def _fetch_ids_single(self, api: str, set_id: str, rarity: str, ptype: str) -> list[str]:
+    async def _fetch_ids_single(self, api: str, set_id: str, category: str, rarity: str, ptype: str) -> list[str]:
         if set_id:
             url = f'{api}/sets/{set_id}'
             params = {}
         else:
             url = f'{api}/cards'
-            params = {'category': 'Pokemon'}
+            params = {}
+            if category:
+                params['category'] = category
             if rarity:
                 params['rarity'] = rarity
             if ptype:
@@ -113,7 +118,7 @@ class PokemonProvider(BaseProvider):
             return []
 
     async def get_card_detail(self, api: str, card_id: str) -> dict | None:
-        cache_key = f'pokemon:card:v4:{card_id}'
+        cache_key = f'pokemon:card:v5:{card_id}'
         try:
             cached = await self.redis.get(cache_key)
             if cached:

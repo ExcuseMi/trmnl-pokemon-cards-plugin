@@ -1,0 +1,79 @@
+{
+  "category": "Trainer",
+  "id": "base1-77",
+  "illustrator": "Ken Sugimori",
+  "image": "https://assets.tcgdex.net/en/base/base1/77",
+  "localId": "77",
+  "name": "Pokémon Trader",
+  "rarity": "Rare",
+  "set": {
+    "cardCount": {
+      "official": 102,
+      "total": 102
+    },
+    "id": "base1",
+    "logo": "https://assets.tcgdex.net/en/base/base1/logo",
+    "name": "Base Set"
+  },
+  "variants": {
+    "firstEdition": true,
+    "holo": false,
+    "normal": true,
+    "reverse": false,
+    "wPromo": false
+  },
+  "variants_detailed": [
+    {
+      "type": "normal",
+      "subtype": "unlimited",
+      "size": "standard",
+      "variantId": "3a83wf50tz7q114spsx7dw6v5"
+    },
+    {
+      "type": "normal",
+      "subtype": "shadowless",
+      "size": "standard",
+      "stamp": [
+        "1st-edition"
+      ],
+      "variantId": "gx8bq2hefwadd3utcibq3oc56sjf4jqdz709e"
+    },
+    {
+      "type": "normal",
+      "subtype": "shadowless",
+      "size": "standard",
+      "variantId": "2tszcx1bpt4e79y5us0p570b9n"
+    },
+    {
+      "type": "normal",
+      "subtype": "1999-2000-copyright",
+      "size": "standard",
+      "variantId": "qi4g3e7tzbkcyhfflvx7zmvunxwjcq3pvx"
+    }
+  ],
+  "legal": {
+    "standard": false,
+    "expanded": false
+  },
+  "updated": "2026-01-07T13:21:43+01:00",
+  "pricing": {
+    "cardmarket": {
+      "updated": "2026-05-07T00:47:17.000Z",
+      "unit": "EUR",
+      "idProduct": 273772,
+      "avg": 7.13,
+      "low": 0.9,
+      "trend": 8.89,
+      "avg1": 4.08,
+      "avg7": 6.61,
+      "avg30": 7.19,
+      "avg-holo": null,
+      "low-holo": null,
+      "trend-holo": 1.55,
+      "avg1-holo": 2.99,
+      "avg7-holo": 2.06,
+      "avg30-holo": 2.06
+    },
+    "tcgplayer": null
+  }
+}

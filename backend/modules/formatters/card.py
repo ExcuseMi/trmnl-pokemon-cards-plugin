@@ -1,4 +1,3 @@
-import json
 import logging
 
 
@@ -65,10 +64,15 @@ def shape_card(raw: dict) -> dict:
     dex_id = raw.get('dexId')
     set_symbol = set_info.get('symbol', '')
     card_count = set_info.get('cardCount', {})
+    legal = raw.get('legal') or {}
+    boosters = raw.get('boosters') or []
     return {
         'id': raw.get('id', ''),
         'name': raw.get('name', ''),
+        'category': raw.get('category', ''),
         'stage': raw.get('stage', ''),
+        'suffix': raw.get('suffix', ''),
+        'level': raw.get('level', ''),
         'hp': str(hp) if hp else '',
         'types': types,
         'rarity': raw.get('rarity', ''),
@@ -86,6 +90,19 @@ def shape_card(raw: dict) -> dict:
         'dexId': dex_id,
         'localId': raw.get('localId', ''),
         'retreat': raw.get('retreat'),
+        'weaknesses': raw.get('weaknesses') or [],
+        'resistances': raw.get('resistances') or [],
+        'item': raw.get('item') or {},
+        'description': raw.get('description', ''),
+        'evolve_from': raw.get('evolveFrom', ''),
+        'effect': raw.get('effect', ''),
+        'trainer_type': raw.get('trainerType', ''),
+        'energy_type': raw.get('energyType', ''),
+        'legal': {
+            'standard': legal.get('standard'),
+            'expanded': legal.get('expanded'),
+        },
+        'boosters': [{'id': b.get('id', ''), 'name': b.get('name', '')} for b in boosters],
         'serie_name': '',
         'regulation_mark': raw.get('regulationMark', ''),
         'price': _format_price(pricing),
@@ -93,6 +110,4 @@ def shape_card(raw: dict) -> dict:
             'official': card_count.get('official'),
             'total': card_count.get('total'),
         },
-        'description': raw.get('description',''),
-        'evolve_from': raw.get('evolveFrom', '')
     }

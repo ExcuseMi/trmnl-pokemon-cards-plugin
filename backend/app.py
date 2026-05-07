@@ -60,6 +60,7 @@ async def card():
     # Normalize multi-select fields so cache key is order-independent
     args['rarity'] = ','.join(sorted(_parse_multi(args.get('rarity', ''))))
     args['pokemon_type'] = ','.join(sorted(_parse_multi(args.get('pokemon_type', ''))))
+    args['category'] = ','.join(sorted(_parse_multi(args.get('category', ''))))
     ttl = REFRESH_HOURS * 3600
 
     if await _provider.is_expired(ttl, **args):

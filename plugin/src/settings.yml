@@ -6,7 +6,7 @@ static_data: ''
 polling_verb: get
 framework_version: 3.1.1
 serverless_language: node
-polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | join: '','' | url_encode }}&rarity={{ rarity | join: '','' | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}'
+polling_url: 'https://trmnl.bettens.dev/pokemon-cards/card?pokemon_type={{ pokemon_type | join: '','' | url_encode }}&rarity={{ rarity | join: '','' | url_encode }}&category={{ category | join: '','' | url_encode }}&set_id={{ set_id | url_encode }}&language={{ language | url_encode }}'
 polling_headers: ''
 polling_body: ''
 id: 297288
@@ -76,6 +76,18 @@ custom_fields:
   description: Show the card price as an overlay when only the card image is displayed (portrait and quadrant views).
   default: 'false'
   optional: true
+- keyname: category
+  field_type: select
+  name: Card Category
+  description: Show only Pokémon, Trainer, or Energy cards, or any mix. Leave empty for all.
+  help_text: Use <kbd>⌘</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select and deselect multiple options.
+  optional: true
+  default: Pokemon
+  options:
+  - Pokémon: Pokemon
+  - Trainer: Trainer
+  - Energy: Energy
+  multiple: true
 - keyname: rarity
   field_type: select
   name: Rarity
