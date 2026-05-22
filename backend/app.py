@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 app = Quart(__name__)
 
 REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
+SETS_REFRESH_HOURS = float(os.getenv('SETS_REFRESH_HOURS', '24'))
 LOW_CARD_WARNING = int(os.getenv('LOW_CARD_WARNING_THRESHOLD', '10'))
 TCGDEX_SETS_API = 'https://api.tcgdex.net/v2/en'
 
@@ -103,7 +104,7 @@ async def _enrich_release_dates(cards: list) -> None:
             raw_sets = json.loads(cached)
         else:
             raw_sets = await _fetch_sets_with_dates()
-            await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
         release_map = {s['id']: s.get('releaseDate', '') for s in raw_sets if s.get('id')}
         serie_map = {s['id']: (s.get('serie') or {}).get('name', '') for s in raw_sets if s.get('id')}
     except Exception:
@@ -158,7 +159,7 @@ async def sets():
         try:
             raw_sets = await _fetch_sets_with_dates()
             try:
-                await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+                await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
             except Exception:
                 pass
         except Exception as exc:
@@ -194,7 +195,7 @@ async def _resolve_multi_set_filter(filter_name: str) -> str:
             raw_sets = json.loads(cached)
         else:
             raw_sets = await _fetch_sets_with_dates()
-            await _redis.set(cache_key, json.dumps(raw_sets), ex=86400)
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
 
         if filter_name == 'last_year':
             cutoff = (datetime.now().replace(year=datetime.now().year - 1)).strftime('%Y-%m-%d')
