@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import random
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 import aiohttp
 from quart import Quart, Response, jsonify, request
@@ -19,6 +19,8 @@ app = Quart(__name__)
 
 REFRESH_HOURS = float(os.getenv('REFRESH_HOURS', '1'))
 SETS_REFRESH_HOURS = float(os.getenv('SETS_REFRESH_HOURS', '24'))
+SETS_RELEASE_DAY_REFRESH_HOURS = float(os.getenv('SETS_RELEASE_DAY_REFRESH_HOURS', '1'))
+SETS_RELEASE_DAY_WINDOW_DAYS = int(os.getenv('SETS_RELEASE_DAY_WINDOW_DAYS', '3'))
 LOW_CARD_WARNING = int(os.getenv('LOW_CARD_WARNING_THRESHOLD', '10'))
 TCGDEX_SETS_API = 'https://api.tcgdex.net/v2/en'
 
@@ -104,7 +106,7 @@ async def _enrich_release_dates(cards: list) -> None:
             raw_sets = json.loads(cached)
         else:
             raw_sets = await _fetch_sets_with_dates()
-            await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=_sets_cache_ttl(raw_sets))
         release_map = {s['id']: s.get('releaseDate', '') for s in raw_sets if s.get('id')}
         serie_map = {s['id']: (s.get('serie') or {}).get('name', '') for s in raw_sets if s.get('id')}
     except Exception:
@@ -159,7 +161,7 @@ async def sets():
         try:
             raw_sets = await _fetch_sets_with_dates()
             try:
-                await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
+                await _redis.set(cache_key, json.dumps(raw_sets), ex=_sets_cache_ttl(raw_sets))
             except Exception:
                 pass
         except Exception as exc:
@@ -195,7 +197,7 @@ async def _resolve_multi_set_filter(filter_name: str) -> str:
             raw_sets = json.loads(cached)
         else:
             raw_sets = await _fetch_sets_with_dates()
-            await _redis.set(cache_key, json.dumps(raw_sets), ex=int(SETS_REFRESH_HOURS * 3600))
+            await _redis.set(cache_key, json.dumps(raw_sets), ex=_sets_cache_ttl(raw_sets))
 
         if filter_name == 'last_year':
             cutoff = (datetime.now().replace(year=datetime.now().year - 1)).strftime('%Y-%m-%d')
@@ -252,6 +254,24 @@ async def _resolve_most_recent_set_id() -> str | None:
         return None
     best = max((s for s in raw_sets if s.get('releaseDate')), key=lambda s: s['releaseDate'], default=None)
     return best.get('id') if best else None
+
+
+def _sets_cache_ttl(raw_sets: list) -> int:
+    """Short TTL when a set releases within SETS_RELEASE_DAY_WINDOW_DAYS, normal TTL otherwise."""
+    today = date.today()
+    window_start = today - timedelta(days=SETS_RELEASE_DAY_WINDOW_DAYS)
+    window_end = today + timedelta(days=SETS_RELEASE_DAY_WINDOW_DAYS)
+    for s in raw_sets:
+        rd = s.get('releaseDate', '')
+        if not rd:
+            continue
+        try:
+            rd_date = date.fromisoformat(rd[:10])
+        except ValueError:
+            continue
+        if window_start <= rd_date <= window_end:
+            return int(SETS_RELEASE_DAY_REFRESH_HOURS * 3600)
+    return int(SETS_REFRESH_HOURS * 3600)
 
 
 def _build_sets(raw_sets: list, search: str) -> list:
