@@ -1,0 +1,602 @@
+{% template main %}
+{% assign first_column_label_width = "w--24  lg:w--32 no-shrink" %}
+{% assign dual_column_label_width = "w--24 lg:w--32 no-shrink" %}
+
+{% if view == 1 %}
+    {% assign lbl_cls = "label label--base lg:label--large pl--2 pr--3 pt--1 pb--1 m--0_5" %}
+    {% assign val_cls = "description description--large lg:description--xxlarge bg--white rounded rounded--small m--0_5 p--1 pl--2 pr--2 " %}
+    {% assign mark_cls = "description description--large lg:description--xxlarge bg--white m--0_5 pl--2 pr--2  pt--0 pb--0 " %}
+
+    {% assign gap = "gap--none md:gap--none lg:gap--small " %}
+
+{% else %}
+    {% assign lbl_cls = "label label--small lg:label--base m--0_5" %}
+    {% assign val_cls = "description description--base lg:description--large bg--white rounded rounded--small  p--1 pl--2 pr--2" %}
+    {% assign mark_cls = "description description--base lg:description--large bg--white pr--2" %}
+    {% assign gap = "md:gap--xsmall lg:gap--small portrait:gap--none lg:portrait:gap--small " %}
+    {% if view == 2 %}
+        {% assign first_column_label_width = "w--16 no-shrink" %}
+        {% assign dual_column_label_width = "w--16 no-shrink" %}
+    {% elsif view == 3 %}
+        {% assign first_column_label_width = "w--16 no-shrink" %}
+        {% assign dual_column_label_width = "w--16 no-shrink" %}
+    {% elsif view == 4 %}
+        {% assign first_column_label_width = "w--16 no-shrink" %}
+        {% assign dual_column_label_width = "w--16 no-shrink" %}
+    {% endif %}
+{% endif %}
+
+<script>var __pkmn = {{ items | json }};</script>
+<style>
+  .custom-rounded-outline {
+    border: 1px solid var(--framework-outline-strong, var(--framework-border-strong));
+  }
+</style>
+<div class="layout h--full
+  {% if view == 1 %}
+  layout--row gap--small
+  {% elsif view == 2 %}
+  layout--row gap--small
+  {% elsif view == 3 %}
+  layout--col gap--small
+  {% elsif view == 4 %}
+  layout--row gap--small p--1
+  {% endif %}" style="position:relative">
+  <img class="pkmn-img image image image-dither image--contain h--full
+    {% if view == 1  %}    portrait:hidden lg:portrait:block
+    {% elsif view == 2  %}
+    {% elsif view == 3  %} portrait:hidden lg:hidden
+    {% elsif view == 4  %} portrait:hidden
+    {% endif %}"
+    alt="height">
+  <img class="pkmn-img image image-dither image--contain w--full
+    {% if view == 1  %}    hidden portrait:block lg:portrait:hidden
+    {% elsif view == 2  %} hidden
+    {% elsif view == 3  %} hidden portrait:block lg:block
+    {% elsif view == 4  %} hidden portrait:block
+    {% endif %}"
+    alt="">
+
+  <div class="flex--col stretch-x w--full h--full 4bit:bg--gray-75 2bit:bg--gray-75 bg--gray-75 p--1 lg:p--2 m--1 outline 
+    md:rounded--base lg:rounded--large custom-rounded-outline {{gap}}
+    {% if view == 1 %}   flex portrait:hidden
+    {% elsif view == 2 %}flex portrait:hidden lg:portrait:flex
+    {% elsif view == 3 %}hidden portrait:flex
+    {% elsif view == 4 %}flex portrait:hidden portrait:m::flex lg:portrait:hidden
+    {% endif %}">
+    <span class="label rounded p--1 pl--3 pr--3 w--full text--stroke pkmn-name
+      {% if view == 1 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 2 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 3 %}
+      label--xlarge lg:label--xxlarge
+      {% elsif view == 4 %}
+      label--base lg:label--large
+      {% endif %}"  data-clamp="2"></span>
+    {% unless view == 2 %}
+    <div class="item pkmn-rarity-row hidden ">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.rarity }}</span>
+        <span class="{{ val_cls }} pkmn-rarity "></span>
+      </div>
+    </div>
+    <div class="item pkmn-card-count-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.number }}</span>
+        <span class="{{ val_cls }} pkmn-card-count" data-clamp="2"></span>
+      </div>
+    </div>
+    <div class="item pkmn-set-name-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.set }}</span>
+        <span class="{{ val_cls }} pkmn-set-name" data-clamp="2"></span>
+      </div>
+    </div>
+
+
+
+    {% unless view == 4 %}
+        <div class="item pkmn-serie-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.serie }}</span>
+        <span class="{{ val_cls }} pkmn-serie" data-clamp="2"></span>
+      </div>
+    </div>
+        <div class="item pkmn-illustrator-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.artist }}</span>
+        <span class="{{ val_cls }} pkmn-illustrator" data-clamp="2"></span>
+      </div>
+    </div>
+        <div class="item pkmn-evolve-from-row hidden md:hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.evolve_from }}</span>
+          <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
+        </div>
+      </div>
+    <div class="item pkmn-release-date-row hidden">
+      <div class="content flex flex--row flex--center-y gap--small">
+        <span class="{{ lbl_cls }} {{first_column_label_width}}">{{ labels.released }}</span>
+        <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
+      </div>
+    </div>
+    {% endunless %}
+    {% endunless %}
+    <div class="w--full {{gap}}  {% if view <= 2 %}grid {% if view == 2%} grid--cols-2 lg:portrait:grid--cols-1{% else %}grid--cols-2{% endif %}{% else %}flex flex--col{% endif %}">
+      {% if view == 2 %}
+      <div class="item pkmn-rarity-row  hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.rarity }}</span>
+          <span class="{{ val_cls }} pkmn-rarity"></span>
+        </div>
+      </div>
+      <div class="item pkmn-card-count-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.number }}</span>
+          <span class="{{ val_cls }} pkmn-card-count" data-clamp="2"></span>
+        </div>
+      </div>
+      <div class="item pkmn-set-name-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.set }}</span>
+          <span class="{{ val_cls }} pkmn-set-name" data-clamp="2"></span>
+        </div>
+      </div>
+      <div class="item pkmn-serie-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.serie }}</span>
+          <span class="{{ val_cls }} pkmn-serie" data-clamp="2"></span>
+        </div>
+      </div>
+      <div class="item pkmn-illustrator-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.artist }}</span>
+          <span class="{{ val_cls }} pkmn-illustrator" data-clamp="2"></span>
+        </div>
+      </div>
+        <div class="item pkmn-evolve-from-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.evolve_from }}</span>
+            <span class="{{ val_cls }} pkmn-evolve-from" data-clamp="2"></span>
+          </div>
+        </div>
+      <div class="item pkmn-release-date-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.released }}</span>
+          <span class="{{ val_cls }} pkmn-release-date" data-clamp="2"></span>
+        </div>
+      </div>
+       <div class="item pkmn-variants-row hidden">
+            <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
+          <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+            <div class="pkmn-variants flex flex--row gap--small flex--wrap m--0_5"></div>
+          </div>
+          </div>
+        </div>
+      {% endif %}
+
+
+      {% if view == 1 or view == 3 %}
+      <div class="item pkmn-variants-row hidden" style="grid-column: 1 / -1">
+          <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
+        <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+          <div class="pkmn-variants flex flex--row gap--small flex--wrap ml--1"></div>
+        </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if view != 4 %}
+      <div class="item pkmn-types-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.type }}</span>
+          <span class="{{ val_cls }} pkmn-types" data-clamp="2"></span>
+        </div>
+      </div>
+      <div class="item pkmn-stage-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.stage }}</span>
+          <span class="{{ val_cls }} pkmn-stage" data-clamp="2"></span>
+        </div>
+      </div>
+
+      {% endif %}
+
+      {% if view == 4 %}
+        <div class="item pkmn-variants-row hidden">
+            <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.variants }}</span>
+          <div class="content flex flex--row flex--center-y gap--small flex--wrap">
+            <div class="pkmn-variants flex flex--row gap--small flex--wrap"></div>
+          </div>
+          </div>
+        </div>
+        <div class="item pkmn-types-row hidden md:hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.type }}</span>
+            <span class="{{ val_cls }} pkmn-types" data-clamp="2"></span>
+          </div>
+        </div>
+        <div class="item pkmn-stage-row hidden">
+          <div class="content flex flex--row flex--center-y gap--small">
+            <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.stage }}</span>
+            <span class="{{ val_cls }} pkmn-stage" data-clamp="2"></span>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if view == 1 or view == 3 %}
+      <div class="item pkmn-regulation-row hidden">
+        <div class=" content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.mark }}</span>
+          <span class="{{ mark_cls }} pkmn-regulation label--outline p--2 pt--1 pb--1 text--center" ></span>
+        </div>
+      </div>
+
+      {% endif %}
+
+
+
+      <div class="item pkmn-price-avg-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.avg }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg" data-clamp="2"></span>
+        </div>
+      </div>
+      {% if view != 4 %}
+      <div class="item pkmn-price-avg7-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.avg7 }}</span>
+          <span class="{{ val_cls }} pkmn-price-avg7" data-clamp="2"></span>
+        </div>
+      </div>
+
+      {% endif %}
+
+      <div class="item pkmn-price-tcg-market-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.tcg_market }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-market" data-clamp="2"></span>
+        </div>
+      </div>
+
+      {% if view != 4 %}
+      <div class="item pkmn-price-tcg-low-row hidden">
+        <div class="content flex flex--row flex--center-y gap--small">
+          <span class="{{ lbl_cls }} {{dual_column_label_width}}">{{ labels.tcg_low }}</span>
+          <span class="{{ val_cls }} pkmn-price-tcg-low" data-clamp="2"></span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if view == 1 %}
+    <div class="pkmn-set-row hidden">
+      <img class="pkmn-set-logo image-dither lg:hidden image--contain h--14 w--max-full" alt="">
+      <img class="pkmn-set-logo image-dither hidden lg:block image--contain mt--8 h--28 w--max-full" alt="">
+    </div>
+    {% endif %}
+  </div>
+  {% if view != 4 and trmnl.plugin_settings.custom_fields_values.pricing_source != "hidden" and  trmnl.plugin_settings.custom_fields_values.show_price_overlay == "true" %}
+  <div class="
+    {% if view == 1 %}hidden portrait:flex
+    {% elsif view == 3 %}flex portrait:hidden
+    {% elsif view == 4 %}hidden portrait:flex
+    {% endif %}"
+    style="position:absolute;{% if view == 4 %}bottom{% else %}top{% endif %}:5px;right:8px;z-index:10;pointer-events:none">
+    <span class="label label--base lg:label--large bg--gray-20 text--white pkmn-price-overlay rounded rounded--small p--1 pl--2 pr--2 hidden"></span>
+  </div>
+  {% endif %}
+</div>
+
+<div class="title_bar
+  {% if view == 1 %}
+  lg:portrait:hidden
+  {% elsif view == 2 %}
+
+  {% elsif view == 3 %}
+  md:hidden portrait:flex lg:flex lg:portrait:hidden
+  {% elsif view == 4 %}
+  md:hidden md:portrait:hidden lg:portrait:hidden
+  {% endif %}">
+  <img class="image  h--12 image--stroke image-dither set_symbol" />
+  <svg class="image w--8 h--8 pokemon-logo image--stroke image-dither hidden" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 511.985 511.985" xml:space="preserve">
+    <path style="fill:#ED5564;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
+      c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-34.554,0-68.083,6.773-99.645,20.125
+      c-30.483,12.89-57.865,31.351-81.373,54.85c-23.499,23.507-41.959,50.889-54.85,81.372C6.774,187.91,0,221.44,0,255.993
+      c0,34.56,6.773,68.091,20.125,99.652c12.89,30.469,31.351,57.857,54.85,81.357c23.507,23.516,50.889,41.967,81.373,54.857
+      c31.562,13.344,65.091,20.125,99.645,20.125c34.561,0,68.092-6.781,99.652-20.125c30.469-12.891,57.857-31.342,81.373-54.857
+      c23.5-23.5,41.951-50.889,54.842-81.357c13.344-31.561,20.125-65.092,20.125-99.652C511.984,221.44,505.203,187.91,491.859,156.348z
+      "/>
+    <path style="fill:#E6E9ED;" d="M0.102,263.18c0.875,32.014,7.593,63.092,20.023,92.465c12.89,30.469,31.351,57.857,54.85,81.357
+      c23.507,23.516,50.889,41.967,81.373,54.857c31.562,13.344,65.091,20.125,99.645,20.125c34.561,0,68.092-6.781,99.652-20.125
+      c30.469-12.891,57.857-31.342,81.373-54.857c23.5-23.5,41.951-50.889,54.842-81.357c12.438-29.373,19.156-60.451,20.031-92.465
+      H0.102z"/>
+    <path style="fill:#434A54;" d="M510.765,281.211c0.812-8.344,1.219-16.75,1.219-25.218c0-9.516-0.516-18.953-1.531-28.289
+      c-12.719,1.961-30.984,4.516-53.998,7.054c-43.688,4.82-113.904,10.57-200.463,10.57c-86.552,0-156.776-5.75-200.455-10.57
+      c-23.022-2.539-41.28-5.093-53.998-7.054C0.516,237.04,0,246.478,0,255.993c0,8.468,0.406,16.875,1.219,25.218
+      c41.53,6.25,133.027,17.436,254.773,17.436S469.234,287.461,510.765,281.211z"/>
+    <path style="fill:#E6E9ED;" d="M309.334,266.656c0,29.459-23.891,53.334-53.342,53.334c-29.452,0-53.334-23.875-53.334-53.334
+      c0-29.453,23.882-53.327,53.334-53.327C285.443,213.33,309.334,237.204,309.334,266.656z"/>
+    <path style="fill:#434A54;" d="M255.992,170.66c-52.936,0-95.997,43.069-95.997,95.997s43.062,95.988,95.997,95.988
+      s95.996-43.061,95.996-95.988C351.988,213.729,308.928,170.66,255.992,170.66z M255.992,309.335
+      c-23.522,0-42.663-19.156-42.663-42.678c0-23.523,19.14-42.663,42.663-42.663c23.531,0,42.654,19.14,42.654,42.663
+      C298.646,290.178,279.523,309.335,255.992,309.335z"/>
+    <path style="opacity:0.2;fill:#FFFFFF;enable-background:new    ;" d="M491.859,156.348c-12.891-30.483-31.342-57.865-54.842-81.372
+      c-23.516-23.5-50.904-41.96-81.373-54.85c-31.56-13.351-65.091-20.125-99.652-20.125c-3.57,0-7.125,0.078-10.664,0.219
+      c30.789,1.25,60.662,7.93,88.974,19.906c30.498,12.89,57.873,31.351,81.371,54.85c23.5,23.507,41.969,50.889,54.857,81.372
+      c13.359,31.562,20.109,65.092,20.109,99.646c0,34.56-6.75,68.091-20.109,99.652c-12.889,30.469-31.357,57.857-54.857,81.357
+      c-23.498,23.516-50.873,41.967-81.371,54.857c-28.312,11.969-58.186,18.656-88.974,19.906c3.539,0.141,7.093,0.219,10.664,0.219
+      c34.561,0,68.092-6.781,99.652-20.125c30.469-12.891,57.857-31.342,81.373-54.857c23.5-23.5,41.951-50.889,54.842-81.357
+      c13.344-31.561,20.125-65.092,20.125-99.652C511.984,221.44,505.203,187.91,491.859,156.348z"/>
+    <path style="opacity:0.1;enable-background:new    ;" d="M20.125,355.645c12.89,30.469,31.351,57.857,54.85,81.357
+      c23.507,23.516,50.889,41.967,81.373,54.857c31.562,13.344,65.091,20.125,99.645,20.125c3.57,0,7.125-0.078,10.664-0.219
+      c-30.789-1.25-60.67-7.938-88.982-19.906c-30.483-12.891-57.857-31.342-81.364-54.857c-23.507-23.5-41.96-50.889-54.858-81.357
+      c-13.352-31.56-20.117-65.091-20.117-99.652c0-34.554,6.765-68.084,20.116-99.646C54.35,125.864,72.803,98.481,96.31,74.983
+      c23.507-23.507,50.881-41.968,81.364-54.858c28.312-11.976,58.193-18.656,88.982-19.906c-3.539-0.14-7.094-0.218-10.664-0.218
+      c-34.554,0-68.083,6.773-99.645,20.125c-30.483,12.89-57.865,31.351-81.373,54.858c-23.499,23.499-41.959,50.881-54.85,81.364
+      C6.774,187.91,0,221.44,0,255.993C0,290.553,6.774,324.085,20.125,355.645z"/>
+  </svg>
+  <span class="title pkmn-title text--stroke"></span>
+  {% if pool_warning %}<span class="label label--warning">{{ pool_warning }} cards</span>{% endif %}
+  <span class="instance  
+    {% if view >= 3 %}
+    md:portrait:hidden
+    {% endif %}">
+    <span class="pkmn-instance"></span>
+    </span>
+</div>
+
+<script>
+  function parseISODate(dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // month is 0-indexed in JS
+  }
+
+  function strftime(date, formatStr) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const replacements = {
+      '%Y': date.getFullYear(),
+      '%m': pad(date.getMonth() + 1),
+      '%d': pad(date.getDate())
+    };
+    return formatStr.replace(/%[Ymd]/g, (match) => replacements[match] || match);
+  }
+  (function() {
+    var views  = Array.from(document.querySelectorAll('.view'));
+    var host   = document.currentScript.closest('.view') || document.body;
+    var pool   = __pkmn || [];
+    var idx    = views.indexOf(host) % 4;
+    var item   = pool.length ? pool[idx % pool.length] : null;
+    var name   = '{{ trmnl.plugin_settings.instance_name | escape }}';
+    function q(sel) { return host.querySelector(sel); }
+
+    var titleEl = q('.pkmn-title');
+    var instEl  = q('.pkmn-instance');
+
+    if (!item || (!item.image_large && !item.name)) {
+      if (titleEl) titleEl.textContent = name;
+      host.querySelectorAll('.pkmn-img').forEach(function(img) { img.src = ''; img.alt = ''; });
+      return;
+    }
+
+    host.querySelectorAll('.pkmn-img').forEach(function(img) {
+      if (item.image_large) { img.src = item.image_large; img.alt = item.name || ''; }
+      else { img.src = ''; img.alt = ''; }
+    });
+    if (item && item.set_symbol) {
+      host.querySelectorAll('.set_symbol').forEach(function(img) {
+        img.src = item.set_symbol; }
+                                                  );
+    } else {
+      show('pokemon-logo');
+    }
+    var nameEl = q('.pkmn-name');
+    if (nameEl) nameEl.textContent = item.name || '';
+    var rarityClasses = rarityClass(item.rarity);
+    rarityClasses.trim().split(/\s+/).forEach(className => {
+        if (className) nameEl.classList.add(className);
+      });
+    function show(key) {
+      host.querySelectorAll('.' + key).forEach(function(el) {
+        el.classList.remove('hidden');
+      });
+    }
+
+    function show2(key, value, extraClass) {
+      if (!value && value !== 0) return;
+      var val = q('.pkmn-' + key);
+      var row = q('.pkmn-' + key + '-row');
+      if (val) {
+        val.textContent = String(value);
+
+        if (extraClass) {
+          extraClass.trim().split(/\s+/).forEach(className => {
+            if (className) val.classList.add(className);
+          });
+        }
+      }
+      if (row) row.classList.remove('hidden');
+    }
+
+    function rarityClass(r) {
+      r = (r || '').toLowerCase();
+
+      // Special Illustration / Hyper – highest rarity
+      if (r.includes('special illustration') || r.includes('hyper')) {
+        return 'bg--red  ' +
+               '1bit:text--white 1bit:bg--black ' +
+               '2bit:text--white 2bit:bg--black  ' +
+               '4bit:text--white 4bit:bg--black ';
+      }
+
+      // Illustration Rare
+      if (r.includes('illustration')) {
+        return 'bg--red-50 ' +
+               '1bit:text--white 1bit:bg--gray-20 ' +
+               '2bit:text--white 2bit:bg--gray-20 ' +
+               '4bit:text--white 4bit:bg--gray-20';
+      }
+
+      // Ultra Rare / Secret Rare / Rainbow Rare
+      if (r.includes('ultra') || r.includes('secret') || r.includes('rainbow')) {
+        return 'bg--yellow  ' +
+               '1bit:text--white 1bit:bg--gray-30 ' +
+               '2bit:text--white 2bit:bg--gray-30  ' +
+               '4bit:text--white 4bit:bg--gray-30 ';
+      }
+
+      // Rare (including Holo Rare)
+      if (r.includes('rare')) {
+        return 'bg--yellow-50  ' +
+               '1bit:text--white 1bit:bg--gray-40 ' +
+               '2bit:text--white 2bit:bg--gray-40  ' +
+               '4bit:text--white 4bit:bg--gray-40 ';
+      }
+
+      // Fallback for Common / Uncommon / unknown
+      return 'bg--gray-65 text--stroke';
+    }
+
+    show2('dex-id', item.dexId ? '#' + item.dexId : '');
+    show2('illustrator', item.illustrator);
+    show2('hp', item.hp);
+    show2('types', item.types ? item.types.join(', ') : '');
+    show2('stage', item.stage);
+    show2('evolve-from', item.evolve_from);
+
+    show2('rarity', item.rarity);
+    //show2('retreat', item.retreat != null ? item.retreat : '');
+    show2('regulation', item.regulation_mark);
+
+    function variantClass(key) {
+      switch (key) {
+        case 'holo':
+          // Highest rarity among variants → similar to Special Illustration / Hyper
+          return 'bg--red label--filled  ';
+        case 'reverse':
+          // Illustration‑like tier
+          return 'bg--red-30 label--filled  ';
+        case 'firstEdition':
+          // Ultra / Secret / Rainbow tier
+          return 'bg--yellow ';
+        case 'wPromo':
+          // Rare tier (lowest of the special variants)
+          return 'bg--yellow-50';
+
+        default:
+          return ' label--outline bg--white';
+      }
+    }
+
+// Your existing variant label code, updated to include color classes
+var VARIANT_LABELS = { holo: 'HOLO', reverse: 'REV', firstEdition: '1ST', normal: 'NORM', wPromo: 'PROMO' };
+var variantOrder = ['normal', 'holo', 'reverse', 'firstEdition', 'wPromo'];
+
+if (item.variants) {
+  var container = q('.pkmn-variants');
+  var hasAny = false;
+
+  // Count total active variants
+  var totalVariants = variantOrder.filter(function(key) {
+    return item.variants[key];
+  }).length;
+
+  variantOrder.forEach(function(key) {
+    if (!item.variants[key]) return;
+
+    // Skip 'normal' if more than 2 variants exist
+    if (key === 'normal' && totalVariants > 2) return;
+
+    hasAny = true;
+    var span = document.createElement('span');
+    var variantClasses = variantClass(key);
+    console.log(variantClasses);
+    span.className = 'label md:label--base{% if view == 4 %} md:label--small lg:label--base {% elsif view >= 2 %} md:label--small lg:label--base {% else %} lg:label--large {% endif %} rounded rounded--small p--1 ' + variantClasses;
+    span.textContent = VARIANT_LABELS[key];
+    if (container) container.appendChild(span);
+  });
+
+  if (hasAny) {
+    var vrow = q('.pkmn-variants-row');
+    if (vrow) vrow.classList.remove('hidden');
+  }
+}
+
+    if (item.card_count) {
+      var official = item.card_count.official;
+      var total = item.card_count.total;
+      if (item.localId != null && item.localId !== '' && official != null) {
+        var countStr = item.localId + ' / ' + official;
+        if (total != null && total !== official) countStr += ' (' + total + ')';
+        show2('card-count', countStr);
+      }
+    }
+
+    var pricePref = "{{ trmnl.plugin_settings.custom_fields_values.pricing_source | default: 'eu_prefer' }}";
+    if (pricePref !== 'hidden') {
+      var price   = item.price || {};
+      var cmNorm  = (price.cm || {}).normal || {};
+      var tcg     = price.tcg || {};
+      var tcgNorm = tcg.normal || tcg[Object.keys(tcg)[0]] || {};
+      var cmAvg   = cmNorm.avg     || '';
+      var tcgMkt  = tcgNorm.market || '';
+      var overlayPrice = '';
+      if (pricePref === 'eu_prefer') {
+        show2('price-avg',  cmAvg || tcgMkt);
+        show2('price-avg7', cmNorm.avg7);
+        overlayPrice = cmAvg || tcgMkt;
+      } else if (pricePref === 'na_prefer') {
+        show2('price-tcg-market', tcgMkt || cmAvg);
+        show2('price-tcg-low',    tcgNorm.low);
+        overlayPrice = tcgMkt || cmAvg;
+      } else if (pricePref === 'eu') {
+        show2('price-avg',  cmAvg);
+        show2('price-avg7', cmNorm.avg7);
+        overlayPrice = cmAvg;
+      } else if (pricePref === 'na') {
+        show2('price-tcg-market', tcgMkt);
+        show2('price-tcg-low',    tcgNorm.low);
+        overlayPrice = tcgMkt;
+      }
+      var overlaySpan = q('.pkmn-price-overlay');
+      if (overlaySpan && overlayPrice) {
+        overlaySpan.textContent = overlayPrice;
+        overlaySpan.classList.remove('hidden');
+      }
+    }
+
+    var titleBarEl = host.querySelector('.title_bar');
+    var titleBarVisible = {{ view }} !== 4 && titleBarEl && titleBarEl.offsetHeight > 0;
+    if (!titleBarVisible) show2('set-name', item.set_name);
+    show2('serie', item.serie_name);
+    var format = {{ trmnl.plugin_settings.custom_fields_values.date_format | default: "%Y-%m-%d" | json }};
+    var releaseDate = parseISODate(item.set_release_date);
+    var formatted = strftime(releaseDate, format);
+    show2('release-date', formatted);
+
+    if (item.set_logo) {
+      host.querySelectorAll('.pkmn-set-logo').forEach(function(img) {
+        img.src = item.set_logo;
+        img.alt = item.set_name || '';
+    });
+      var setRow = q('.pkmn-set-row');
+      if (setRow) setRow.classList.remove('hidden');
+    }
+
+    if (titleEl) titleEl.textContent = item.name || '';
+    var cardCountRow = q('.pkmn-card-count-row');
+    var cardCountShown = cardCountRow && !cardCountRow.classList.contains('hidden');
+    var instLabel = item.set_name || '';
+    if (!cardCountShown && item.localId && item.card_count && item.card_count.official) {
+      instLabel += ' (' + item.localId + '/' + item.card_count.official + ')';
+    }
+    if (instEl) instEl.textContent = instLabel;
+  })();
+</script>
+
+{% endtemplate %}
