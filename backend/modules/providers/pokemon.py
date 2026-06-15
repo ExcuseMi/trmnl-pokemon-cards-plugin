@@ -121,7 +121,8 @@ class PokemonProvider(BaseProvider):
             return []
 
     async def get_card_detail(self, api: str, card_id: str) -> dict | None:
-        cache_key = f'pokemon:card:v5:{card_id}'
+        lang = api.rstrip('/').rsplit('/', 1)[-1]
+        cache_key = f'pokemon:card:v6:{lang}:{card_id}'
         try:
             cached = await self.redis.get(cache_key)
             if cached:
