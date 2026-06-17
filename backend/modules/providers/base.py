@@ -57,6 +57,10 @@ class BaseProvider:
                     await self.store_cards(cards, **filters)
                     log.info('%s: cached %d cards filters=%s', self.name, len(cards), filters)
                     return cards
+                existing = await self.get_cached(**filters)
+                if existing:
+                    log.warning('%s: fetch failed filters=%s — keeping stale cache', self.name, filters)
+                    return existing
                 log.warning('%s: fetch returned nothing filters=%s — backing off 5m', self.name, filters)
                 await self._store_backoff(**filters)
                 return None
