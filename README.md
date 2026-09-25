@@ -53,7 +53,7 @@ The backend expects a Redis instance. Docker Compose starts one automatically.
 <!-- PLUGIN_STATS_START -->
 ## 🚀 TRMNL Plugin(s)
 
-*Last updated: 2026-09-24 10:40:50 UTC*
+*Last updated: 2026-09-25 10:44:15 UTC*
 
 
 ## <img src="assets/plugin-images/297288_icon.png" alt="Pokemon Cards icon" width="32"/> [Pokemon Cards](https://usetrmnl.com/recipes/297288)
@@ -67,7 +67,7 @@ Discover Pokémon cards on your TRMNL: browse packs, hunt for rares, or enjoy th
 
 | Metric | Value |
 |--------|-------|
-| Installs | 66 |
+| Installs | 67 |
 | Forks | 0 |
 
 ---
