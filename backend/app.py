@@ -22,6 +22,7 @@ SETS_REFRESH_HOURS = float(os.getenv('SETS_REFRESH_HOURS', '24'))
 SETS_RELEASE_DAY_REFRESH_HOURS = float(os.getenv('SETS_RELEASE_DAY_REFRESH_HOURS', '1'))
 SETS_RELEASE_DAY_WINDOW_DAYS = int(os.getenv('SETS_RELEASE_DAY_WINDOW_DAYS', '3'))
 LOW_CARD_WARNING = int(os.getenv('LOW_CARD_WARNING_THRESHOLD', '10'))
+FALLBACK_POOL = int(os.getenv('FALLBACK_POOL', '200'))
 TCGDEX_SETS_API = 'https://api.tcgdex.net/v2/en'
 
 _redis = Redis(
@@ -85,6 +86,14 @@ async def card():
         return_exceptions=True,
     )
     selected = [r for r in results if isinstance(r, dict) and r.get('image_large')][:4]
+
+    if not selected:
+        # TCGdex failing: cards of this pool whose details are already cached, before giving up
+        pool = random.sample(cached_ids, min(FALLBACK_POOL, len(cached_ids)))
+        cached_cards = [c for c in await _provider.get_cached_card_details(api, pool) if c.get('image_large')]
+        selected = cached_cards[:4]
+        if selected:
+            log.warning('card: TCGdex details failed, served %d cached cards', len(selected))
 
     if not selected:
         return jsonify({'error': 'Failed to fetch cards'}), 503

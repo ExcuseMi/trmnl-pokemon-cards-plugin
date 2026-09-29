@@ -12,6 +12,8 @@ from modules.providers.constants import TCGDEX_BASE, VALID_LANGS, CATEGORY_I18N
 log = logging.getLogger(__name__)
 
 CARD_DETAIL_TTL = 86400
+SET_MISSING_TTL = 86400
+RETRY_DELAY = 1.0
 ID_CAP = 200
 
 _VALID_LANGS = VALID_LANGS
@@ -95,7 +97,13 @@ class PokemonProvider(BaseProvider):
         return list(seen) if seen else None
 
     async def _fetch_ids_single(self, api: str, set_id: str, category: str, rarity: str, ptype: str) -> list[str]:
+        missing_key = f'pokemon:set404:{api.rsplit("/", 1)[-1]}:{set_id}' if set_id else ''
         if set_id:
+            try:
+                if await self.redis.get(missing_key):
+                    return []
+            except Exception:
+                pass
             url = f'{api}/sets/{set_id}'
             params = {}
         else:
@@ -116,6 +124,17 @@ class PokemonProvider(BaseProvider):
 
             cards = data.get('cards', []) if set_id else (data if isinstance(data, list) else [])
             return [c['id'] for c in cards if c.get('id')]
+        except aiohttp.ClientResponseError as exc:
+            if exc.status == 404 and set_id:
+                # the set does not exist in this language (e.g. B1 in de): skip it for a day
+                log.info('Set %s not available at %s, skipping for %ds', set_id, api, SET_MISSING_TTL)
+                try:
+                    await self.redis.set(missing_key, '1', ex=SET_MISSING_TTL)
+                except Exception:
+                    pass
+            else:
+                log.error('Error fetching card IDs: %s', exc)
+            return []
         except Exception as exc:
             log.error('Error fetching card IDs: %s', exc)
             return []
@@ -137,16 +156,40 @@ class PokemonProvider(BaseProvider):
                 pass
         return card
 
-    async def _fetch_card(self, api: str, card_id: str) -> dict | None:
+    async def get_cached_card_details(self, api: str, card_ids: list[str]) -> list[dict]:
+        """Card details already in Redis, no network: the fallback while TCGdex is down."""
+        if not card_ids:
+            return []
+        lang = api.rstrip('/').rsplit('/', 1)[-1]
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    f'{api}/cards/{card_id}',
-                    timeout=aiohttp.ClientTimeout(total=10),
-                ) as resp:
-                    resp.raise_for_status()
-                    data = await resp.json()
-            return shape_card(data)
-        except Exception as exc:
-            log.warning('Error fetching card %s: %s', card_id, exc)
-            return None
+            values = await self.redis.mget([f'pokemon:card:v6:{lang}:{cid}' for cid in card_ids])
+        except Exception:
+            return []
+        cards = []
+        for v in values:
+            try:
+                if v:
+                    cards.append(json.loads(v))
+            except ValueError:
+                pass
+        return cards
+
+    async def _fetch_card(self, api: str, card_id: str) -> dict | None:
+        for attempt in range(2):
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        f'{api}/cards/{card_id}',
+                        timeout=aiohttp.ClientTimeout(total=10),
+                    ) as resp:
+                        resp.raise_for_status()
+                        data = await resp.json()
+                return shape_card(data)
+            except Exception as exc:
+                transient = not isinstance(exc, aiohttp.ClientResponseError) or exc.status == 429 or exc.status >= 500
+                if attempt == 0 and transient:
+                    await asyncio.sleep(RETRY_DELAY)
+                    continue
+                log.warning('Error fetching card %s: %s', card_id, exc)
+                return None
+        return None
