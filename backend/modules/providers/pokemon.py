@@ -88,7 +88,12 @@ class PokemonProvider(BaseProvider):
             combined = [i for i in set_ids if i in filter_ids]
             if not combined and failed:
                 raise UpstreamError('card lists failed')
-            return combined if combined else None
+            if not combined:
+                # the set has no card of that rarity, type or category (a new set, 30th-c on 2026-10-06):
+                # the set's own cards, not an empty screen
+                log.info('No card of set %s matches the other filters, serving the whole set', set_id)
+                return list(set_ids)
+            return combined
 
         seen = await gather_ids(
             [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list])

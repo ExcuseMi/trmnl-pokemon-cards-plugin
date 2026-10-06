@@ -44,6 +44,12 @@ async def _startup():
 @require_tiered_access(lambda: _redis, prefix='card')
 async def card():
     args = dict(request.args)
+    # TRMNL sometimes fails to render the polling URL and sends its error text as the value
+    # ("Liquid error (line 1): Internal exception", 27 times on 2026-10-06): no filter, not a filter matching nothing
+    for key in ('pokemon_type', 'rarity', 'category', 'set_id', 'language'):
+        if 'liquid error' in (args.get(key) or '').lower():
+            log.warning('card: %s arrived as a Liquid error text, ignored', key)
+            args[key] = ''
     raw_lang = ((args.get('language') or '').strip().lower().split() or [''])[0]
     args['language'] = raw_lang if raw_lang in _VALID_LANGS else 'en'
     set_id = args.get('set_id', '')

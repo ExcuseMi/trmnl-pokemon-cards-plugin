@@ -182,3 +182,39 @@ def test_card_answers_503_only_when_the_source_is_down_and_nothing_is_cached(cli
     p = provider([http_error(503)])
     monkeypatch.setattr(backend_app, '_provider', p)
     assert get_card(backend_app).status_code == 503
+
+
+def test_liquid_error_text_as_a_filter_is_no_filter(client, monkeypatch):
+    backend_app, _ = client
+    p = provider([['e-1']])
+    monkeypatch.setattr(backend_app, '_provider', p)
+    seen = {}
+
+    async def is_expired(ttl, **args):
+        seen.update(args)
+        return True
+
+    p.is_expired = is_expired
+
+    async def no_detail(api, cid):
+        return {'id': cid, 'name': 'x', 'image_large': 'http://img', 'set_release_date': 'd', 'serie_name': 's'}
+
+    p.get_card_detail = no_detail
+    bad = 'Liquid%20error%20(line%201)%3A%20Internal%20exception'
+    resp = get_card(backend_app, f'pokemon_type={bad}&rarity={bad}&category={bad}')
+    assert resp.status_code == 200
+    assert seen['rarity'] == '' and seen['pokemon_type'] == '' and seen['category'] == ''
+    assert run(resp.get_json())['data'][0]['id'] == 'e-1'
+
+
+def test_a_set_without_cards_of_the_chosen_rarity_shows_the_set():
+    p = PokemonProvider(name='pokemon', redis=FakeRedis())
+
+    async def get_json(url, params, total=15):
+        if '/sets/' in url:
+            return {'cards': [{'id': 'new-1'}, {'id': 'new-2'}]}
+        return [{'id': 'other-9'}]
+
+    p._get_json = get_json
+    f = dict(FILTERS, set_id='30th-c', rarity='Ultra Rare')
+    assert sorted(run(p.refresh(**f))) == ['new-1', 'new-2']
