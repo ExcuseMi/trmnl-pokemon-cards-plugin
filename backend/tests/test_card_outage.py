@@ -218,3 +218,17 @@ def test_a_set_without_cards_of_the_chosen_rarity_shows_the_set():
     p._get_json = get_json
     f = dict(FILTERS, set_id='30th-c', rarity='Ultra Rare')
     assert sorted(run(p.refresh(**f))) == ['new-1', 'new-2']
+
+
+def test_cards_without_a_picture_at_the_source_are_nothing_to_show_not_an_outage(client, monkeypatch):
+    backend_app, _ = client
+    p = provider([['n-1', 'n-2']])
+    monkeypatch.setattr(backend_app, '_provider', p)
+
+    async def detail_without_image(api, cid):
+        return {'id': cid, 'name': 'Charizard', 'image_large': ''}
+
+    p.get_card_detail = detail_without_image
+    resp = get_card(backend_app)
+    assert resp.status_code == 200
+    assert run(resp.get_json())['empty'] is True

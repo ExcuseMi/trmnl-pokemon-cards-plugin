@@ -105,6 +105,10 @@ async def card():
             log.warning('card: TCGdex details failed, served %d cached cards', len(selected))
 
     if not selected:
+        if any(isinstance(r, dict) for r in results):
+            # the details loaded, the source has no picture for these cards yet (set 30th-c on 2026-10-06,
+            # a new set without images): nothing to show, which is not an outage
+            return jsonify({'data': [], 'empty': True, 'message': 'No card pictures for these filters yet'})
         return jsonify({'error': 'Failed to fetch cards'}), 503
 
     await _enrich_release_dates(selected)
