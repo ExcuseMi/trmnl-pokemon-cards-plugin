@@ -77,6 +77,9 @@ async def card():
         cached_ids = await _provider.get_cached(**args)
 
     if not cached_ids:
+        if await _provider.is_empty_match(**args):
+            # the source answered: these filters match no card. Not an outage, so not a 503
+            return jsonify({'data': [], 'empty': True, 'message': 'No cards match these filters'})
         return jsonify({'error': 'Failed to fetch cards'}), 503
 
     api = _pokemon_api(args.get('language', 'en'))

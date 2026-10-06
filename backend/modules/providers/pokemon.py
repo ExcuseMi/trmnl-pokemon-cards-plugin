@@ -6,7 +6,7 @@ import random
 import aiohttp
 
 from modules.formatters.card import shape_card
-from modules.providers.base import BaseProvider
+from modules.providers.base import BaseProvider, UpstreamError
 from modules.providers.constants import TCGDEX_BASE, VALID_LANGS, CATEGORY_I18N
 
 log = logging.getLogger(__name__)
@@ -41,6 +41,7 @@ class PokemonProvider(BaseProvider):
         language = filters.get('language', 'en')
         api = _api(language)
 
+        # an UpstreamError (the source failed) goes up to refresh(); None here means "answered, no such cards"
         card_ids = await self._fetch_ids(api, set_id, rarities, ptypes, categories, language)
         if not card_ids and language != 'en':
             log.info('No cards found for language=%s, falling back to en', language)
@@ -56,44 +57,43 @@ class PokemonProvider(BaseProvider):
     async def _fetch_ids(self, api: str, set_id: str, rarities: list[str], ptypes: list[str], categories: list[str], language: str = 'en') -> list[str] | None:
         cat_map = _CATEGORY_I18N.get(language, _CATEGORY_I18N['en'])
         loc_categories = [cat_map.get(c, c) for c in categories]
-        if set_id:
-            sid_list = [s.strip() for s in set_id.split(',') if s.strip()]
-            if len(sid_list) == 1:
-                set_ids = set(await self._fetch_ids_single(api, sid_list[0], '', '', '') or [])
-            else:
-                tasks = [self._fetch_ids_single(api, sid, '', '', '') for sid in sid_list]
-                results = await asyncio.gather(*tasks, return_exceptions=True)
-                set_ids = set()
-                for res in results:
-                    if isinstance(res, list):
-                        set_ids.update(res)
-            if not set_ids:
-                return None
-            if not rarities and not ptypes and not loc_categories:
-                return list(set_ids)
-            # Intersect set cards with globally-filtered cards to respect rarity/type/category within the set
-            c_list = loc_categories or ['']
-            r_list = rarities or ['']
-            p_list = ptypes or ['']
-            tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            filter_ids = set()
-            for res in results:
+        failed = False
+
+        async def gather_ids(tasks) -> dict:
+            nonlocal failed
+            seen = {}
+            for res in await asyncio.gather(*tasks, return_exceptions=True):
                 if isinstance(res, list):
-                    filter_ids.update(res)
-            combined = list(set_ids & filter_ids)
-            return combined if combined else None
+                    for i in res:
+                        seen[i] = None
+                else:
+                    failed = True
+            return seen
 
         c_list = loc_categories or ['']
         r_list = rarities or ['']
         p_list = ptypes or ['']
-        tasks = [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        seen = {}
-        for res in results:
-            if isinstance(res, list):
-                for i in res:
-                    seen[i] = None
+        if set_id:
+            sid_list = [s.strip() for s in set_id.split(',') if s.strip()]
+            set_ids = await gather_ids([self._fetch_ids_single(api, sid, '', '', '') for sid in sid_list])
+            if not set_ids:
+                if failed:
+                    raise UpstreamError('set lists failed')
+                return None
+            if not rarities and not ptypes and not loc_categories:
+                return list(set_ids)
+            # Intersect set cards with globally-filtered cards to respect rarity/type/category within the set
+            filter_ids = await gather_ids(
+                [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list])
+            combined = [i for i in set_ids if i in filter_ids]
+            if not combined and failed:
+                raise UpstreamError('card lists failed')
+            return combined if combined else None
+
+        seen = await gather_ids(
+            [self._fetch_ids_single(api, '', c, r, p) for c in c_list for r in r_list for p in p_list])
+        if not seen and failed:
+            raise UpstreamError('card lists failed')
         return list(seen) if seen else None
 
     async def _fetch_ids_single(self, api: str, set_id: str, category: str, rarity: str, ptype: str) -> list[str]:
@@ -117,13 +117,7 @@ class PokemonProvider(BaseProvider):
                 params['types'] = ptype
 
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
-                    resp.raise_for_status()
-                    data = await resp.json()
-
-            cards = data.get('cards', []) if set_id else (data if isinstance(data, list) else [])
-            return [c['id'] for c in cards if c.get('id')]
+            data = await self._get_json(url, params)
         except aiohttp.ClientResponseError as exc:
             if exc.status == 404 and set_id:
                 # the set does not exist in this language (e.g. B1 in de): skip it for a day
@@ -132,12 +126,30 @@ class PokemonProvider(BaseProvider):
                     await self.redis.set(missing_key, '1', ex=SET_MISSING_TTL)
                 except Exception:
                     pass
-            else:
-                log.error('Error fetching card IDs: %s', exc)
-            return []
+                return []
+            log.error('Error fetching card IDs: %s', exc)
+            raise UpstreamError(str(exc)) from exc
         except Exception as exc:
             log.error('Error fetching card IDs: %s', exc)
-            return []
+            raise UpstreamError(str(exc) or type(exc).__name__) from exc
+
+        cards = data.get('cards', []) if set_id else (data if isinstance(data, list) else [])
+        return [c['id'] for c in cards if c.get('id')]
+
+    async def _get_json(self, url: str, params: dict, total: float = 15):
+        """One GET, tried again once after a transient failure (network, 429, 5xx), as the card details are."""
+        for attempt in range(2):
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=total)) as resp:
+                        resp.raise_for_status()
+                        return await resp.json()
+            except Exception as exc:
+                transient = not isinstance(exc, aiohttp.ClientResponseError) or exc.status == 429 or exc.status >= 500
+                if attempt == 0 and transient:
+                    await asyncio.sleep(RETRY_DELAY)
+                    continue
+                raise
 
     async def get_card_detail(self, api: str, card_id: str) -> dict | None:
         lang = api.rstrip('/').rsplit('/', 1)[-1]
